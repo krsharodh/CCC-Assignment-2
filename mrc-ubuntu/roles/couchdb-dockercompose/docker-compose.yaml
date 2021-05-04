@@ -1,0 +1,13 @@
+version: "3.3"
+networks:
+  network:
+services:
+  server-0:
+    image: couchdb
+    ports:
+      - "5984:5984"
+    environment:
+      COUCHDB_PASSWORD: admin
+      COUCHDB_SECRET: a192aeb9904e6590849337933b000c99
+      COUCHDB_USER: admin
+      NODENAME: couchdb-test
