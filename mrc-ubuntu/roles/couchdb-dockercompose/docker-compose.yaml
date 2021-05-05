@@ -1,13 +1,14 @@
-version: "3.3"
-networks:
-  network:
+version: "3"
 services:
-  server-0:
-    image: couchdb
+  docker_couchdb:
+    image: "couchdb:latest"
+    restart: always
     ports:
       - "5984:5984"
+      - "4369:4369"
+      - "9100-9200:9100-9200"
     environment:
-      COUCHDB_PASSWORD: admin
-      COUCHDB_SECRET: a192aeb9904e6590849337933b000c99
-      COUCHDB_USER: admin
-      NODENAME: couchdb-test
+      COUCHDB_USER: "{{ couchdbusername }}"
+      COUCHDB_PASSWORD: "{{ couchdbpassword }}"
+      NODENAME: "{{ ansible_host }}"
+      COUCHDB_SECRET: "{{ couchdbcookie }}"

@@ -32,6 +32,18 @@ security_groups:
     port_range_min: 5984
     port_range_max: 5984
     remote_ip_prefix: 0.0.0.0/0
+  - name: demo_couchdb_cluster
+    description: "Demo security group for couchdb cluster"
+    protocol: tcp
+    port_range_min: 4369
+    port_range_max: 4369
+    remote_ip_prefix: 0.0.0.0/0
+  - name: demo_couchdb_connection
+    description: "Demo security group for couchdb nodes to communicate"
+    protocol: tcp
+    port_range_min: 9100
+    port_range_max: 9200
+    remote_ip_prefix: 0.0.0.0/0
 
 # Instance
 instances:

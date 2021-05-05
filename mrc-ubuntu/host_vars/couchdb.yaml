@@ -1,6 +1,7 @@
 #Common vars
 couchdbusername: admin
 couchdbpassword: admin
+couchdbcookie: a192aeb9904e6590849337933b000c99
 
 # Volume
 volumes:

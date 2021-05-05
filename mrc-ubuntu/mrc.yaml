@@ -23,3 +23,10 @@
     - role: couchdb-volumes
     - role: couchdb-docker
     - role: couchdb-dockercompose
+
+- hosts: SLAVES
+  vars_files:
+    - host_vars/couchdb.yaml
+
+  roles:
+    - role: couchdb-cluster

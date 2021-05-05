@@ -17,6 +17,12 @@
     owner: '{{ ansible_user }}'
     group: "{{ ansible_user }}"
 
+# - name: Stop couchdb docker container
+#   become: yes
+#   docker_container:
+#     name: couchdb
+#     state: absent
+
 - name: Run docker compose
   tags: 'couchdb'
   become: yes
