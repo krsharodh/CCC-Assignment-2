@@ -1,0 +1,1 @@
+./python harvester.py -keyword vaccine -city Melbourne

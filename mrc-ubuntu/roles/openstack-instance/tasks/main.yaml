@@ -29,3 +29,10 @@
     search_regex: OpenSSH
   loop: '{{ os_instance.results }}'
   when: item.openstack is defined
+
+- name: Add host
+  add_host:
+    name: '{{ item.openstack.public_v4 }}'
+    groups: COMP90024
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined

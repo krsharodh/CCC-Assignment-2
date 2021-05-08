@@ -1,0 +1,2 @@
+couchdb_dir: couchdb
+couchdb_path: couchdb/docker-compose.yaml

@@ -1,0 +1,19 @@
+#Common vars
+couchdbusername: admin
+couchdbpassword: admin
+couchdbcookie: a192aeb9904e6590849337933b000c99
+
+# Volume
+volumes:
+  - device: /dev/vdb
+    mountpoint: /var/lib/docker
+
+instances:
+  - name: couchdb-1
+    volumes: ['demo-vol-1']
+  - name: couchdb-2
+    volumes: ['demo-vol-2']
+  - name: couchdb-3
+    volumes: ['demo-vol-3']
+  - name: couchdb-4
+    volumes: ['demo-vol-4']

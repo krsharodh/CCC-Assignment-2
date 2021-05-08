@@ -3,14 +3,14 @@ availability_zone: melbourne-qh2-uom
 
 # Volume
 volumes:
-  - vol_name: WSL-demo-vol-1-1
-    vol_size: 10
-  - vol_name: WSL-demo-vol-1-2
-    vol_size: 10
-  - vol_name: WSL-demo-vol-2-1
-    vol_size: 10
-  - vol_name: WSL-demo-vol-2-2
-    vol_size: 10
+  - vol_name: demo-vol-1
+    vol_size: 120
+  - vol_name: demo-vol-2
+    vol_size: 120
+  - vol_name: demo-vol-3
+    vol_size: 120
+  - vol_name: demo-vol-4
+    vol_size: 120
 
 # Security group
 security_groups:
@@ -26,14 +26,36 @@ security_groups:
     port_range_min: 80
     port_range_max: 80
     remote_ip_prefix: 0.0.0.0/0
+  - name: demo_couchdb
+    description: "Demo security group for couchdb"
+    protocol: tcp
+    port_range_min: 5984
+    port_range_max: 5984
+    remote_ip_prefix: 0.0.0.0/0
+  - name: demo_couchdb_cluster
+    description: "Demo security group for couchdb cluster"
+    protocol: tcp
+    port_range_min: 4369
+    port_range_max: 4369
+    remote_ip_prefix: 0.0.0.0/0
+  - name: demo_couchdb_connection
+    description: "Demo security group for couchdb nodes to communicate"
+    protocol: tcp
+    port_range_min: 9100
+    port_range_max: 9200
+    remote_ip_prefix: 0.0.0.0/0
 
 # Instance
 instances:
-  - name: WSL-demo-1
-    volumes: ['WSL-demo-vol-1-1', 'WSL-demo-vol-1-2']
-  - name: WSL-demo-2
-    volumes: ['WSL-demo-vol-2-1', 'WSL-demo-vol-2-2']
+  - name: demo-1
+    volumes: ['demo-vol-1']
+  - name: demo-2
+    volumes: ['demo-vol-2']
+  - name: demo-3
+    volumes: ['demo-vol-3']
+  - name: demo-4
+    volumes: ['demo-vol-4']
 
 instance_image: f8b79936-6616-4a22-b55d-0d0a1d27bceb
-instance_key_name: Assignment2
-instance_flavor: uom.mse.2c9g
+instance_key_name: Test
+instance_flavor: uom.mse.1c4g
