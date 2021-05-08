@@ -22,12 +22,22 @@ function Home() {
         getAreas()
     }, [])
 
+    useEffect(() => {
+        getSample()
+    }, [])
+
     const baseURL = "http://127.0.0.1:5000/";
 
     const getAreas = async () => {
         const response = await fetch(baseURL);
         const responseJson = await response.json();
         setAreasList(responseJson);
+    }
+
+    const getSample = async () => {
+        const response = await fetch(baseURL + "getSample");
+        const responseJson = await response.json();
+        console.log(responseJson);
     }
 
     return (
