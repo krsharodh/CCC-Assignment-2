@@ -6,24 +6,6 @@ import time
 
 from var import * 
 
-argv = sys.argv
-for i in range(len(argv)):
-    if argv[i] == "-keyword":
-        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
-            keyword = argv[i+1]
-        else :
-            print("Invalid arguments!")
-            exit()
-    elif argv[i] == "-location":
-        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
-            search_location = argv[i+1]
-        else :
-            print("Invalid arguments!")
-            exit()
-
-print(keyword)
-print(search_location)
-
 ## set the Twitter API
 auth = tweepy.OAuthHandler(JiarChen108_API_key, JiarChen108_API_secret_key)
 auth.set_access_token(access_token, access_token_secret)
@@ -36,7 +18,6 @@ if remain_request>1:
 else:
     print(f"Note: {remain_request} search request remaining / 15-min window.")
 start_time = time.time()
-last_check_time = time.time()
 print(start_time)
 val = input("Continue? (Y/N): ")
 if val.lower() in ["n", "no", "false"]:
@@ -48,18 +29,25 @@ address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 # address = f"https://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 couchdb_server = couchdb.Server(address)
 print(couchdb_server.version())
-tweet_db_name = "tweets_"+keyword+"_test2"
+
 user_db_name = "user"
-try:
-    tweet_db = couchdb_server.create(tweet_db_name)
-except:
-    tweet_db = couchdb_server[tweet_db_name]
 
 try:
-    user_db = couchdb_server.create(user_db_name)
-except:
     user_db = couchdb_server[user_db_name]
+except:
+    print(f"There is no database called {user_db_name} on the server.")
 
+target_user_list = []
+city_list = ["melbourne", "sydney", "adelaide", "brisbane", "perth", "canberra", "darwin", "hobart"]
+
+for i in user_db:
+    doc = user_db[i]
+    if "darwin" in doc["location"].lower():
+        target_user_list.append(i)
+        print(doc["location"].lower())
+#print(user_db[id_list[0]]["location"])
+print(len(target_user_list))
+exit()
 #testdb = couchdb_server["test"]
 #db.save({'_id':"1", 'text':"Hello CouchDB!", 'User':"Jiarui"})
 #db.save({'_id':"2", 'text':"My greetings to CouchDB!", 'User':"Jiarui"})
@@ -72,7 +60,6 @@ geocode = {"australia": "-25.610112,134.354805,2240km",
 "brisbane":"-27.33,152.81,109km", 
 "perth":"-32.12,115.68,75km"
 }
-city_list = ["melbourne", "sydney", "adelaide", "brisbane", "perth", "canberra", "darwin", "hobart"]
 
 # until="2021-05-08",
 page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", until="2021-05-11", lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
@@ -80,20 +67,18 @@ page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", until="
 #page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", lang="en", count = 100, geocode=geocode, tweet_mode='extended').pages()
 
 page_fetched = 0
-while (True):
+while (remain_request>1):
     page = page_cursor.next()
-    remain_request -= 1
     print(f"Fetch Page: {page_fetched}")
     for tweet in page:
         # here use try & except to avoid duplicated tweets
         # duplicated tweets will have the same tweet_id
         
-        
-        tweet_formated = tweet._json
-        if "retweeted_status" in tweet_formated.keys():
-            tweet_formated = tweet_formated["retweeted_status"]
-            #print(tweet_formated)
         try:
+            tweet_formated = tweet._json
+            if "retweeted_status" in tweet_formated.keys():
+                tweet_formated = tweet_formated["retweeted_status"]
+                #print(tweet_formated)
             tweet_db.save({
                 "_id": str(tweet_formated["id"]),
                 "created_at": tweet_formated["created_at"],
@@ -103,53 +88,30 @@ while (True):
             })
         
         except:
-            #print("One duplicated tweets caught!")
+            print("One dup tweets caught!")
             continue
         
-        
-        user_info = tweet_formated["user"]
-        uniform_location = "NA"
-        for c in city_list:
-            if c in user_info["location"].lower():
-                uniform_location = c
-                break
         try:
             user_db.save({
-                        "_id": str(user_info["id"]),
-                        "name": user_info["name"],
-                        "screen_name": user_info["screen_name"],
-                        "location": user_info["location"],
-                        "uniform_location": uniform_location,
-                        "created_at": user_info["created_at"]
-                    }) 
-
+                "_id": str(tweet_formated["user"]["id"]),
+                "name": tweet_formated["user"]["name"],
+                "screen_name": tweet_formated["user"]["screen_name"],
+                "location": tweet_formated["user"]["location"],
+                "created_at": tweet_formated["user"]["created_at"]
+            })
         except:
-            print("Duplicated user found!")
+            print("One dup users caught!")
+
+        
 
     
+    remain_request -= 1
     page_fetched += 1
-    
+
     if len(page)==0:
         print("All tweets in the time interval are harvested.")
         break
 
-    if (time.time()-last_check_time)>=15*60:
-        remain_request = api.rate_limit_status("search")["resources"]["search"]["/search/tweets"]["remaining"]
-        last_check_time = time.time()
-        print(f"Time up! Refresh the request limit, now {remain_request} request(s) available")
-    
-    if remain_request <=1:
-        # recheck it with Twitter API
-        remain_request = api.rate_limit_status("search")["resources"]["search"]["/search/tweets"]["remaining"]
-        
-        while (remain_request<=1):
-            sleep_time = 15*60 - (time.time()-last_check_time)
-            last_check_time = time.time()
-            print(f"Start to sleep {round(sleep_time, 2)}s to wait for the refreshing.")
-            time.sleep(sleep_time)
-            remain_request = api.rate_limit_status("search")["resources"]["search"]["/search/tweets"]["remaining"]
-
-        last_check_time = time.time()
 
 end_time = time.time()
 print(f"harvest_time={round(end_time-start_time, 2)}")

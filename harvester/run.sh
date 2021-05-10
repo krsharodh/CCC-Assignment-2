@@ -1,1 +1,2 @@
-./python harvester.py -keyword vaccine -city Melbourne
+#./python harvester.py -keyword vaccine -location australia
+./python helloworld.py
