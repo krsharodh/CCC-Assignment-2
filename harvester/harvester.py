@@ -2,8 +2,10 @@ import couchdb
 import tweepy
 import sys
 import json
+import time
 
 from var import * 
+
 argv = sys.argv
 for i in range(len(argv)):
     if argv[i] == "-keyword":
@@ -12,40 +14,122 @@ for i in range(len(argv)):
         else :
             print("Invalid arguments!")
             exit()
-    elif argv[i] == "-city":
+    elif argv[i] == "-location":
         if (i<len(argv)-1) and (argv[i+1][0] != '-'):
-            city = argv[i+1]
+            search_location = argv[i+1]
         else :
             print("Invalid arguments!")
             exit()
 
 print(keyword)
-print(city)
-print(f'https://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}/')
+print(search_location)
 
-couchdb_server = couchdb.Server(f'https://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}/')
-print(couchdb_server.version())
-db_name = "test"
-
-testdb = couchdb_server.create(db_name)
-exit()
-#testdb = couchdb_server["test"]
-testdb.save({'_id':1, 'text':"Hello CouchDB!", 'User':"Jiarui"})
-
-
-exit()
+## set the Twitter API
 auth = tweepy.OAuthHandler(JiarChen108_API_key, JiarChen108_API_secret_key)
 auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(auth)
 
-print(api.rate_limit_status("search"))
+remain_request = api.rate_limit_status("search")["resources"]["search"]["/search/tweets"]["remaining"]
+if remain_request>1:
+    print(f"Note: {remain_request} search requests remaining / 15-min window.")
+else:
+    print(f"Note: {remain_request} search request remaining / 15-min window.")
+start_time = time.time()
+print(start_time)
+val = input("Continue? (Y/N): ")
+if val.lower() in ["n", "no", "false"]:
+    exit(0)
 
-geocode = "-25.610112,134.354805,2240km"
-page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-04-28", until="2021-04-29", lang="en", count = 100, geocode=geocode, tweet_mode='extended').pages()
+## set the couchdb API
+address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
+# Note: For urllib3 version<1.26.0, please use the line below instead.
+# address = f"https://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
+couchdb_server = couchdb.Server(address)
+print(couchdb_server.version())
+tweet_db_name = "tweets_"+keyword+"_test2"
+user_db_name = "user"
+try:
+    tweet_db = couchdb_server.create(tweet_db_name)
+except:
+    tweet_db = couchdb_server[tweet_db_name]
+
+try:
+    user_db = couchdb_server.create(user_db_name)
+except:
+    user_db = couchdb_server[user_db_name]
+
+#testdb = couchdb_server["test"]
+#db.save({'_id':"1", 'text':"Hello CouchDB!", 'User':"Jiarui"})
+#db.save({'_id':"2", 'text':"My greetings to CouchDB!", 'User':"Jiarui"})
+#db.save({'_id':"3", 'text':"こんにちは、 CouchDB!", 'User':"Jiarui"})
+#db.save({'_id':"4", 'text':"你好，CouchDB!", 'User':"Jiarui"})
+
+geocode = {"australia": "-25.610112,134.354805,2240km", 
+"sydney":"-33.63,150.89,85km", 
+"melbourne":"-37.80,145.11,75km", 
+"brisbane":"-27.33,152.81,109km", 
+"perth":"-32.12,115.68,75km"
+}
+
+# until="2021-05-08",
+page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", until="2021-05-11", lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
+
+#page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", lang="en", count = 100, geocode=geocode, tweet_mode='extended').pages()
+
+page_fetched = 0
+while (remain_request>1):
+    page = page_cursor.next()
+    print(f"Fetch Page: {page_fetched}")
+    for tweet in page:
+        # here use try & except to avoid duplicated tweets
+        # duplicated tweets will have the same tweet_id
+        
+        try:
+            tweet_formated = tweet._json
+            if "retweeted_status" in tweet_formated.keys():
+                tweet_formated = tweet_formated["retweeted_status"]
+                #print(tweet_formated)
+            tweet_db.save({
+                "_id": str(tweet_formated["id"]),
+                "created_at": tweet_formated["created_at"],
+                "full_text": tweet_formated["full_text"],
+                "user": tweet_formated["user"],
+                "search_location": search_location
+            })
+        
+        except:
+            print("One dup tweets caught!")
+            continue
+        
+        try:
+            user_db.save({
+                "_id": str(tweet_formated["user"]["id"]),
+                "name": tweet_formated["user"]["name"],
+                "screen_name": tweet_formated["user"]["screen_name"],
+                "location": tweet_formated["user"]["location"],
+                "created_at": tweet_formated["user"]["created_at"]
+            })
+        except:
+            print("One dup users caught!")
+
+        
+
+    
+    remain_request -= 1
+    page_fetched += 1
+
+    if len(page)==0:
+        print("All tweets in the time interval are harvested.")
+        break
 
 
-counter = 0
+end_time = time.time()
+print(f"harvest_time={round(end_time-start_time, 2)}")
+print(api.rate_limit_status("search")["resources"]["search"]["/search/tweets"]["remaining"])
+
+exit()
+
 while (counter <2):
     
     page = page_cursor.next()
