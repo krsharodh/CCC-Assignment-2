@@ -81,13 +81,17 @@ page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", until="
 
 page_fetched = 0
 while (True):
-    page = page_cursor.next()
+    try:
+        page = page_cursor.next()
+    except:
+        print("All tweets in the time interval are harvested.")
+        break
+
     remain_request -= 1
     print(f"Fetch Page: {page_fetched}")
     for tweet in page:
         # here use try & except to avoid duplicated tweets
         # duplicated tweets will have the same tweet_id
-        
         
         tweet_formated = tweet._json
         if "retweeted_status" in tweet_formated.keys():
@@ -129,14 +133,10 @@ while (True):
     
     page_fetched += 1
     
-    if len(page)==0:
-        print("All tweets in the time interval are harvested.")
-        break
-
     if (time.time()-last_check_time)>=15*60:
         remain_request = api.rate_limit_status("search")["resources"]["search"]["/search/tweets"]["remaining"]
         last_check_time = time.time()
-        print(f"Time up! Refresh the request limit, now {remain_request} request(s) available")
+        print(f"The request limit should be reset, now {remain_request} request(s) available")
     
     if remain_request <=1:
         # recheck it with Twitter API
@@ -145,7 +145,7 @@ while (True):
         while (remain_request<=1):
             sleep_time = 15*60 - (time.time()-last_check_time)
             last_check_time = time.time()
-            print(f"Start to sleep {round(sleep_time, 2)}s to wait for the refreshing.")
+            print(f"Start to sleep {round(sleep_time, 2)}s to wait for the limit resetting.")
             time.sleep(sleep_time)
             remain_request = api.rate_limit_status("search")["resources"]["search"]["/search/tweets"]["remaining"]
 
