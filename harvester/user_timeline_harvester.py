@@ -21,7 +21,7 @@ else:
 start_time = time.time()
 last_check_time = time.time()
 
-val = input("Continue? (Y/N): ")
+val = input("Do you want to continue? [Y/n] ")
 if val.lower() in ["n", "no", "false"]:
     exit(0)
 

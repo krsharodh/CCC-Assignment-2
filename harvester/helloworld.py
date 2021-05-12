@@ -1,4 +1,5 @@
+from afinn import Afinn
+afinn = Afinn()
+afinn.score('This is utterly excellent!')
 print("Hello world!")
-f = open("test.txt", "w+")
-f.write("Hello world!")
-f.close()
+print(afinn.score('This is utterly excellent!'))

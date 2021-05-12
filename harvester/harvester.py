@@ -24,6 +24,7 @@ for i in range(len(argv)):
 print(keyword)
 print(search_location)
 
+keyword = "vaccine OR COVID OR COVAX"
 ## set the Twitter API
 auth = tweepy.OAuthHandler(JiarChen108_API_key, JiarChen108_API_secret_key)
 auth.set_access_token(access_token, access_token_secret)
@@ -37,10 +38,10 @@ else:
     print(f"Note: {remain_request} search request remaining / 15-min window.")
 start_time = time.time()
 last_check_time = time.time()
-print(start_time)
-val = input("Continue? (Y/N): ")
-if val.lower() in ["n", "no", "false"]:
-    exit(0)
+#print(start_time)
+#val = input("Do you want to continue? [Y/n] ")
+#if val.lower() in ["n", "no", "false"]:
+#    exit(0)
 
 ## set the couchdb API
 address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
@@ -48,8 +49,8 @@ address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 # address = f"https://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 couchdb_server = couchdb.Server(address)
 print(couchdb_server.version())
-tweet_db_name = "tweets_"+keyword+"_test2"
-user_db_name = "user"
+tweet_db_name = "tweets_test3"
+user_db_name = "user3"
 try:
     tweet_db = couchdb_server.create(tweet_db_name)
 except:
@@ -75,7 +76,7 @@ geocode = {"australia": "-25.610112,134.354805,2240km",
 city_list = ["melbourne", "sydney", "adelaide", "brisbane", "perth", "canberra", "darwin", "hobart"]
 
 # until="2021-05-08",
-page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", until="2021-05-11", lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
+page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-04-29", until="2021-05-13", lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
 
 #page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", lang="en", count = 100, geocode=geocode, tweet_mode='extended').pages()
 
@@ -83,7 +84,7 @@ page_fetched = 0
 while (True):
     try:
         page = page_cursor.next()
-    except:
+    except StopIteration:
         print("All tweets in the time interval are harvested.")
         break
 
@@ -94,8 +95,10 @@ while (True):
         # duplicated tweets will have the same tweet_id
         
         tweet_formated = tweet._json
+        user_list = [tweet_formated["user"]]
         if "retweeted_status" in tweet_formated.keys():
             tweet_formated = tweet_formated["retweeted_status"]
+            user_list.append(tweet_formated["user"])
             #print(tweet_formated)
         try:
             tweet_db.save({
@@ -105,30 +108,31 @@ while (True):
                 "user": tweet_formated["user"],
                 "search_location": search_location
             })
+            print(tweet_formated["full_text"])
         
         except:
             #print("One duplicated tweets caught!")
             continue
         
-        
-        user_info = tweet_formated["user"]
-        uniform_location = "NA"
-        for c in city_list:
-            if c in user_info["location"].lower():
-                uniform_location = c
-                break
-        try:
-            user_db.save({
-                        "_id": str(user_info["id"]),
-                        "name": user_info["name"],
-                        "screen_name": user_info["screen_name"],
-                        "location": user_info["location"],
-                        "uniform_location": uniform_location,
-                        "created_at": user_info["created_at"]
-                    }) 
+        for user_info in user_list:
+            #user_info = tweet_formated["user"]
+            uniform_location = "NA"
+            for c in city_list:
+                if c in user_info["location"].lower():
+                    uniform_location = c
+                    break
+            try:
+                user_db.save({
+                            "_id": str(user_info["id"]),
+                            "name": user_info["name"],
+                            "screen_name": user_info["screen_name"],
+                            "location": user_info["location"],
+                            "uniform_location": uniform_location,
+                            "created_at": user_info["created_at"]
+                        }) 
 
-        except:
-            print("Duplicated user found!")
+            except:
+                print("Duplicated user found!")
 
     
     page_fetched += 1
