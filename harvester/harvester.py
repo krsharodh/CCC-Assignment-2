@@ -3,8 +3,9 @@ import tweepy
 import sys
 import json
 import time
+from datetime import date
 
-#from var import * 
+from var import * 
 
 argv = sys.argv
 for i in range(len(argv)):
@@ -34,10 +35,11 @@ print(rank)
 keyword = "vaccine OR COVID OR COVAX"
 ## set the Twitter API
 
+rank = 2
+
+## load the API key, API secret key, access token and access token secret 
 f = open("auth.json", "r")
 auth_dict = json.load(f)
-
-rank = 2
 
 if rank == 0:
     API_key = auth_dict["JiarChen108"]["API_key"]
@@ -111,7 +113,9 @@ geocode = {"australia": "-25.610112,134.354805,2240km",
 city_list = ["melbourne", "sydney", "adelaide", "brisbane", "perth", "canberra", "darwin", "hobart"]
 
 # until="2021-05-08",
-page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-04-29", until="2021-05-13", lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
+today = date.today()
+
+page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-04-29", until=f"{today.year}-{today.month}-{today.day+1}", lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
 
 #page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", lang="en", count = 100, geocode=geocode, tweet_mode='extended').pages()
 
@@ -125,6 +129,7 @@ while (True):
 
     remain_request -= 1
     print(f"Fetch Page: {page_fetched}")
+    
     for tweet in page:
         # here use try & except to avoid duplicated tweets
         # duplicated tweets will have the same tweet_id

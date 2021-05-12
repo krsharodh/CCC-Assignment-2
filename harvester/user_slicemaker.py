@@ -13,8 +13,8 @@ address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 # address = f"https://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 couchdb_server = couchdb.Server(address)
 
-user_db_name = "user"
-clean_user_db_name = "clean_user"
+user_db_name = "user3"
+clean_user_db_name = "clean_user3"
 
 try:
     user_db = couchdb_server[user_db_name]

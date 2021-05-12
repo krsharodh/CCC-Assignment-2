@@ -1,5 +1,4 @@
-from afinn import Afinn
-afinn = Afinn()
-afinn.score('This is utterly excellent!')
-print("Hello world!")
-print(afinn.score('This is utterly excellent!'))
+from datetime import date
+today = date.today()
+today.day += 1
+print("Today's date:", today)
