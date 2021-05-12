@@ -1,0 +1,29 @@
+- name: Create git directory
+  become: yes
+  file:
+    path: "{{ git_directory }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    state: directory
+
+- name: Add rsa private key to mrc
+  copy:
+    src: ./id_rsa
+    dest: /home/ubuntu/.ssh/id_rsa
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '600'
+
+- name: Add github config file to mrc
+  template:
+    src: ./config
+    dest: /home/ubuntu/.ssh/config
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+
+- name: Clone source code from github repository
+  git:
+    repo: '{{ git_repository }}'
+    dest: '{{ git_directory }}'
+    key_file: /home/ubuntu/.ssh/id_rsa
+    force: yes

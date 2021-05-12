@@ -1,4 +1,8 @@
-from datetime import date
-today = date.today()
-today.day += 1
-print("Today's date:", today)
+from mpi4py import MPI
+
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+size = comm.Get_size()
+
+print("This is rank {}".format(rank))
+print("The size is {}".format(size))
