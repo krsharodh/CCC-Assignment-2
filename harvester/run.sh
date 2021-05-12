@@ -1,2 +1,3 @@
 #python3 harvester.py -keyword vaccine -location australia
-python3 harvester.py -location australia -keyword vaccine                                                                 
+
+python3 harvester.py -location australia -keyword vaccine -rank $1                                                         

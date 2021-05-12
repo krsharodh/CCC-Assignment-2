@@ -25,7 +25,6 @@ val = input("Do you want to continue? [Y/n] ")
 if val.lower() in ["n", "no", "false"]:
     exit(0)
 
-
 ## set the couchdb API
 address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 # Note: For urllib3 version<1.26.0, please use the line below instead.
@@ -47,10 +46,13 @@ except:
 
 #city_list = ["melbourne", "sydney", "adelaide", "brisbane", "perth", "canberra", "darwin", "hobart"]
 
+user_count = 0
+
 for i in user_db:
     page_cursor = tweepy.Cursor(api.user_timeline, id = i, count=200, trim_user = True, include_rts = False, tweet_mode='extended').pages()
     page_fetched = 0
-
+    user_count += 1
+    print(f"user: No.{user_count}")
     while (True):
         try:
             page = page_cursor.next()
@@ -79,6 +81,7 @@ for i in user_db:
                     "created_at": tweet_formated["created_at"],
                     "full_text": tweet_formated["full_text"],
                     "user_location": user_db[i]["location"],
+                    "user_created_at": user_db[i]["created_at"],
                     "uniform_location": user_db[i]["uniform_location"]
                 })
             

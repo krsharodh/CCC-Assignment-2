@@ -4,7 +4,7 @@ import sys
 import json
 import time
 
-from var import * 
+#from var import * 
 
 argv = sys.argv
 for i in range(len(argv)):
@@ -20,13 +20,47 @@ for i in range(len(argv)):
         else :
             print("Invalid arguments!")
             exit()
+    elif argv[i] == "-rank":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            rank = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
 
 print(keyword)
 print(search_location)
+print(rank)
 
 keyword = "vaccine OR COVID OR COVAX"
 ## set the Twitter API
-auth = tweepy.OAuthHandler(JiarChen108_API_key, JiarChen108_API_secret_key)
+
+f = open("auth.json", "r")
+auth_dict = json.load(f)
+
+rank = 2
+
+if rank == 0:
+    API_key = auth_dict["JiarChen108"]["API_key"]
+    API_secret_key = auth_dict["JiarChen108"]["API_secret_key"]
+    access_token = auth_dict["JiarChen108"]["access_token"]
+    access_token_secret = auth_dict["JiarChen108"]["access_token_secret"]
+elif rank == 1:
+    API_key = auth_dict["ChrisXiu1"]["API_key"]
+    API_secret_key = auth_dict["ChrisXiu1"]["API_secret_key"]
+    access_token = auth_dict["ChrisXiu1"]["access_token"]
+    access_token_secret = auth_dict["ChrisXiu1"]["access_token_secret"]
+elif rank == 2:
+    API_key = auth_dict["nicolee42875627"]["API_key"]
+    API_secret_key = auth_dict["nicolee42875627"]["API_secret_key"]
+    access_token = auth_dict["nicolee42875627"]["access_token"]
+    access_token_secret = auth_dict["nicolee42875627"]["access_token_secret"]
+elif rank == 3:
+    API_key = auth_dict["sharodh"]["API_key"]
+    API_secret_key = auth_dict["sharodh"]["API_secret_key"]
+    access_token = auth_dict["sharodh"]["access_token"]
+    access_token_secret = auth_dict["sharodh"]["access_token_secret"]
+
+auth = tweepy.OAuthHandler(API_key, API_secret_key)
 auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(auth)
@@ -38,10 +72,11 @@ else:
     print(f"Note: {remain_request} search request remaining / 15-min window.")
 start_time = time.time()
 last_check_time = time.time()
-#print(start_time)
-#val = input("Do you want to continue? [Y/n] ")
-#if val.lower() in ["n", "no", "false"]:
-#    exit(0)
+
+
+val = input("Do you want to continue? [Y/n] ")
+if val.lower() in ["n", "no", "false"]:
+    exit(0)
 
 ## set the couchdb API
 address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
