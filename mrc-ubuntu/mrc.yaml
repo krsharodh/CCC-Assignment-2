@@ -6,12 +6,11 @@
   gather_facts: true
 
   roles:
-    - role: openstack-common
-    - role: openstack-images
-    - role: openstack-volume
-    - role: openstack-security-group
-    - role: openstack-instance
-    #- role: openstack-volume-snapshot
+    - role: openstack/openstack-common
+    - role: openstack/openstack-images
+    - role: openstack/openstack-volume
+    - role: openstack/openstack-security-group
+    - role: openstack/openstack-instance
 
 - hosts: COMP90024
   vars_files:
@@ -19,14 +18,16 @@
   gather_facts: true
 
   roles:
-    - role: couchdb-common
-    - role: couchdb-volumes
-    - role: couchdb-docker
-    - role: couchdb-dockercompose
+    - role: couchdb/couchdb-common
+    - role: couchdb/couchdb-volumes
+    - role: couchdb/couchdb-docker
+    - role: couchdb/couchdb-dockercompose
 
-- hosts: SLAVES
+- hosts: COMP90024:!MASTER
+  var:
+    masternode: hosts['MASTER'].0
   vars_files:
     - host_vars/couchdb.yaml
 
   roles:
-    - role: couchdb-cluster
+    - role: couchdb/couchdb-cluster

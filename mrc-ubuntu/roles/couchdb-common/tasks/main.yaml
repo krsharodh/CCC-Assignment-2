@@ -1,7 +1,0 @@
-- name: Apply proxy setting to instances
-  become: yes
-  lineinfile:
-    path: '{{ proxy_path }}'
-    line: '{{ item.proxy }}'
-  loop: "{{ proxys }}"
-  when: proxys is defined
