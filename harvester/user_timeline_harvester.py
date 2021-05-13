@@ -3,12 +3,49 @@ import tweepy
 import sys
 import json
 import time
+import math
 from datetime import datetime
+
 
 from var import * 
 
+#comm = MPI.COMM_WORLD
+#rank = comm.rank
+#n_tasks = comm.size
+rank = 2
+n_tasks = 4
+
 ## set the Twitter API
-auth = tweepy.OAuthHandler(JiarChen108_API_key, JiarChen108_API_secret_key)
+argv = sys.argv
+for i in range(len(argv)):
+    if argv[i] == "-rank":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            rank = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+
+## load the API key, API secret key, access token and access token secret 
+f = open("auth.json", "r")
+auth_dict = json.load(f)
+
+n_dev_account = len(auth_dict.keys())
+
+# if rank is lower than #developer account, assign an account to this process
+if rank < n_dev_account:
+    dev_account = list(auth_dict.keys())[rank]
+# else, end the program since there is no free developer account for this process
+else :
+    exit()
+
+# load the specific API key, API secret key, access token and access token secret
+
+API_key = auth_dict[dev_account]["API_key"]
+API_secret_key = auth_dict[dev_account]["API_secret_key"]
+access_token = auth_dict[dev_account]["access_token"]
+access_token_secret = auth_dict[dev_account]["access_token_secret"]
+
+auth = tweepy.OAuthHandler(API_key, API_secret_key)
 auth.set_access_token(access_token, access_token_secret)
 
 api = tweepy.API(auth)
@@ -31,8 +68,8 @@ address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 # address = f"https://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 couchdb_server = couchdb.Server(address)
 
-user_db_name = "clean_user"
-tweet_db_name = "raw_tweets_from_timeline"
+user_db_name = "clean_user3"
+tweet_db_name = "raw_tweets_from_timeline3"
 
 try:
     tweet_db = couchdb_server.create(tweet_db_name)
@@ -45,10 +82,17 @@ except:
     print(f"There is no database called {user_db_name} on the server.")
 
 #city_list = ["melbourne", "sydney", "adelaide", "brisbane", "perth", "canberra", "darwin", "hobart"]
+user_ids = list(user_db)
+n_user = len(list(user_db))
+#bin_width = math.ceil(n_user/n_tasks)
+
+start_pos = round(rank*n_user/n_tasks)
+end_pos = round((rank+1)*n_user/n_tasks)
+assigned_user_ids = user_ids[start_pos:end_pos]
 
 user_count = 0
 
-for i in user_db:
+for i in assigned_user_ids:
     page_cursor = tweepy.Cursor(api.user_timeline, id = i, count=200, trim_user = True, include_rts = False, tweet_mode='extended').pages()
     page_fetched = 0
     user_count += 1

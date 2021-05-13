@@ -4,8 +4,17 @@ import sys
 import json
 import time
 from datetime import date
+from datetime import timedelta 
+from mpi4py import MPI
+import math
 
 from var import * 
+
+#comm = MPI.COMM_WORLD
+#rank = comm.rank
+#n_tasks = comm.size
+rank = 2
+n_tasks = 4
 
 argv = sys.argv
 for i in range(len(argv)):
@@ -23,7 +32,7 @@ for i in range(len(argv)):
             exit()
     elif argv[i] == "-rank":
         if (i<len(argv)-1) and (argv[i+1][0] != '-'):
-            rank = argv[i+1]
+            rank = int(argv[i+1])
         else :
             print("Invalid arguments!")
             exit()
@@ -32,35 +41,28 @@ print(keyword)
 print(search_location)
 print(rank)
 
-keyword = "vaccine OR COVID OR COVAX"
-## set the Twitter API
-
-rank = 2
+keyword = "vaccin OR COVID OR COVAX"
 
 ## load the API key, API secret key, access token and access token secret 
 f = open("auth.json", "r")
 auth_dict = json.load(f)
 
-if rank == 0:
-    API_key = auth_dict["JiarChen108"]["API_key"]
-    API_secret_key = auth_dict["JiarChen108"]["API_secret_key"]
-    access_token = auth_dict["JiarChen108"]["access_token"]
-    access_token_secret = auth_dict["JiarChen108"]["access_token_secret"]
-elif rank == 1:
-    API_key = auth_dict["ChrisXiu1"]["API_key"]
-    API_secret_key = auth_dict["ChrisXiu1"]["API_secret_key"]
-    access_token = auth_dict["ChrisXiu1"]["access_token"]
-    access_token_secret = auth_dict["ChrisXiu1"]["access_token_secret"]
-elif rank == 2:
-    API_key = auth_dict["nicolee42875627"]["API_key"]
-    API_secret_key = auth_dict["nicolee42875627"]["API_secret_key"]
-    access_token = auth_dict["nicolee42875627"]["access_token"]
-    access_token_secret = auth_dict["nicolee42875627"]["access_token_secret"]
-elif rank == 3:
-    API_key = auth_dict["sharodh"]["API_key"]
-    API_secret_key = auth_dict["sharodh"]["API_secret_key"]
-    access_token = auth_dict["sharodh"]["access_token"]
-    access_token_secret = auth_dict["sharodh"]["access_token_secret"]
+n_dev_account = len(auth_dict.keys())
+
+# if rank is lower than #developer account, assign an account to this process
+if rank < n_dev_account:
+    dev_account = list(auth_dict.keys())[rank]
+# else, end the program since there is no free developer account for this process
+else :
+    exit()
+
+# load the specific API key, API secret key, access token and access token secret
+
+API_key = auth_dict[dev_account]["API_key"]
+API_secret_key = auth_dict[dev_account]["API_secret_key"]
+access_token = auth_dict[dev_account]["access_token"]
+access_token_secret = auth_dict[dev_account]["access_token_secret"]
+
 
 auth = tweepy.OAuthHandler(API_key, API_secret_key)
 auth.set_access_token(access_token, access_token_secret)
@@ -114,8 +116,16 @@ city_list = ["melbourne", "sydney", "adelaide", "brisbane", "perth", "canberra",
 
 # until="2021-05-08",
 today = date.today()
+#start_date = 
+print(today + timedelta(days=1))
+period = math.ceil(7/(min(n_dev_account, n_tasks)))
 
-page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-04-29", until=f"{today.year}-{today.month}-{today.day+1}", lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
+start_time = today + timedelta(days=1-(rank*period))
+end_time = today + timedelta(days=1-((rank+1)*period))
+
+#page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-04-29", until=f"{today.year}-{today.month}-{today.day+1}", lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
+
+page_cursor = tweepy.Cursor(api.search, q = keyword, since=str(start_time),until=str(end_time), lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
 
 #page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", lang="en", count = 100, geocode=geocode, tweet_mode='extended').pages()
 
