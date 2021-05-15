@@ -49,7 +49,7 @@ for i in range(len(argv)):
 #address = f"http://{username}:{password}@{node_ip}:{couchdb_port}"
 #couchdb_server = couchdb.Server(address)
 
-print(f"Rank {rank}, address={address}")
+print(f"Rank {rank}, address=1")
 comm.Barrier()
 print("Finish!")
 #res = requests.get("http://admin:admin@172.26.133.34:5984/_membership")
