@@ -1,8 +1,3 @@
-#Common vars
-couchdbusername: admin
-couchdbpassword: admin
-couchdbcookie: a192aeb9904e6590849337933b000c99
-
 # Volume
 volumes:
   - device: /dev/vdb
@@ -10,10 +5,15 @@ volumes:
 
 instances:
   - name: couchdb-1
-    volumes: ['demo-vol-1']
+    volumes: ['volume-1']
   - name: couchdb-2
-    volumes: ['demo-vol-2']
+    volumes: ['volume-2']
   - name: couchdb-3
-    volumes: ['demo-vol-3']
+    volumes: ['volume-3']
   - name: couchdb-4
-    volumes: ['demo-vol-4']
+    volumes: ['volume-4']
+
+#Common vars
+couchdbusername: admin
+couchdbpassword: admin
+couchdbcookie: a192aeb9904e6590849337933b000c99

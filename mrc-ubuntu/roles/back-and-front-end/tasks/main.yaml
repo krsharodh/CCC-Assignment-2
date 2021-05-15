@@ -1,0 +1,6 @@
+- name: Install npm
+  become: yes
+  apt:
+    name: ['npm']
+    state: latest
+    install_recommends: yes

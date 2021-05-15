@@ -1,4 +1,3 @@
----
 # Create volumes from vars
 - name: Create volume(s) on NeCTAR
   os_volume:

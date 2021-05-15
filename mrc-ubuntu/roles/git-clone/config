@@ -4,3 +4,20 @@ Host github.com
   User git
   ProxyCommand nc -X connect -x wwwproxy.unimelb.edu.au:8000 %h %p
   IdentityFile ~/.ssh/id_rsa
+  StrictHostKeyChecking no
+
+Host 172.26.128.206
+  IdentityFile ~/.ssh/Test.pem
+  StrictHostKeyChecking no
+
+Host 172.26.134.125
+  IdentityFile ~/.ssh/Test.pem
+  StrictHostKeyChecking no
+
+Host 172.26.134.97
+  IdentityFile ~/.ssh/Test.pem
+  StrictHostKeyChecking no
+
+Host 172.26.132.46
+  IdentityFile ~/.ssh/Test.pem
+  StrictHostKeyChecking no
