@@ -15,11 +15,12 @@
     mode: '600'
 
 - name: Add github config file to mrc
-  template:
+  copy:
     src: ./config
     dest: /home/ubuntu/.ssh/config
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
+    mode: '600'
 
 - name: Clone source code from github repository
   git:

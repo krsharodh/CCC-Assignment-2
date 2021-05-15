@@ -1,5 +1,0 @@
-- hosts: COMP90024
-
-  roles:
-    #- role: git-clone
-    - role: harvester

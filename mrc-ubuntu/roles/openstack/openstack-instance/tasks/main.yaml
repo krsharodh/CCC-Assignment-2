@@ -1,11 +1,10 @@
----
 # Create an instance on NeCTAR
 - name: Create an instance
   os_server:
     name: '{{ item.name }}'
     image: '{{ instance_image }}'
     key_name: '{{ instance_key_name }}'
-    flavor: '{{ instance_flavor }}'
+    flavor: '{{ item.flavor }}'
     availability_zone: '{{ availability_zone }}'
     security_groups: '{{ sg_names }}'
     volumes: '{{ item.volumes }}'
@@ -37,9 +36,16 @@
   loop: '{{ os_instance.results }}'
   when: item.openstack is defined
 
-- name: Add master
+- name: Add slaves
   add_host:
     name: '{{ item.openstack.public_v4 }}'
+    groups: SLAVES
+    masternode: '{{ os_instance.results[0].openstack.public_v4 }}'
+  loop: '{{ os_instance.results[1:] }}'
+  when: item.openstack is defined
+
+- name: Add master
+  add_host:
+    name: '{{ os_instance.results[0].openstack.public_v4 }}'
     groups: MASTER
-  loop: '{{ hosts['COMP90024'].0 }}'
   when: item.openstack is defined

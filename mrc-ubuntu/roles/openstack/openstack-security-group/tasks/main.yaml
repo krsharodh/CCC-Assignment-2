@@ -1,4 +1,3 @@
----
 # Create a security group
 - name: Create a security group
   os_security_group:

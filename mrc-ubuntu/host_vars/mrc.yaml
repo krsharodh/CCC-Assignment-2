@@ -3,13 +3,13 @@ availability_zone: melbourne-qh2-uom
 
 # Volume
 volumes:
-  - vol_name: demo-vol-1
+  - vol_name: volume-1
     vol_size: 120
-  - vol_name: demo-vol-2
+  - vol_name: volume-2
     vol_size: 120
-  - vol_name: demo-vol-3
+  - vol_name: volume-3
     vol_size: 120
-  - vol_name: demo-vol-4
+  - vol_name: volume-4
     vol_size: 120
 
 # Security group
@@ -44,18 +44,33 @@ security_groups:
     port_range_min: 9100
     port_range_max: 9200
     remote_ip_prefix: 0.0.0.0/0
+  - name: demo_front_end
+    description: "Demo security group for react front end app"
+    protocol: tcp
+    port_range_min: 5000
+    port_range_max: 5000
+    remote_ip_prefix: 0.0.0.0/0
+  - name: demo_open_mpi
+    description: "open all tcp port for open mpi"
+    protocol: tcp
+    port_range_min: 1
+    port_range_max: 65535
+    remote_ip_prefix: 0.0.0.0/0
 
 # Instance
 instances:
-  - name: demo-1
-    volumes: ['demo-vol-1']
-  - name: demo-2
-    volumes: ['demo-vol-2']
-  - name: demo-3
-    volumes: ['demo-vol-3']
-  - name: demo-4
-    volumes: ['demo-vol-4']
+  - name: node-1
+    volumes: ['volume-1']
+    flavor: uom.mse.2c9g
+  - name: node-2
+    volumes: ['volume-2']
+    flavor: uom.mse.2c9g
+  - name: node-3
+    volumes: ['volume-3']
+    flavor: uom.mse.2c9g
+  - name: node-4
+    volumes: ['volume-4']
+    flavor: uom.mse.1c4g
 
 instance_image: f8b79936-6616-4a22-b55d-0d0a1d27bceb
 instance_key_name: Test
-instance_flavor: uom.mse.1c4g

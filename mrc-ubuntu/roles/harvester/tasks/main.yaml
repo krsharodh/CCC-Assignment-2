@@ -1,14 +1,16 @@
-# - name: Install requirements for pip
-#   apt:
-#     name: ['python3-pip','virtualenv','python3-setuptools']
-#     state: latest
-#     install_recommends: yes
-#
-# - name: Install python modules needed for harvester
-#   pip:
-#     name: ['couchdb','tweepy']
-#     state: latest
-#
+- name: Install requirements for pip
+  become: yes
+  apt:
+    name: ['python3-pip','virtualenv','python3-setuptools']
+    state: latest
+    install_recommends: yes
+
+- name: Install python modules needed for harvester
+  become: yes
+  pip:
+    name: ['couchdb','tweepy']
+    state: latest
+
 # - name: Run the harvester script
 #   command: sh run.sh
 #   args:
@@ -22,14 +24,31 @@
     group: "{{ ansible_user }}"
     mode: '600'
 
-# - name: Install open mpi
-#   become: yes
-#   apt:
-#     name: ['openmpi-bin', 'libopenmpi-dev']
-#     state: latest
-#     install_recommends: yes
+- name: Install open mpi
+  become: yes
+  apt:
+    name: ['openmpi-bin', 'libopenmpi-dev', 'openssh-client']
+    state: latest
+    install_recommends: yes
 
 - name: Install mpi4py
+  become: yes
   pip:
     name: ['mpi4py']
     state: latest
+
+# - name: Create ssh conf
+#   become: yes
+#   copy:
+#     src: ./ssh.conf
+#     dest: /etc/ssh/ssh_config.d/ssh.conf
+#     owner: '{{ ansible_user }}'
+#     group: "{{ ansible_user }}"
+#
+# - name: Create sshd conf
+#   become: yes
+#   copy:
+#     src: ./sshd.conf
+#     dest: /etc/ssh/sshd_config.d/sshd.conf
+#     owner: '{{ ansible_user }}'
+#     group: "{{ ansible_user }}"

@@ -23,9 +23,7 @@
     - role: couchdb/couchdb-docker
     - role: couchdb/couchdb-dockercompose
 
-- hosts: COMP90024:!MASTER
-  var:
-    masternode: hosts['MASTER'].0
+- hosts: SLAVES
   vars_files:
     - host_vars/couchdb.yaml
 
