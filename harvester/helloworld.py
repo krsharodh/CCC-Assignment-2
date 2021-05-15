@@ -50,7 +50,8 @@ address = f"http://{username}:{password}@{node_ip}:{couchdb_port}"
 couchdb_server = couchdb.Server(address)
 
 print(f"Rank {rank}, address={address}")
-
+comm.Barrier()
+print("Finish!")
 #res = requests.get("http://admin:admin@172.26.133.34:5984/_membership")
 
 #print(res.text)
