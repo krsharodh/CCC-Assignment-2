@@ -52,17 +52,24 @@ function Home() {
                 justify="center"
                 alignItems="center"
             >
-                <Card className={classes.root}>
-                    <CardContent>
-                        <Filters autoCompleteList={areasList} label={"Search Area"} />
-                    </CardContent>
-                </Card>
+                <Grid item xs={12} spacing={2}>
 
-                <Card className={classes.root}>
-                    <CardContent>
-                        <h2>Attitude towards vaccine</h2>
-                    </CardContent>
-                </Card>
+                    <Card className={classes.root}>
+                        <CardContent>
+                            <Filters autoCompleteList={areasList} label={"Search Area"} />
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                <Grid item xs={12} >
+
+                    <Card className={classes.root}>
+                        <CardContent>
+                            <h2>Attitude towards vaccine</h2>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
             </Grid>
         </div>
     );
