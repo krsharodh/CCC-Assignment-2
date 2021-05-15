@@ -8,19 +8,37 @@ from datetime import timedelta
 from mpi4py import MPI
 import math
 
-from var import * 
+from util import *
 
-#comm = MPI.COMM_WORLD
-#rank = comm.rank
-#n_tasks = comm.size
-rank = 2
-n_tasks = 4
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+n_tasks = comm.Get_size()
+# rank = 2
+# n_tasks = 4
 
 argv = sys.argv
 for i in range(len(argv)):
-    if argv[i] == "-keyword":
+    if argv[i] == "-master_node_ip":
         if (i<len(argv)-1) and (argv[i+1][0] != '-'):
-            keyword = argv[i+1]
+            master_node_ip = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-username":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+           username = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-password":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            password = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-couchdb_port":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            couchdb_port = int(argv[i+1])
         else :
             print("Invalid arguments!")
             exit()
@@ -30,18 +48,8 @@ for i in range(len(argv)):
         else :
             print("Invalid arguments!")
             exit()
-    elif argv[i] == "-rank":
-        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
-            rank = int(argv[i+1])
-        else :
-            print("Invalid arguments!")
-            exit()
 
-print(keyword)
-print(search_location)
-print(rank)
-
-keyword = "vaccin OR COVID OR COVAX"
+keyword = "vaccin OR COVID OR COVAX OR SARS-CoV-2 OR pfizer OR astrazeneca OR az OR moderna"
 
 ## load the API key, API secret key, access token and access token secret 
 f = open("auth.json", "r")
@@ -55,6 +63,11 @@ if rank < n_dev_account:
 # else, end the program since there is no free developer account for this process
 else :
     exit()
+
+#print(rank)
+#print(dev_account)
+#print(search_location)
+
 
 # load the specific API key, API secret key, access token and access token secret
 
@@ -74,30 +87,44 @@ if remain_request>1:
     print(f"Note: {remain_request} search requests remaining / 15-min window.")
 else:
     print(f"Note: {remain_request} search request remaining / 15-min window.")
+
 start_time = time.time()
 last_check_time = time.time()
 
-
+"""
 val = input("Do you want to continue? [Y/n] ")
 if val.lower() in ["n", "no", "false"]:
     exit(0)
+"""
 
 ## set the couchdb API
-address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
+
+#address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 # Note: For urllib3 version<1.26.0, please use the line below instead.
 # address = f"https://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
-couchdb_server = couchdb.Server(address)
-print(couchdb_server.version())
-tweet_db_name = "tweets_test3"
-user_db_name = "user3"
-try:
-    tweet_db = couchdb_server.create(tweet_db_name)
-except:
-    tweet_db = couchdb_server[tweet_db_name]
 
-try:
-    user_db = couchdb_server.create(user_db_name)
-except:
+node_ip = allocate_node_ip(master_node_ip, username, password, couchdb_port, rank)
+address = f"http://{username}:{password}@{node_ip}:{couchdb_port}"
+couchdb_server = couchdb.Server(address)
+
+tweet_db_name = "recent_search_tweets"
+user_db_name = "user"
+
+if rank == 0:
+    try:
+        tweet_db = couchdb_server.create(tweet_db_name)
+    except:
+        tweet_db = couchdb_server[tweet_db_name]
+
+    try:
+        user_db = couchdb_server.create(user_db_name)
+    except:
+        user_db = couchdb_server[user_db_name]
+
+comm.Barrier()
+
+if rank != 0:
+    tweet_db = couchdb_server[tweet_db_name]
     user_db = couchdb_server[user_db_name]
 
 #testdb = couchdb_server["test"]
@@ -120,12 +147,18 @@ today = date.today()
 print(today + timedelta(days=1))
 period = math.ceil(7/(min(n_dev_account, n_tasks)))
 
-start_time = today + timedelta(days=1-(rank*period))
-end_time = today + timedelta(days=1-((rank+1)*period))
+until_date = today + timedelta(days=1-(rank*period))
+since_date = today + timedelta(days=1-((rank+1)*period))
 
 #page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-04-29", until=f"{today.year}-{today.month}-{today.day+1}", lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
+#print(f"Rank: {rank}, since={since_date}, until={until_date}")
 
-page_cursor = tweepy.Cursor(api.search, q = keyword, since=str(start_time),until=str(end_time), lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
+if rank == (min(n_dev_account, n_tasks)-1):
+    page_cursor = tweepy.Cursor(api.search, q = keyword, until=str(until_date), lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
+    #print(f"Rank: {rank}, until={until_date}")
+else:
+    page_cursor = tweepy.Cursor(api.search, q = keyword, since=str(since_date),until=str(until_date), lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
+    #print(f"Rank: {rank}, since={since_date}, until={until_date}")
 
 #page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-05-01", lang="en", count = 100, geocode=geocode, tweet_mode='extended').pages()
 
@@ -158,7 +191,6 @@ while (True):
                 "user": tweet_formated["user"],
                 "search_location": search_location
             })
-            print(tweet_formated["full_text"])
         
         except:
             #print("One duplicated tweets caught!")
@@ -208,7 +240,7 @@ while (True):
 end_time = time.time()
 print(f"harvest_time={round(end_time-start_time, 2)}")
 print(api.rate_limit_status("search")["resources"]["search"]["/search/tweets"]["remaining"])
-
+print("Finish!")
 exit()
 
 while (counter <2):
