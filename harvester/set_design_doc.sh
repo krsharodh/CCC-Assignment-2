@@ -1,0 +1,1 @@
+curl -X PUT http://admin:admin@172.26.133.34:5984/raw_tweets_from_timeline/_design/ddoc -d '{"views": {"my_filter":{"map":"function(doc) {if (doc.full_text.indexOf('vaccine') != -1 || doc.full_text.indexOf('vaccination') != -1 || doc.full_text.indexOf('vaccinate') != -1 || doc.full_text.indexOf('vaccinated') != -1)emit(doc.uniform_location, 1);}"}}}'

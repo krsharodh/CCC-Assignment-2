@@ -1,0 +1,35 @@
+# - name: Install requirements for pip
+#   apt:
+#     name: ['python3-pip','virtualenv','python3-setuptools']
+#     state: latest
+#     install_recommends: yes
+#
+# - name: Install python modules needed for harvester
+#   pip:
+#     name: ['couchdb','tweepy']
+#     state: latest
+#
+# - name: Run the harvester script
+#   command: sh run.sh
+#   args:
+#     chdir: /home/ubuntu/COMP90024/harvester
+
+- name: Push private key to mrc instances
+  copy:
+    src: ./Test.pem
+    dest: /home/ubuntu/.ssh/Test.pem
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '600'
+
+# - name: Install open mpi
+#   become: yes
+#   apt:
+#     name: ['openmpi-bin', 'libopenmpi-dev']
+#     state: latest
+#     install_recommends: yes
+
+- name: Install mpi4py
+  pip:
+    name: ['mpi4py']
+    state: latest

@@ -1,0 +1,6 @@
+Host github.com
+  Hostname ssh.github.com
+  Port 443
+  User git
+  ProxyCommand nc -X connect -x wwwproxy.unimelb.edu.au:8000 %h %p
+  IdentityFile ~/.ssh/id_rsa
