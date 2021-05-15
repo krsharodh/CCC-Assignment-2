@@ -110,23 +110,22 @@ couchdb_server = couchdb.Server(address)
 tweet_db_name = "recent_search_tweets"
 user_db_name = "user"
 
-if rank == 0:
-    try:
-        tweet_db = couchdb_server.create(tweet_db_name)
-    except:
-        tweet_db = couchdb_server[tweet_db_name]
+# if rank == 0:
+#     try:
+#         tweet_db = couchdb_server.create(tweet_db_name)
+#     except:
+#         tweet_db = couchdb_server[tweet_db_name]
 
-    try:
-        user_db = couchdb_server.create(user_db_name)
-    except:
-        user_db = couchdb_server[user_db_name]
+#     try:
+#         user_db = couchdb_server.create(user_db_name)
+#     except:
+#         user_db = couchdb_server[user_db_name]
 
-comm.Barrier()
-
-if rank != 0:
-    tweet_db = couchdb_server[tweet_db_name]
-    user_db = couchdb_server[user_db_name]
-
+# if rank != 0:
+#     tweet_db = couchdb_server[tweet_db_name]
+#     user_db = couchdb_server[user_db_name]
+tweet_db = couchdb_server[tweet_db_name]
+user_db = couchdb_server[user_db_name]
 #testdb = couchdb_server["test"]
 #db.save({'_id':"1", 'text':"Hello CouchDB!", 'User':"Jiarui"})
 #db.save({'_id':"2", 'text':"My greetings to CouchDB!", 'User':"Jiarui"})
