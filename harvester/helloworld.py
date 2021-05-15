@@ -45,9 +45,9 @@ for i in range(len(argv)):
             print("Invalid arguments!")
             exit()
 
-node_ip = allocate_node_ip(master_node_ip, username, password, couchdb_port, rank)
-address = f"http://{username}:{password}@{node_ip}:{couchdb_port}"
-couchdb_server = couchdb.Server(address)
+#node_ip = allocate_node_ip(master_node_ip, username, password, couchdb_port, rank)
+#address = f"http://{username}:{password}@{node_ip}:{couchdb_port}"
+#couchdb_server = couchdb.Server(address)
 
 print(f"Rank {rank}, address={address}")
 comm.Barrier()
