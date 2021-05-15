@@ -9,18 +9,36 @@ from datetime import datetime
 
 from var import * 
 
-#comm = MPI.COMM_WORLD
-#rank = comm.rank
-#n_tasks = comm.size
-rank = 2
-n_tasks = 4
+comm = MPI.COMM_WORLD
+rank = comm.Get_rank()
+n_tasks = comm.Get_size()
+# rank = 2
+# n_tasks = 4
 
 ## set the Twitter API
 argv = sys.argv
 for i in range(len(argv)):
-    if argv[i] == "-rank":
+    if argv[i] == "-master_node_ip":
         if (i<len(argv)-1) and (argv[i+1][0] != '-'):
-            rank = argv[i+1]
+            master_node_ip = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-username":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+           username = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-password":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            password = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-couchdb_port":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            couchdb_port = int(argv[i+1])
         else :
             print("Invalid arguments!")
             exit()
@@ -61,12 +79,12 @@ last_check_time = time.time()
 #val = input("Do you want to continue? [Y/n] ")
 #if val.lower() in ["n", "no", "false"]:
 #    exit(0)
-node_ip = allocate_node_ip(master_node_ip, username, password, couchdb_port, rank, n_tasks)
+node_ip = allocate_node_ip(master_node_ip, username, password, couchdb_port, rank)
 address = f"http://{username}:{password}@{node_ip}:{couchdb_port}"
 couchdb_server = couchdb.Server(address)
 
-user_db_name = "clean_user4"
-tweet_db_name = "raw_tweets_from_timeline4"
+user_db_name = "clean_user"
+tweet_db_name = "raw_tweets_from_timeline"
 
 if rank == 0:
     try:
@@ -84,6 +102,7 @@ try:
     user_db = couchdb_server[user_db_name]
 except:
     print(f"There is no database called {user_db_name} on the server.")
+    exit()
 
 #city_list = ["melbourne", "sydney", "adelaide", "brisbane", "perth", "canberra", "darwin", "hobart"]
 user_ids = list(user_db)

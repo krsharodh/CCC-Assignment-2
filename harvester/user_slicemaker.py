@@ -5,26 +5,53 @@ import json
 import time
 from datetime import datetime
 import math
-from var import * 
+
 from mpi4py import MPI
 
 comm = MPI.COMM_WORLD
-rank = comm.rank
-n_tasks = comm.size
+rank = comm.Get_rank()
+n_tasks = comm.Get_size()
 #rank = 0
 #n_tasks = 1
+argv = sys.argv
+for i in range(len(argv)):
+    if argv[i] == "-master_node_ip":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            master_node_ip = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-username":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+           username = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-password":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            password = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-couchdb_port":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            couchdb_port = int(argv[i+1])
+        else :
+            print("Invalid arguments!")
+            exit()
 
-node_ip = allocate_node_ip(master_node_ip, username, password, couchdb_port, rank, n_tasks)
+node_ip = allocate_node_ip(master_node_ip, username, password, couchdb_port, rank)
 address = f"http://{username}:{password}@{node_ip}:{couchdb_port}"
 couchdb_server = couchdb.Server(address)
 
-user_db_name = "user4"
-clean_user_db_name = "clean_user4"
+user_db_name = "user"
+clean_user_db_name = "clean_user"
 
 try:
     user_db = couchdb_server[user_db_name]
 except:
     print(f"There is no database called {user_db_name} on the server.")
+    exit()
 
 if rank == 0:
     try:

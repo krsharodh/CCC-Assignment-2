@@ -8,32 +8,43 @@ from datetime import timedelta
 from mpi4py import MPI
 import math
 
-from var import * 
 from util import *
 
 comm = MPI.COMM_WORLD
-rank = comm.rank
-n_tasks = comm.size
-#rank = 2
-#n_tasks = 4
+rank = comm.Get_rank()
+n_tasks = comm.Get_size()
+# rank = 2
+# n_tasks = 4
 
 argv = sys.argv
 for i in range(len(argv)):
-    if argv[i] == "-keyword":
+    if argv[i] == "-master_node_ip":
         if (i<len(argv)-1) and (argv[i+1][0] != '-'):
-            keyword = argv[i+1]
+            master_node_ip = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-username":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+           username = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-password":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            password = argv[i+1]
+        else :
+            print("Invalid arguments!")
+            exit()
+    elif argv[i] == "-couchdb_port":
+        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
+            couchdb_port = int(argv[i+1])
         else :
             print("Invalid arguments!")
             exit()
     elif argv[i] == "-location":
         if (i<len(argv)-1) and (argv[i+1][0] != '-'):
             search_location = argv[i+1]
-        else :
-            print("Invalid arguments!")
-            exit()
-    elif argv[i] == "-rank":
-        if (i<len(argv)-1) and (argv[i+1][0] != '-'):
-            rank = int(argv[i+1])
         else :
             print("Invalid arguments!")
             exit()
@@ -92,12 +103,12 @@ if val.lower() in ["n", "no", "false"]:
 # Note: For urllib3 version<1.26.0, please use the line below instead.
 # address = f"https://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
 
-node_ip = allocate_node_ip(master_node_ip, username, password, couchdb_port, rank, n_tasks)
+node_ip = allocate_node_ip(master_node_ip, username, password, couchdb_port, rank)
 address = f"http://{username}:{password}@{node_ip}:{couchdb_port}"
 couchdb_server = couchdb.Server(address)
 
-tweet_db_name = "tweets_test4"
-user_db_name = "user4"
+tweet_db_name = "recent_search_tweets"
+user_db_name = "user"
 
 if rank == 0:
     try:
