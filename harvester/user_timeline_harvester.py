@@ -58,23 +58,27 @@ else:
 start_time = time.time()
 last_check_time = time.time()
 
-val = input("Do you want to continue? [Y/n] ")
-if val.lower() in ["n", "no", "false"]:
-    exit(0)
-
-## set the couchdb API
-address = f"http://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
-# Note: For urllib3 version<1.26.0, please use the line below instead.
-# address = f"https://{username}:{password}@{MASTER_NODE_IP}:{couchdb_port}"
+#val = input("Do you want to continue? [Y/n] ")
+#if val.lower() in ["n", "no", "false"]:
+#    exit(0)
+node_ip = allocate_node_ip(master_node_ip, username, password, couchdb_port, rank, n_tasks)
+address = f"http://{username}:{password}@{node_ip}:{couchdb_port}"
 couchdb_server = couchdb.Server(address)
 
-user_db_name = "clean_user3"
-tweet_db_name = "raw_tweets_from_timeline3"
+user_db_name = "clean_user4"
+tweet_db_name = "raw_tweets_from_timeline4"
 
-try:
-    tweet_db = couchdb_server.create(tweet_db_name)
-except:
+if rank == 0:
+    try:
+        tweet_db = couchdb_server.create(tweet_db_name)
+    except:
+        tweet_db = couchdb_server[tweet_db_name]
+
+comm.barrier()
+
+if rank != 0:
     tweet_db = couchdb_server[tweet_db_name]
+    user_db = couchdb_server[user_db_name]
 
 try:
     user_db = couchdb_server[user_db_name]
