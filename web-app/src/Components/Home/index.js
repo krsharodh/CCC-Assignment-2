@@ -26,7 +26,10 @@ function Home() {
         getSample()
     }, [])
 
-    const baseURL = "http://127.0.0.1:5000/";
+    let baseURL = "http://127.0.0.1:5000/"
+    if (process.env.NODE_ENV === 'production') {
+        baseURL = `${process.env.REACT_APP_PROD_URL}:${process.env.REACT_APP_PORT_NUMBER}`
+    };
 
     const getAreas = async () => {
         const response = await fetch(baseURL);
