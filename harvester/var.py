@@ -5,5 +5,5 @@ access_token_secret ="jz2Uj2GrFDNX5ov5RgSioIKIP034k29gYXxZyAHHYjHky"
 
 username = "admin"
 password = "admin"
-MASTER_NODE_IP = "172.26.133.34"
+master_node_ip = "172.26.133.34"
 couchdb_port = "5984"
