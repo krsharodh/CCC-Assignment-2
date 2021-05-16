@@ -86,22 +86,21 @@ couchdb_server = couchdb.Server(address)
 user_db_name = "clean_user"
 tweet_db_name = "raw_tweets_from_timeline"
 
-if rank == 0:
-    try:
-        tweet_db = couchdb_server.create(tweet_db_name)
-    except:
-        tweet_db = couchdb_server[tweet_db_name]
+# if rank == 0:
+#     try:
+#         tweet_db = couchdb_server.create(tweet_db_name)
+#     except:
+#         tweet_db = couchdb_server[tweet_db_name]
 
-comm.barrier()
-
-if rank != 0:
-    tweet_db = couchdb_server[tweet_db_name]
-    user_db = couchdb_server[user_db_name]
+# if rank != 0:
+#     tweet_db = couchdb_server[tweet_db_name]
+#     user_db = couchdb_server[user_db_name]
 
 try:
     user_db = couchdb_server[user_db_name]
+    tweet_db = couchdb_server[tweet_db_name]
 except:
-    print(f"There is no database called {user_db_name} on the server.")
+    print(f"There is no targeted database on the server.")
     exit()
 
 #city_list = ["melbourne", "sydney", "adelaide", "brisbane", "perth", "canberra", "darwin", "hobart"]
@@ -123,9 +122,13 @@ for i in assigned_user_ids:
     while (True):
         try:
             page = page_cursor.next()
-        except:
+        except StopIteration:
             print("All tweets from user's timeline are harvested.")
             break
+        except:
+            print("Something else went wrong.")
+            break
+        
         #print(api.rate_limit_status("statuses")["resources"]["statuses"]["/statuses/user_timeline"]["remaining"])
         remain_request -= 1
         page_fetched += 1
@@ -147,6 +150,7 @@ for i in assigned_user_ids:
                     "_id": str(tweet_formated["id"]),
                     "created_at": tweet_formated["created_at"],
                     "full_text": tweet_formated["full_text"],
+                    "hashtags": tweet_formated["entities"]["hashtags"],
                     "user_location": user_db[i]["location"],
                     "user_created_at": user_db[i]["created_at"],
                     "uniform_location": user_db[i]["uniform_location"]

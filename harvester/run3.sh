@@ -1,0 +1,1 @@
+mpirun -n 4 -host $1:1,$2:1,$3:1,$4:1 python3 user_timeline_harvester.py -master_node_ip $1 -username admin -password admin -couchdb_port 5984

@@ -49,21 +49,20 @@ clean_user_db_name = "clean_user"
 
 try:
     user_db = couchdb_server[user_db_name]
+    clean_user_db = couchdb_server[clean_user_db_name]
 except:
-    print(f"There is no database called {user_db_name} on the server.")
+    print(f"There is no targeted database on the server.")
     exit()
 
-if rank == 0:
-    try:
-        clean_user_db = couchdb_server.create(clean_user_db_name)
-    except:
-        clean_user_db = couchdb_server[clean_user_db_name]
+# if rank == 0:
+#     try:
+#         clean_user_db = couchdb_server.create(clean_user_db_name)
+#     except:
+#         clean_user_db = couchdb_server[clean_user_db_name]
 
-comm.barrier()
-
-if rank != 0:
+# if rank != 0:
     
-    clean_user_db = couchdb_server[clean_user_db_name]
+#     clean_user_db = couchdb_server[clean_user_db_name]
 
 user_ids = list(user_db)
 n_user = len(list(user_db))
