@@ -5,7 +5,7 @@
     state: latest
     install_recommends: yes
 
-- name: Launch React app
+- name: Install dependencies and build the app
   become: yes
   command: "{{ item }}"
   args:
@@ -14,4 +14,11 @@
     - "npm install"
     - "npm run build"
     - "npm install -g serve"
-    - "serve -s build"
+
+- name: Launch React app
+  become: yes
+  command: serve -l 3000 -s build
+  async: 180
+  poll: 0
+  args:
+    chdir: /home/ubuntu/COMP90024/web-app

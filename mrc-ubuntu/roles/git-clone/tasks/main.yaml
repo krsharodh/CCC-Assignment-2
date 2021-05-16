@@ -14,7 +14,7 @@
     group: "{{ ansible_user }}"
     mode: '600'
 
-- name: Add github config file to mrc
+- name: Add ssh config file to mrc
   copy:
     src: ./config
     dest: /home/ubuntu/.ssh/config
