@@ -14,48 +14,50 @@ volumes:
 
 # Security group
 security_groups:
-  - name: demo_ssh
-    description: "Demo security group for SSH access"
+  - name: outside
+    description: "Security group for remote ips"
+  - name: inside
+    description: "Security group for remote groups"
+
+outside_rules:
+  - name: outside
+    description: "SSH"
     protocol: tcp
     port_range_min: 22
     port_range_max: 22
     remote_ip_prefix: 0.0.0.0/0
-  - name: demo_http
-    description: "Demo security group for HTTP"
+  - name: outside
+    description: "HTTP"
     protocol: tcp
     port_range_min: 80
     port_range_max: 80
     remote_ip_prefix: 0.0.0.0/0
-  - name: demo_couchdb
-    description: "Demo security group for couchdb"
+  - name: outside
+    description: "Couchdb"
     protocol: tcp
     port_range_min: 5984
     port_range_max: 5984
     remote_ip_prefix: 0.0.0.0/0
-  - name: demo_couchdb_cluster
-    description: "Demo security group for couchdb cluster"
+  - name: outside
+    description: "Flask"
     protocol: tcp
-    port_range_min: 4369
-    port_range_max: 4369
+    port_range_min: 3000
+    port_range_max: 3000
     remote_ip_prefix: 0.0.0.0/0
-  - name: demo_couchdb_connection
-    description: "Demo security group for couchdb nodes to communicate"
-    protocol: tcp
-    port_range_min: 9100
-    port_range_max: 9200
-    remote_ip_prefix: 0.0.0.0/0
-  - name: demo_front_end
-    description: "Demo security group for react front end app"
+  - name: outside
+    description: "React"
     protocol: tcp
     port_range_min: 5000
     port_range_max: 5000
     remote_ip_prefix: 0.0.0.0/0
-  - name: demo_open_mpi
-    description: "open all tcp port for open mpi"
+
+inside_rules:
+  - name: inside
+    description: "Open all the ports between instances"
     protocol: tcp
     port_range_min: 1
     port_range_max: 65535
-    remote_ip_prefix: 0.0.0.0/0
+    remote_group: inside
 
 # Instance
 instances:

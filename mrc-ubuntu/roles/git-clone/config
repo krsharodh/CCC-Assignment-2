@@ -6,18 +6,18 @@ Host github.com
   IdentityFile ~/.ssh/id_rsa
   StrictHostKeyChecking no
 
-Host 172.26.128.206
+Host 172.26.132.48
   IdentityFile ~/.ssh/Test.pem
   StrictHostKeyChecking no
 
-Host 172.26.134.125
+Host 172.26.129.76
   IdentityFile ~/.ssh/Test.pem
   StrictHostKeyChecking no
 
-Host 172.26.134.97
+Host 172.26.130.203
   IdentityFile ~/.ssh/Test.pem
   StrictHostKeyChecking no
 
-Host 172.26.132.46
+Host 172.26.128.161
   IdentityFile ~/.ssh/Test.pem
   StrictHostKeyChecking no

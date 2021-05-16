@@ -1,0 +1,10 @@
+- name: Install flask python modules needed for back end
+  become: yes
+  pip:
+    requirements: /home/ubuntu/COMP90024/Flask-Service/requirements.txt
+
+- name: Launch Flask app
+  become: yes
+  command: sh launch_flask.sh
+  args:
+    chdir: /home/ubuntu/COMP90024/Flask-Service

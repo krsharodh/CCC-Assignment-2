@@ -3,4 +3,9 @@
   roles:
     - role: git-clone
     - role: harvester
-    - role: back-and-front-end
+
+- hosts: MASTER
+
+  roles:
+    - role: back-end
+    - role: front-end

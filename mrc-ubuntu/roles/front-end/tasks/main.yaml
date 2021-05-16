@@ -1,0 +1,17 @@
+- name: Install npm
+  become: yes
+  apt:
+    name: ['npm']
+    state: latest
+    install_recommends: yes
+
+- name: Launch React app
+  become: yes
+  command: "{{ item }}"
+  args:
+    chdir: /home/ubuntu/COMP90024/web-app
+  with_items:
+    - "npm install"
+    - "npm run build"
+    - "npm install -g serve"
+    - "serve -s build"

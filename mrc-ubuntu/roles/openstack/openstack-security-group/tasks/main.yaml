@@ -15,7 +15,7 @@
     msg: "Security group(s) {{ sg_names }} have been created."
 
 # Create security group rules
-- name: Create security group rules
+- name: Create security group rules for communication with outside
   os_security_group_rule:
     security_group: '{{ item.name }}'
     protocol: '{{ item.protocol }}'
@@ -23,4 +23,14 @@
     port_range_max: '{{ item.port_range_max }}'
     remote_ip_prefix: '{{ item.remote_ip_prefix }}'
     state: present
-  loop: '{{ security_groups }}'
+  loop: '{{ outside_rules }}'
+
+- name: Create security group rules for communication between instances
+  os_security_group_rule:
+    security_group: '{{ item.name }}'
+    protocol: '{{ item.protocol }}'
+    port_range_min: '{{ item.port_range_min }}'
+    port_range_max: '{{ item.port_range_max }}'
+    remote_group: '{{ item.remote_group }}'
+    state: present
+  loop: '{{ inside_rules }}'
