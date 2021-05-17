@@ -143,14 +143,14 @@ city_list = ["melbourne", "sydney", "adelaide", "brisbane", "perth", "canberra",
 # until="2021-05-08",
 today = date.today()
 #start_date = 
-print(today + timedelta(days=1))
+#print(today + timedelta(days=1))
 period = math.ceil(7/(min(n_dev_account, n_tasks)))
 
 until_date = today + timedelta(days=1-(rank*period))
 since_date = today + timedelta(days=1-((rank+1)*period))
 
 #page_cursor = tweepy.Cursor(api.search, q = keyword, since="2021-04-29", until=f"{today.year}-{today.month}-{today.day+1}", lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
-#print(f"Rank: {rank}, since={since_date}, until={until_date}")
+print(f"Rank: {rank}, since={since_date}, until={until_date}")
 
 if rank == (min(n_dev_account, n_tasks)-1):
     page_cursor = tweepy.Cursor(api.search, q = keyword, until=str(until_date), lang="en", count = 100, geocode=geocode[search_location], tweet_mode='extended').pages()
@@ -167,6 +167,9 @@ while (True):
         page = page_cursor.next()
     except StopIteration:
         print("All tweets in the time interval are harvested.")
+        break
+    except:
+        print("Something else went wrong.")
         break
 
     remain_request -= 1
@@ -187,6 +190,7 @@ while (True):
                 "_id": str(tweet_formated["id"]),
                 "created_at": tweet_formated["created_at"],
                 "full_text": tweet_formated["full_text"],
+                "hashtags": tweet_formated["entities"]["hashtags"],
                 "user": tweet_formated["user"],
                 "search_location": search_location
             })

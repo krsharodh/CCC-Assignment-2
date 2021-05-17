@@ -12,7 +12,7 @@ const useStyles = makeStyles({
     // Styles for component
 });
 
-function Home() {
+function Vaccine() {
 
     const classes = useStyles();
 
@@ -45,9 +45,9 @@ function Home() {
 
     return (
         <div >
-            <header className="App-header">
+            {/* <header className="App-header">
                 <span>Cluster and Cloud Computing Assignment 2</span>
-            </header>
+            </header> */}
 
             <Grid
                 container
@@ -78,4 +78,4 @@ function Home() {
     );
 }
 
-export default Home;
+export default Vaccine;
