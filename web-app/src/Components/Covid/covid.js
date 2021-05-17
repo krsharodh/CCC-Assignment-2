@@ -31,27 +31,54 @@ function Covid() {
 
     const [areasList, setAreasList] = useState([]);
     const [selectedArea, setSelectedArea] = useState(0);
+    const [covidGraph1Data, setCovidGraph1Data] = useState([]);
+    const [covidGraph2Data, setCovidGraph2Data] = useState([]);
+    const [covidWordCloudData, setCovidWordCloudData] = useState([]);
 
     useEffect(() => {
-        getAreas();
-        getSample();
+        getCities();
+        getCovidGraph1Data();
+        getCovidWordCloudData();
+        // getSample();
     }, [])
 
-    let baseURL = "http://127.0.0.1:5000/"
+    let baseURL = "http://127.0.0.1:5000"
     if (process.env.NODE_ENV === 'production') {
         baseURL = `${process.env.REACT_APP_PROD_URL}:${process.env.REACT_APP_PORT_NUMBER}`
     };
 
-    const getAreas = async () => {
-        // const response = await fetch(baseURL);
-        // const responseJson = await response.json();
-        const responseJson = [
-            { "label": 'Melbourne', "value": 1 },
-            { "label": 'Adelaide', "value": 2 },
-            { "label": 'Sydney', "value": 3 }
-        ]
+    const getCities = async () => {
+        const response = await fetch(`${baseURL}/getCities`);
+        const responseJson = await response.json();
+        // const responseJson = [
+        //     { "label": 'Melbourne', "value": 1 },
+        //     { "label": 'Adelaide', "value": 2 },
+        //     { "label": 'Sydney', "value": 3 }
+        // ]
         setAreasList(responseJson);
         setSelectedArea(responseJson[0]["value"])
+        getCovidGraph2Data();
+    }
+
+    const getCovidGraph1Data = async () => {
+        const response = await fetch(`${baseURL}/getCovidGraph1Data`);
+        const responseJson = await response.json();
+        setCovidGraph1Data(responseJson);
+    }
+
+    const getCovidGraph2Data = async () => {
+        const url = new URL(`${baseURL}/getCovidGraph2Data`)
+        const params = { city: selectedArea }
+        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
+        const response = await fetch(url);
+        const responseJson = await response.json();
+        setCovidGraph2Data(responseJson);
+    }
+
+    const getCovidWordCloudData = async () => {
+        const response = await fetch(`${baseURL}/getCovidWordCloudData`);
+        const responseJson = await response.json();
+        setCovidWordCloudData(responseJson);
     }
 
     const getSample = async () => {
@@ -82,7 +109,7 @@ function Covid() {
                             <Typography variant="h6" className={classes.chartHeader}>
                                 Proportion/count of tweets mentioning COVID
                             </Typography>
-                            <CovidGraph1 />
+                            <CovidGraph1 data={covidGraph1Data} />
                         </CardContent>
                     </Card>
                 </Grid>
@@ -106,7 +133,7 @@ function Covid() {
                                 </Grid>
                             </Typography>
 
-                            <CovidGraph2 city={selectedArea} />
+                            <CovidGraph2 data={covidGraph2Data} />
                         </CardContent>
                     </Card>
                 </Grid>
@@ -119,7 +146,7 @@ function Covid() {
                                 Main Topics
                             </Typography>
 
-                            <Wordcloud />
+                            <Wordcloud data={covidWordCloudData} />
 
                         </CardContent>
                     </Card>

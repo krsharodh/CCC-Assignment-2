@@ -14,28 +14,7 @@ import {
 } from "recharts";
 import ReactWordcloud from 'react-wordcloud';
 
-const CovidGraph1 = () => {
-    const data = [
-        { name: "Melbourne", remaining: 1000, covid: 335 },
-        { name: "Brisbane", remaining: 1000, covid: 345 },
-        {
-            name: "Perth",
-            remaining: 1000,
-            covid: 2110
-        },
-        {
-            name: "Adelaide",
-            remaining: 1000,
-            covid: 540
-        },
-        {
-            name: "Hobart",
-            remaining: 1000,
-            covid: 335
-        },
-        { name: "Darwin", remaining: 1000, covid: 110 },
-        { name: "Canberra", remaining: 1000, covid: 110 }
-    ];
+const CovidGraph1 = ({ data }) => {
 
     const renderCustomizedLabel = (props) => {
         const { content, ...rest } = props;
@@ -78,44 +57,7 @@ const CovidGraph1 = () => {
     );
 }
 
-const CovidGraph2 = ({ city }) => {
-    const data = [
-        {
-            "name": "1/01/2021",
-            "tweets": 4000,
-            "cases": 2400,
-        },
-        {
-            "name": "2/01/2021",
-            "tweets": 3000,
-            "cases": 1398,
-        },
-        {
-            "name": "3/01/2021",
-            "tweets": 2000,
-            "cases": 9800,
-        },
-        {
-            "name": "4/01/2021",
-            "tweets": 2780,
-            "cases": 3908,
-        },
-        {
-            "name": "5/01/2021",
-            "tweets": 1890,
-            "cases": 4800,
-        },
-        {
-            "name": "6/01/2021",
-            "tweets": 2390,
-            "cases": 3800,
-        },
-        {
-            "name": "7/01/2021",
-            "tweets": 3490,
-            "cases": 4300,
-        }
-    ]
+const CovidGraph2 = ({ data }) => {
 
     return (
         <ResponsiveContainer height={250} width={"100%"}>
@@ -133,102 +75,8 @@ const CovidGraph2 = ({ city }) => {
     );
 }
 
-const Wordcloud = () => {
-    const words = [
-        {
-            text: 'word1',
-            value: 64,
-        },
-        {
-            text: 'word2',
-            value: 11,
-        },
-        {
-            text: 'word3',
-            value: 16,
-        },
-        {
-            text: 'bad',
-            value: 17,
-        },
-        {
-            text: 'Covid',
-            value: 64,
-        },
-        {
-            text: 'mistake',
-            value: 11,
-        },
-        {
-            text: 'thought',
-            value: 16,
-        },
-        {
-            text: 'bad',
-            value: 17,
-        }, {
-            text: 'Covid',
-            value: 64,
-        },
-        {
-            text: 'mistake',
-            value: 11,
-        },
-        {
-            text: 'thought',
-            value: 16,
-        },
-        {
-            text: 'bad',
-            value: 17,
-        }, {
-            text: 'Covid',
-            value: 64,
-        },
-        {
-            text: 'mistake',
-            value: 11,
-        },
-        {
-            text: 'thought',
-            value: 16,
-        },
-        {
-            text: 'bad',
-            value: 17,
-        }, {
-            text: 'told',
-            value: 64,
-        },
-        {
-            text: 'mistake',
-            value: 11,
-        },
-        {
-            text: 'thought',
-            value: 16,
-        },
-        {
-            text: 'bad',
-            value: 17,
-        }, {
-            text: 'Covid',
-            value: 64,
-        },
-        {
-            text: 'mistake',
-            value: 11,
-        },
-        {
-            text: 'thought',
-            value: 16,
-        },
-        {
-            text: 'bad',
-            value: 17,
-        },
-    ]
-    return <ReactWordcloud words={words} />
+const Wordcloud = ({ data }) => {
+    return <ReactWordcloud words={data} />
 }
 
 
