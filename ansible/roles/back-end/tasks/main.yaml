@@ -6,7 +6,7 @@
 - name: Launch Flask app
   become: yes
   command: python3 main.py
-  async: 240
+  async: 1200
   poll: 0
   args:
     chdir: /home/ubuntu/COMP90024/Flask-Service

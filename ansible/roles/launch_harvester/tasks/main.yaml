@@ -1,0 +1,6 @@
+- name: Run the harvester script
+  command: "sh run1+2.sh {{ masternode }} {{ slavenode1 }} {{ slavenode2 }} {{ slavenode3 }}"
+  async: 36000
+  poll: 0
+  args:
+    chdir: /home/ubuntu/COMP90024/harvester

@@ -22,6 +22,14 @@
     group: "{{ ansible_user }}"
     mode: '600'
 
+- name: Add IP addresses file to mrc
+  copy:
+    src: ./ip_addresses
+    dest: /home/ubuntu/ip_addresses.txt
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '600'
+
 - name: Clone source code from github repository
   git:
     repo: '{{ git_repository }}'

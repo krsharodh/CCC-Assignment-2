@@ -1,0 +1,78 @@
+# Create an instance on NeCTAR
+- name: Create an instance
+  os_server:
+    name: '{{ item.name }}'
+    image: '{{ instance_image }}'
+    key_name: '{{ instance_key_name }}'
+    flavor: '{{ item.flavor }}'
+    availability_zone: '{{ availability_zone }}'
+    security_groups: '{{ sg_names }}'
+    volumes: '{{ item.volumes }}'
+    auto_floating_ip: yes
+    wait: yes
+    timeout: 600
+    state: present
+  loop: '{{ instances }}'
+  register: os_instance
+
+- debug:
+    msg: "Instance {{ item.openstack.name }} has been created. IP address is {{ item.openstack.public_v4 }}"
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined
+
+- name: Wait for connection
+  wait_for:
+    host: "{{ item.openstack.public_v4 }}"
+    port: 22
+    timeout: 120
+    search_regex: OpenSSH
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined
+
+- name: Add host
+  add_host:
+    name: '{{ item.openstack.public_v4 }}'
+    groups: COMP90024
+    masternode: '{{ os_instance.results[0].openstack.public_v4 }}'
+    slavenode1: '{{ os_instance.results[1].openstack.public_v4 }}'
+    slavenode2: '{{ os_instance.results[2].openstack.public_v4 }}'
+    slavenode3: '{{ os_instance.results[3].openstack.public_v4 }}'
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined
+
+- name: Add master
+  add_host:
+    name: '{{ item.openstack.public_v4 }}'
+    groups: MASTER
+    masternode: '{{ os_instance.results[0].openstack.public_v4 }}'
+    slavenode1: '{{ os_instance.results[1].openstack.public_v4 }}'
+    slavenode2: '{{ os_instance.results[2].openstack.public_v4 }}'
+    slavenode3: '{{ os_instance.results[3].openstack.public_v4 }}'
+  loop: '{{ os_instance.results[:1] }}'
+  when: item.openstack is defined
+
+- name: Add slaves
+  add_host:
+    name: '{{ item.openstack.public_v4 }}'
+    groups: SLAVES
+    masternode: '{{ os_instance.results[0].openstack.public_v4 }}'
+  loop: '{{ os_instance.results[1:] }}'
+  when: item.openstack is defined
+
+- name: Add dynamically created IP addresses to ssh config file
+  blockinfile:
+    path: /home/chris/Desktop/CCC-Assignment-2/ansible/roles/git-clone/config
+    block: |
+      Host {{ item.openstack.public_v4 }}
+        IdentityFile ~/.ssh/Test.pem
+        StrictHostKeyChecking no
+    marker: "# {mark} SSH config for IP address: {{item.openstack.public_v4}}"
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined
+
+- name: Store dynamically created IP addresses to a file
+  lineinfile:
+    path: /home/chris/Desktop/CCC-Assignment-2/ansible/roles/git-clone/ip_addresses
+    line: '{{item.openstack.public_v4}}'
+  loop: '{{ os_instance.results }}'
+  when: item.openstack is defined

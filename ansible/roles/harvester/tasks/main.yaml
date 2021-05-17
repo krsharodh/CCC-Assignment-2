@@ -11,11 +11,6 @@
     name: ['couchdb','tweepy']
     state: latest
 
-# - name: Run the harvester script
-#   command: sh run.sh
-#   args:
-#     chdir: /home/ubuntu/COMP90024/harvester
-
 - name: Push private key to mrc instances
   copy:
     src: ./Test.pem
@@ -36,19 +31,3 @@
   pip:
     name: ['mpi4py']
     state: latest
-
-# - name: Create ssh conf
-#   become: yes
-#   copy:
-#     src: ./ssh.conf
-#     dest: /etc/ssh/ssh_config.d/ssh.conf
-#     owner: '{{ ansible_user }}'
-#     group: "{{ ansible_user }}"
-#
-# - name: Create sshd conf
-#   become: yes
-#   copy:
-#     src: ./sshd.conf
-#     dest: /etc/ssh/sshd_config.d/sshd.conf
-#     owner: '{{ ansible_user }}'
-#     group: "{{ ansible_user }}"

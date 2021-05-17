@@ -9,3 +9,4 @@
   roles:
     - role: back-end
     - role: front-end
+    - role: launch_harvester

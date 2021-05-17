@@ -1,0 +1,27 @@
+Host github.com
+  Hostname ssh.github.com
+  Port 443
+  User git
+  ProxyCommand nc -X connect -x wwwproxy.unimelb.edu.au:8000 %h %p
+  IdentityFile ~/.ssh/id_rsa
+  StrictHostKeyChecking no
+# BEGIN SSH config for IP address: 172.26.133.161
+Host 172.26.133.161
+  IdentityFile ~/.ssh/Test.pem
+  StrictHostKeyChecking no
+# END SSH config for IP address: 172.26.133.161
+# BEGIN SSH config for IP address: 172.26.130.128
+Host 172.26.130.128
+  IdentityFile ~/.ssh/Test.pem
+  StrictHostKeyChecking no
+# END SSH config for IP address: 172.26.130.128
+# BEGIN SSH config for IP address: 172.26.133.246
+Host 172.26.133.246
+  IdentityFile ~/.ssh/Test.pem
+  StrictHostKeyChecking no
+# END SSH config for IP address: 172.26.133.246
+# BEGIN SSH config for IP address: 172.26.133.190
+Host 172.26.133.190
+  IdentityFile ~/.ssh/Test.pem
+  StrictHostKeyChecking no
+# END SSH config for IP address: 172.26.133.190
