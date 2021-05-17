@@ -1,23 +1,25 @@
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import TextField from '@material-ui/core/TextField';
-import "./style.css";
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
 
 function Filters({
     autoCompleteList,
-    label
+    label,
+    handleChange,
+    value
 }) {
 
-
     return (
-        <div>
-            <Autocomplete
-                id="area-search-box"
-                options={autoCompleteList}
-                getOptionLabel={(option) => option.title}
+        <FormControl>
+            <Select
+                native
+                displayEmpty
+                value={value}
+                onChange={handleChange}
                 style={{ width: "100%" }}
-                renderInput={(params) => <TextField {...params} label={label} variant="outlined" />}
-            />
-        </div>
+            >
+                {autoCompleteList.map(item => <option value={item.value}>{item.label}</option>)}
+            </Select>
+        </FormControl>
     );
 }
 

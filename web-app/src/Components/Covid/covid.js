@@ -19,6 +19,9 @@ const useStyles = makeStyles({
         width: "95%",
         margin: "0 auto",
         marginTop: 10
+    },
+    chartHeader: {
+        marginBottom: 10
     }
 });
 
@@ -27,6 +30,7 @@ function Covid() {
     const classes = useStyles();
 
     const [areasList, setAreasList] = useState([]);
+    const [selectedArea, setSelectedArea] = useState(0);
 
     useEffect(() => {
         getAreas();
@@ -39,9 +43,15 @@ function Covid() {
     };
 
     const getAreas = async () => {
-        const response = await fetch(baseURL);
-        const responseJson = await response.json();
+        // const response = await fetch(baseURL);
+        // const responseJson = await response.json();
+        const responseJson = [
+            { "label": 'Melbourne', "value": 1 },
+            { "label": 'Adelide', "value": 2 },
+            { "label": 'Sydney', "value": 3 }
+        ]
         setAreasList(responseJson);
+        setSelectedArea(responseJson[0]["value"])
     }
 
     const getSample = async () => {
@@ -49,6 +59,10 @@ function Covid() {
         const responseJson = await response.json();
         console.log(responseJson);
     }
+
+    const handleAreaChange = (event) => {
+        setSelectedArea(event.target.value);
+    };
 
 
     return (
@@ -65,7 +79,7 @@ function Covid() {
                 <Grid item xs={6} >
                     <Card>
                         <CardContent>
-                            <Typography variant="h6">
+                            <Typography variant="h6" className={classes.chartHeader}>
                                 Proportion/count of tweets mentioning COVID
                             </Typography>
                             <CovidGraph1 />
@@ -76,10 +90,24 @@ function Covid() {
                 <Grid item xs={6} >
                     <Card >
                         <CardContent>
-                            <Typography variant="h6">
-                                COVID tweets vs COVID cases
+                            <Typography variant="h6" className={classes.chartHeader}>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justify="center"
+                                    alignItems="center"
+                                >
+                                    <Grid item xs={7}>
+
+                                        COVID tweets vs COVID cases -
+                                    </Grid>
+                                    <Grid item xs={5}>
+                                        <Filters autoCompleteList={areasList} label={"Select City"} value={selectedArea} handleChange={handleAreaChange} />
+                                    </Grid>
+                                </Grid>
                             </Typography>
-                            {/* <Filters autoCompleteList={areasList} label={"Search Area"} /> */}
+
+                            <CovidGraph2 />
                         </CardContent>
                     </Card>
                 </Grid>
@@ -88,7 +116,7 @@ function Covid() {
                     <Card >
                         <CardContent>
 
-                            <Typography variant="h6">
+                            <Typography variant="h6" className={classes.chartHeader}>
                                 Word Cloud
                             </Typography>
 

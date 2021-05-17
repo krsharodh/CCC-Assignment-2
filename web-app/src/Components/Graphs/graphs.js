@@ -1,6 +1,8 @@
 import {
     BarChart,
     Bar,
+    LineChart,
+    Line,
     XAxis,
     YAxis,
     ResponsiveContainer,
@@ -76,18 +78,57 @@ const CovidGraph1 = () => {
 }
 
 const CovidGraph2 = () => {
-    const data = [{ name: 'Page A', uv: 400, pv: 2400, amt: 2400 }];
+    const data = [
+        {
+            "name": "1/01/2021",
+            "tweets": 4000,
+            "cases": 2400,
+        },
+        {
+            "name": "2/01/2021",
+            "tweets": 3000,
+            "cases": 1398,
+        },
+        {
+            "name": "3/01/2021",
+            "tweets": 2000,
+            "cases": 9800,
+        },
+        {
+            "name": "4/01/2021",
+            "tweets": 2780,
+            "cases": 3908,
+        },
+        {
+            "name": "5/01/2021",
+            "tweets": 1890,
+            "cases": 4800,
+        },
+        {
+            "name": "6/01/2021",
+            "tweets": 2390,
+            "cases": 3800,
+        },
+        {
+            "name": "7/01/2021",
+            "tweets": 3490,
+            "cases": 4300,
+        }
+    ]
 
     return (
-        <BarChart width={730} height={250} data={data}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="pv" fill="#8884d8" />
-            <Bar dataKey="uv" fill="#82ca9d" />
-        </BarChart>
+        <ResponsiveContainer height={250} width={"100%"}>
+
+            <LineChart data={data} margin={{ left: 10, right: 10 }}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis hide dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="cases" stroke="#8884d8" />
+                <Line type="monotone" dataKey="tweets" stroke="#82ca9d" />
+            </LineChart>
+        </ResponsiveContainer>
     );
 }
 
