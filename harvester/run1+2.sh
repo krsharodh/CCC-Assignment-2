@@ -10,7 +10,7 @@ curl -X PUT "admin:admin@$1:5984/raw_tweets_from_timeline3?q=8&n=2"
 #python3 initialise_db.py -master_node_ip $1 -username admin -password admin -couchdb_port 5984
 mpirun -n 4 -host $1:1,$2:1,$3:1,$4:1 python3 harvester.py -master_node_ip $1 -username admin -password admin -couchdb_port 5984 -location australia
 mpirun -n 4 -host $1:1,$2:1,$3:1,$4:1 python3 user_slicemaker.py -master_node_ip $1 -username admin -password admin -couchdb_port 5984
-mpirun -n 4 -host $1:1,$2:1,$3:1,$4:1 python3 user_timeline_harvester.py -master_node_ip $1 -username admin -password admin -couchdb_port 5984
+#mpirun -n 4 -host $1:1,$2:1,$3:1,$4:1 python3 user_timeline_harvester.py -master_node_ip $1 -username admin -password admin -couchdb_port 5984
 
 #python3 harvester.py -location australia -keyword vaccine -rank $1
 #python3 user_slicemaker.py
