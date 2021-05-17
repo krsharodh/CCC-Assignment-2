@@ -1,5 +1,5 @@
 import './style.css';
-import Filters from '../Filters/index';
+import Filters from '../Filters/filters';
 import React, { useState, useEffect } from 'react';
 
 // Material UI imports
