@@ -6,8 +6,8 @@ import time
 import math
 from datetime import datetime
 
-
 from var import * 
+from util import *
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
@@ -128,7 +128,7 @@ for i in assigned_user_ids:
         except:
             print("Something else went wrong.")
             break
-        
+
         #print(api.rate_limit_status("statuses")["resources"]["statuses"]["/statuses/user_timeline"]["remaining"])
         remain_request -= 1
         page_fetched += 1

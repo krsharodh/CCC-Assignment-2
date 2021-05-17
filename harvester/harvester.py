@@ -173,7 +173,7 @@ while (True):
         break
 
     remain_request -= 1
-    print(f"Fetch Page: {page_fetched}")
+    #print(f"Fetch Page: {page_fetched}")
     
     for tweet in page:
         # here use try & except to avoid duplicated tweets
@@ -217,8 +217,8 @@ while (True):
                         }) 
 
             except:
-                print("Duplicated user found!")
-
+                #print("Duplicated user found!")
+                pass
     
     page_fetched += 1
     

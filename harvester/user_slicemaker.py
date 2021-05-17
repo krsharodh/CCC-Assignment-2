@@ -7,6 +7,7 @@ from datetime import datetime
 import math
 
 from mpi4py import MPI
+from util import *
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
