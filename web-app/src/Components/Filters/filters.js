@@ -15,7 +15,6 @@ function Filters({
                 displayEmpty
                 value={value}
                 onChange={handleChange}
-                style={{ width: "100%" }}
             >
                 {autoCompleteList.map(item => <option value={item.value}>{item.label}</option>)}
             </Select>

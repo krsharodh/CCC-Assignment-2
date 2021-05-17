@@ -3,7 +3,7 @@ import Filters from '../Filters/filters';
 import React, { useState, useEffect } from 'react';
 
 // ReChars
-import { CovidGraph1, CovidGraph2 } from "../Graphs/graphs";
+import { CovidGraph1, CovidGraph2, Wordcloud } from "../Graphs/graphs";
 
 // Material UI imports
 import Card from '@material-ui/core/Card';
@@ -107,7 +107,7 @@ function Covid() {
                                 </Grid>
                             </Typography>
 
-                            <CovidGraph2 />
+                            <CovidGraph2 city={selectedArea} />
                         </CardContent>
                     </Card>
                 </Grid>
@@ -119,6 +119,8 @@ function Covid() {
                             <Typography variant="h6" className={classes.chartHeader}>
                                 Word Cloud
                             </Typography>
+
+                            <Wordcloud />
 
                         </CardContent>
                     </Card>

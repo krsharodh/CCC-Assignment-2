@@ -12,6 +12,7 @@ import {
     Legend,
     CartesianGrid
 } from "recharts";
+import ReactWordcloud from 'react-wordcloud';
 
 const CovidGraph1 = () => {
     const data = [
@@ -77,7 +78,7 @@ const CovidGraph1 = () => {
     );
 }
 
-const CovidGraph2 = () => {
+const CovidGraph2 = ({ city }) => {
     const data = [
         {
             "name": "1/01/2021",
@@ -132,5 +133,103 @@ const CovidGraph2 = () => {
     );
 }
 
+function Wordcloud() {
+    const words = [
+        {
+            text: 'word1',
+            value: 64,
+        },
+        {
+            text: 'word2',
+            value: 11,
+        },
+        {
+            text: 'word3',
+            value: 16,
+        },
+        {
+            text: 'bad',
+            value: 17,
+        },
+        {
+            text: 'Covid',
+            value: 64,
+        },
+        {
+            text: 'mistake',
+            value: 11,
+        },
+        {
+            text: 'thought',
+            value: 16,
+        },
+        {
+            text: 'bad',
+            value: 17,
+        }, {
+            text: 'Covid',
+            value: 64,
+        },
+        {
+            text: 'mistake',
+            value: 11,
+        },
+        {
+            text: 'thought',
+            value: 16,
+        },
+        {
+            text: 'bad',
+            value: 17,
+        }, {
+            text: 'Covid',
+            value: 64,
+        },
+        {
+            text: 'mistake',
+            value: 11,
+        },
+        {
+            text: 'thought',
+            value: 16,
+        },
+        {
+            text: 'bad',
+            value: 17,
+        }, {
+            text: 'told',
+            value: 64,
+        },
+        {
+            text: 'mistake',
+            value: 11,
+        },
+        {
+            text: 'thought',
+            value: 16,
+        },
+        {
+            text: 'bad',
+            value: 17,
+        }, {
+            text: 'Covid',
+            value: 64,
+        },
+        {
+            text: 'mistake',
+            value: 11,
+        },
+        {
+            text: 'thought',
+            value: 16,
+        },
+        {
+            text: 'bad',
+            value: 17,
+        },
+    ]
+    return <ReactWordcloud words={words} />
+}
 
-export { CovidGraph1, CovidGraph2 };
+
+export { CovidGraph1, CovidGraph2, Wordcloud };
