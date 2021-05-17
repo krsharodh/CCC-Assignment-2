@@ -47,7 +47,7 @@ function Covid() {
         // const responseJson = await response.json();
         const responseJson = [
             { "label": 'Melbourne', "value": 1 },
-            { "label": 'Adelide', "value": 2 },
+            { "label": 'Adelaide', "value": 2 },
             { "label": 'Sydney', "value": 3 }
         ]
         setAreasList(responseJson);
@@ -98,7 +98,6 @@ function Covid() {
                                     alignItems="center"
                                 >
                                     <Grid item xs={7}>
-
                                         COVID tweets vs COVID cases -
                                     </Grid>
                                     <Grid item xs={5}>
@@ -117,7 +116,7 @@ function Covid() {
                         <CardContent>
 
                             <Typography variant="h6" className={classes.chartHeader}>
-                                Word Cloud
+                                Main Topics
                             </Typography>
 
                             <Wordcloud />

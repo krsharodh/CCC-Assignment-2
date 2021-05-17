@@ -133,7 +133,7 @@ const CovidGraph2 = ({ city }) => {
     );
 }
 
-function Wordcloud() {
+const Wordcloud = () => {
     const words = [
         {
             text: 'word1',
