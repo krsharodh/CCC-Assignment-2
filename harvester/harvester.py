@@ -54,6 +54,7 @@ keyword = "vaccin OR COVID OR COVAX OR SARS-CoV-2 OR pfizer OR astrazeneca OR az
 ## load the API key, API secret key, access token and access token secret 
 f = open("auth.json", "r")
 auth_dict = json.load(f)
+f.close()
 
 n_dev_account = len(auth_dict.keys())
 

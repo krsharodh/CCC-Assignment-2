@@ -5,6 +5,7 @@ import json
 import time
 import math
 from datetime import datetime
+from mpi4py import MPI
 
 from var import * 
 from util import *
@@ -46,6 +47,7 @@ for i in range(len(argv)):
 ## load the API key, API secret key, access token and access token secret 
 f = open("auth.json", "r")
 auth_dict = json.load(f)
+f.close()
 
 n_dev_account = len(auth_dict.keys())
 
