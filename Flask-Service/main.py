@@ -4,7 +4,7 @@ from flask_cors import CORS
 import couchdb
 
 app = Flask(__name__)
-cors = CORS(app)
+# cors = CORS(app)
 api = Api(app)
 
 
