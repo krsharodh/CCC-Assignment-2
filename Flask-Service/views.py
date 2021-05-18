@@ -148,17 +148,6 @@ def get_view(db_name, doc_name, view_name, group_level):
 #### Scenarion 1: covid related ####
 ######################################
 
-# Count the number of tweets mentioned covid in each city
-covid_tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 1).content.decode("utf-8"))
-for row in covid_tweet_city['rows']:
-    print(row["key"], row["value"])
-
-# Count the total number of tweets in each city
-
-tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","Tweet_count", 1).content.decode("utf-8"))
-for row in tweet_city['rows']:
-    print(row["key"], row["value"])
-
 Scenario_one = []
 
 # Count the number of tweets mentioned covid in each city
