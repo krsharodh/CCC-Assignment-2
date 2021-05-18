@@ -148,8 +148,6 @@ def get_view(db_name, doc_name, view_name, group_level):
 #### Scenarion 1: covid related ####
 ######################################
 
-# Scenario_one = {{}:{"metioned_covid":{}, "total_tweets": {}}}
-
 # Count the number of tweets mentioned covid in each city
 covid_tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 1).content.decode("utf-8"))
 for row in covid_tweet_city['rows']:
@@ -161,6 +159,25 @@ tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","Tw
 for row in tweet_city['rows']:
     print(row["key"], row["value"])
 
+Scenario_one = []
+
+# Count the number of tweets mentioned covid in each city
+covid_tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 1).content.decode("utf-8"))
+for row in covid_tweet_city['rows']:
+    Scenario_one_temp = {"city":{}, "metioned_covid":{}}
+    Scenario_one_temp["city"] = row["key"][0]
+    Scenario_one_temp["metioned_covid"] = row["value"]
+    Scenario_one.append(Scenario_one_temp)
+    print(row["key"], row["value"])
+
+# Count the total number of tweets in each city
+
+tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","Tweet_count", 1).content.decode("utf-8"))
+for row in tweet_city['rows']:
+    print(row["key"], row["value"])
+    for i in range(len(Scenario_one)):
+        if row["key"] == Scenario_one[i]["city"]:
+            Scenario_one[i]["total_tweets"] = row["value"]
 
 
 ######################################
