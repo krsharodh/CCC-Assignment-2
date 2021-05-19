@@ -18,8 +18,7 @@ const CovidGraph1 = ({ data }) => {
 
     const renderCustomizedLabel = (props) => {
         const { content, ...rest } = props;
-
-        return <Label {...rest} fontSize="12" fill="#FFFFFF" fontWeight="Bold" />;
+        return <Label {...rest} fontSize="12" fill="#FFFFFF" fontWeight="Bold" value={`${rest.value} %`} />;
     };
 
     return (
@@ -28,7 +27,6 @@ const CovidGraph1 = ({ data }) => {
                 layout="vertical"
                 data={data}
                 margin={{ left: 10, right: 10 }}
-                stackOffset="expand"
             >
                 <XAxis hide type="number" />
                 <YAxis
@@ -38,20 +36,20 @@ const CovidGraph1 = ({ data }) => {
                     fontSize="12"
                 />
                 <Tooltip />
-                <Bar dataKey="metioned_covid" fill="#dd7876" stackId="a">
+                <Bar dataKey="percentage" fill="#dd7876" stackId="a">
                     <LabelList
-                        dataKey="metioned_covid"
+                        dataKey="percentage"
                         position="center"
                         content={renderCustomizedLabel}
                     />
                 </Bar>
-                <Bar dataKey="total_tweets" fill="#82ba7f" stackId="a">
+                {/* <Bar dataKey="total_tweets" fill="#82ba7f" stackId="a">
                     <LabelList
                         dataKey="total_tweets"
                         position="center"
                         content={renderCustomizedLabel}
                     />
-                </Bar>
+                </Bar> */}
             </BarChart>
         </ResponsiveContainer>
     );

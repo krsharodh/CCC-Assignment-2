@@ -57,7 +57,14 @@ function Covid() {
 
     const getCovidGraph1Data = async () => {
         const response = await fetch(`${baseURL}/getCovidGraph1Data`);
-        const responseJson = await response.json();
+        let responseJson = await response.json();
+
+        responseJson = responseJson.map(el => ({
+            ...el,
+            percentage: ((el.metioned_covid / el.total_tweets) * 100).toFixed(2)
+        }))
+
+
         setCovidGraph1Data(responseJson);
     }
 
@@ -101,7 +108,7 @@ function Covid() {
                     <Card>
                         <CardContent>
                             <Typography variant="h6" className={classes.chartHeader}>
-                                Proportion/count of tweets mentioning COVID
+                                Proportion of tweets mentioning COVID
                             </Typography>
                             <CovidGraph1 data={covidGraph1Data} />
                         </CardContent>
