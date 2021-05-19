@@ -44,17 +44,12 @@ function Covid() {
 
     let baseURL = "http://127.0.0.1:5000"
     if (process.env.NODE_ENV === 'production') {
-        baseURL = `${process.env.REACT_APP_PROD_URL}:${process.env.REACT_APP_PORT_NUMBER}`
+        baseURL = `${process.env.REACT_APP_PROD_URL}`
     };
 
     const getCities = async () => {
         const response = await fetch(`${baseURL}/getCities`);
         const responseJson = await response.json();
-        // const responseJson = [
-        //     { "label": 'Melbourne', "value": 1 },
-        //     { "label": 'Adelaide', "value": 2 },
-        //     { "label": 'Sydney', "value": 3 }
-        // ]
         setAreasList(responseJson);
         setSelectedArea(responseJson[0]["value"])
         getCovidGraph2Data();
@@ -94,7 +89,6 @@ function Covid() {
 
     return (
         <div className={classes.container}>
-
 
             <Grid
                 container

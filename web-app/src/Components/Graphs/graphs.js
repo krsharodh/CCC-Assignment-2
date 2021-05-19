@@ -33,21 +33,21 @@ const CovidGraph1 = ({ data }) => {
                 <XAxis hide type="number" />
                 <YAxis
                     type="category"
-                    dataKey="name"
+                    dataKey="city"
                     stroke="black"
                     fontSize="12"
                 />
                 <Tooltip />
-                <Bar dataKey="remaining" fill="#dd7876" stackId="a">
+                <Bar dataKey="metioned_covid" fill="#dd7876" stackId="a">
                     <LabelList
-                        dataKey="remaining"
+                        dataKey="metioned_covid"
                         position="center"
                         content={renderCustomizedLabel}
                     />
                 </Bar>
-                <Bar dataKey="covid" fill="#82ba7f" stackId="a">
+                <Bar dataKey="total_tweets" fill="#82ba7f" stackId="a">
                     <LabelList
-                        dataKey="covid"
+                        dataKey="total_tweets"
                         position="center"
                         content={renderCustomizedLabel}
                     />
