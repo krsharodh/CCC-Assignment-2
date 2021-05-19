@@ -2,6 +2,8 @@ import requests
 from requests.api import get
 import couchdb
 import json
+import csv
+import pandas as pd
 
 user = "admin"
 password = "admin"
@@ -71,9 +73,10 @@ db.save(data_covid)
 
 map_fun_Vaccine_CityDateTime = '''function (doc) {
     var text = doc.full_text.toLowerCase()
-    if (text.indexOf('vaccine') != -1 ||
-     text.indexOf('vaccinate') != -1 ||
-     text.indexOf('vaccination') != -1)
+    if (text.indexOf('vaccine') != -1 || 
+    text.indexOf('vaccinat') != -1 || 
+    text.indexOf('pfizer') != -1 || 
+    text.indexOf('astrazeneca') != -1)
         var date = new Date(doc.created_at); 
         var year = date.getFullYear();
         var month = date.getMonth();
@@ -145,10 +148,15 @@ def get_view(db_name, doc_name, view_name, group_level):
 
 
 ######################################
-#### Scenarion 1: covid related ####
+####  Scenarion 1: covid related  ####
 ######################################
 
-Scenario_one = []
+### 1. Proportion of covid tweets ###
+
+# Create a list and each element in the list contained info about city name, number of tweets mentioned covid and total tweets
+# e.g. Scenario_one_proportion = [{"city":{}, "metioned_covid":{}, "total_tweets": {}}]
+
+Scenario_one_proportion = []
 
 # Count the number of tweets mentioned covid in each city
 covid_tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 1).content.decode("utf-8"))
@@ -156,7 +164,7 @@ for row in covid_tweet_city['rows']:
     Scenario_one_temp = {"city":{}, "metioned_covid":{}}
     Scenario_one_temp["city"] = row["key"][0]
     Scenario_one_temp["metioned_covid"] = row["value"]
-    Scenario_one.append(Scenario_one_temp)
+    Scenario_one_proportion.append(Scenario_one_temp)
     print(row["key"], row["value"])
 
 # Count the total number of tweets in each city
@@ -164,9 +172,99 @@ for row in covid_tweet_city['rows']:
 tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","Tweet_count", 1).content.decode("utf-8"))
 for row in tweet_city['rows']:
     print(row["key"], row["value"])
-    for i in range(len(Scenario_one)):
-        if row["key"] == Scenario_one[i]["city"]:
-            Scenario_one[i]["total_tweets"] = row["value"]
+    for i in range(len(Scenario_one_proportion)):
+        if row["key"] == Scenario_one_proportion[i]["city"]:
+            Scenario_one_proportion[i]["total_tweets"] = row["value"]
+
+
+### 2. correlation between covid tweets and confirmed cases ###
+
+# Create a list for each city and each element/dictionary in the list contains three variables
+# e.g. city_list = [{"time":{}, "tweets": {}, "cases": {}}]
+
+# Function for adding the number of tweets mentioned covid in particular city and time to the city list
+
+def add_value(scenario_list, key, value):
+    Scenario_two_temp = {"time":{}, "tweets": {}}
+    Datetime = [key[1], key[2] + 1, key[3] + 1]
+    Scenario_two_temp["time"] = "-".join(str(e).zfill(2) for e in Datetime)
+
+    Scenario_two_temp["tweets"] = value
+    return scenario_list.append(Scenario_two_temp)
+
+#  Function for adding the confirmed cases in each state in particular time to the city list
+
+def add_case(scenario_list, case_list):
+    for i in range(len(scenario_list)):
+        if scenario_list[i]["time"] in set(case_ACT.date):
+            index = case_list[case_list['date'] == scenario_list[i]["time"]].index.values[0]
+            scenario_list[i]["cases"] = case_list.at[index,'confirmed']
+
+# Create a series of empty list for each city
+
+Scenario_one_adelaide = []
+Scenario_one_brisbane = []
+Scenario_one_canberra = []
+Scenario_one_darwin = []
+Scenario_one_hobart = []
+Scenario_one_melbourne = []
+Scenario_one_perth = []
+Scenario_one_sydney = []
+
+# Read the number of tweets mentioned covid group/aggregated by location, year, month, date
+
+covid_tweet_citymonth = json.loads(get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 4).content.decode("utf-8"))
+
+# Add the number of tweets mentioned covid and date to each city list 
+
+for row in covid_tweet_citymonth['rows']:
+    if "adelaide" == row["key"][0]:
+        add_value(Scenario_one_adelaide, row["key"], row["value"])
+    elif "brisbane" == row["key"][0]:
+        add_value(Scenario_one_brisbane, row["key"], row["value"])
+    elif "canberra" == row["key"][0]:
+        add_value(Scenario_one_canberra, row["key"], row["value"])
+    elif "darwin" == row["key"][0]:
+        add_value(Scenario_one_darwin, row["key"], row["value"])
+    elif "hobart" == row["key"][0]:
+        add_value(Scenario_one_hobart, row["key"], row["value"])
+    elif "melbourne" == row["key"][0]:
+        add_value(Scenario_one_melbourne, row["key"], row["value"])
+    elif "perth" == row["key"][0]:
+        add_value(Scenario_one_perth, row["key"], row["value"])
+    elif "sydney" == row["key"][0]:
+        add_value(Scenario_one_sydney, row["key"], row["value"])
+
+# Read the covid cases dataset
+
+with open('COVID_AU_state_daily_change.csv', newline='') as f:
+    reader = csv.reader(f) 
+    case = pd.DataFrame(reader) 
+    new_header = case.iloc[0] 
+    case = case[1:]
+    case.columns = new_header 
+
+    # Create a series of lists to store the confirmed cases information for each state
+
+    case_ACT = case.loc[case['state_abbrev'] == 'ACT']
+    case_NSW = case.loc[case['state_abbrev'] == 'NSW']
+    case_NT = case.loc[case['state_abbrev'] == 'NT']
+    case_QLD = case.loc[case['state_abbrev'] == 'QLD']
+    case_SA = case.loc[case['state_abbrev'] == 'SA']
+    case_TAS = case.loc[case['state_abbrev'] == 'TAS']
+    case_VIC = case.loc[case['state_abbrev'] == 'VIC']
+    case_WA = case.loc[case['state_abbrev'] == 'WA']
+
+# Add the confirmed cases info to each city list
+
+add_case(Scenario_one_adelaide, case_SA)
+add_case(Scenario_one_brisbane, case_QLD)
+add_case(Scenario_one_canberra, case_ACT)
+add_case(Scenario_one_darwin, case_NT)
+add_case(Scenario_one_hobart, case_TAS)
+add_case(Scenario_one_melbourne, case_VIC)
+add_case(Scenario_one_perth, case_WA)
+add_case(Scenario_one_sydney, case_NSW)
 
 
 ######################################
@@ -178,7 +276,6 @@ for row in tweet_city['rows']:
 covid_tweet_citymonth = json.loads(get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 3).content.decode("utf-8"))
 for row in covid_tweet_citymonth['rows']:
     print(row["key"], row["value"])
-
 
 ######################################
 ####   Scenarion 3: job related   ####
