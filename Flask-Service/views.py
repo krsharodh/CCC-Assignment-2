@@ -112,7 +112,8 @@ db.save(data_vaccine)
 
 map_fun_job_CityDateTime = '''function (doc) {
     var text = doc.full_text.toLowerCase()
-    if (doc.full_text.indexOf('jobkeeper') != -1 || doc.full_text.indexOf('jobseeker') != -1)
+    if (text.indexOf('jobkeeper') != -1 || text.indexOf('jobseeker') != -1 ||
+    text.indexOf('job keeper') != -1 || text.indexOf('job seeker') != -1)
         var date = new Date(doc.created_at); 
         var year = date.getFullYear();
         var month = date.getMonth();
@@ -271,11 +272,28 @@ add_case(Scenario_one_sydney, case_NSW)
 #### Scenarion 2: vaccine related ####
 ######################################
 
-# Count the number of tweets mentioning COVID in each city each month
+### 1. Proportion of vaccine tweets ###
 
-covid_tweet_citymonth = json.loads(get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 3).content.decode("utf-8"))
-for row in covid_tweet_citymonth['rows']:
-    print(row["key"], row["value"])
+# Create a list and each element in the list contained info about city name, number of tweets mentioned covid vaccine, total tweets
+# e.g. Scenario_two_proportion = [{"city":{}, "metioned_vaccine":{}, "total_tweets": {}}]
+
+Scenario_two_proportion = []
+
+# Count the number of tweets mentioned covid in each city
+vaccine_tweet_city = json.loads(get_view("raw_tweets_from_timeline", "vaccine_related","Vaccine_CityDateTime_count", 1).content.decode("utf-8"))
+for row in vaccine_tweet_city['rows']:
+    Scenario_two_temp = {"city":{}, "metioned_vaccine":{}}
+    Scenario_two_temp["city"] = row["key"][0]
+    Scenario_two_temp["metioned_vaccine"] = row["value"]
+    Scenario_two_proportion.append(Scenario_two_temp)
+
+# Count the total number of tweets in each city
+
+tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","Tweet_count", 1).content.decode("utf-8"))
+for row in tweet_city['rows']:
+    for i in range(len(Scenario_two_proportion)):
+        if row["key"] == Scenario_two_proportion[i]["city"]:
+            Scenario_two_proportion[i]["total_tweets"] = row["value"]
 
 ######################################
 ####   Scenarion 3: job related   ####
