@@ -117,6 +117,12 @@ function Covid() {
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Proportion of tweets mentioning COVID
                                     </Typography>
+                                    <p>
+                                        The graph describes the percentage of COVID keyword in tweets across various major in cities in Australia.
+                                        <p></p>
+                                        <strong>Highest Percentage:</strong>  Canberra<br></br>
+                                        <strong>Lowest Percentage:</strong>  Hobart
+                                    </p>
                                 </Grid>
                             </Grid>
 
@@ -145,6 +151,10 @@ function Covid() {
                                     <div className={classes.chartHeader}>
                                         <Filters autoCompleteList={areasList} label={"Select City"} value={selectedArea} handleChange={handleAreaChange} />
                                     </div>
+                                    <p>
+                                        The graph describes the correlation betweet COVID keyword in tweets and the actual number of cases in a specific city.
+                                        <p></p>
+                                    </p>
                                 </Grid>
                             </Grid>
 
@@ -170,6 +180,16 @@ function Covid() {
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Main Topics
                                      </Typography>
+                                    <p>
+                                        The wordcloud describes the main topics used in COVID related tweets.
+                                        <p></p>
+                                        <strong>Top 3 topics</strong>
+                                        <ul>
+                                            {covidWordCloudData
+                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                .map(el => <li>{el.text}</li>)}
+                                        </ul>
+                                    </p>
                                 </Grid>
                             </Grid>
                         </CardContent>
