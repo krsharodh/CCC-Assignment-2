@@ -1,5 +1,3 @@
-import requests
-from requests.api import get
 import couchdb
 import json
 import csv
@@ -143,8 +141,11 @@ db.save(data_job)
 ### Define Get View Function ###
 
 def get_view(db_name, doc_name, view_name, group_level):
-
-    return requests.get(f"http://{user}:{password}@172.26.133.161:5984/{db_name}/_design/{doc_name}/_view/{view_name}?reduce=true&group_level={group_level}")
+    user = "admin"
+    password = "admin"
+    couchserver = couchdb.Server("http://%s:%s@172.26.133.161:5984/" % (user, password))
+    db = couchserver[db_name]
+    return db.view(name = doc_name + '/' + view_name, group_level = group_level, reduce='true')
 
 
 
@@ -160,7 +161,7 @@ def get_view(db_name, doc_name, view_name, group_level):
 Scenario_one_proportion = []
 
 # Count the number of tweets mentioned covid in each city
-covid_tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 1).content.decode("utf-8"))
+covid_tweet_city = get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 1)
 for row in covid_tweet_city['rows']:
     Scenario_one_temp = {"city":{}, "metioned_covid":{}}
     Scenario_one_temp["city"] = row["key"][0]
@@ -170,7 +171,7 @@ for row in covid_tweet_city['rows']:
 
 # Count the total number of tweets in each city
 
-tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","Tweet_count", 1).content.decode("utf-8"))
+tweet_city = get_view("raw_tweets_from_timeline", "covid_related","Tweet_count", 1)
 for row in tweet_city['rows']:
     print(row["key"], row["value"])
     for i in range(len(Scenario_one_proportion)):
@@ -214,7 +215,7 @@ Scenario_one_sydney = []
 
 # Read the number of tweets mentioned covid group/aggregated by location, year, month, date
 
-covid_tweet_citymonth = json.loads(get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 4).content.decode("utf-8"))
+covid_tweet_citymonth = get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 4)
 
 # Add the number of tweets mentioned covid and date to each city list 
 
@@ -280,7 +281,7 @@ add_case(Scenario_one_sydney, case_NSW)
 Scenario_two_proportion = []
 
 # Count the number of tweets mentioned covid in each city
-vaccine_tweet_city = json.loads(get_view("raw_tweets_from_timeline", "vaccine_related","Vaccine_CityDateTime_count", 1).content.decode("utf-8"))
+vaccine_tweet_city = get_view("raw_tweets_from_timeline", "vaccine_related","Vaccine_CityDateTime_count", 1)
 for row in vaccine_tweet_city['rows']:
     Scenario_two_temp = {"city":{}, "metioned_vaccine":{}}
     Scenario_two_temp["city"] = row["key"][0]
@@ -289,7 +290,7 @@ for row in vaccine_tweet_city['rows']:
 
 # Count the total number of tweets in each city
 
-tweet_city = json.loads(get_view("raw_tweets_from_timeline", "covid_related","Tweet_count", 1).content.decode("utf-8"))
+tweet_city = get_view("raw_tweets_from_timeline", "covid_related","Tweet_count", 1)
 for row in tweet_city['rows']:
     for i in range(len(Scenario_two_proportion)):
         if row["key"] == Scenario_two_proportion[i]["city"]:
@@ -300,6 +301,6 @@ for row in tweet_city['rows']:
 ######################################
 
 # Count the number of tweets mentioned jobkeeper/jobseeker in each city
-Job_CityDateTime = json.loads(get_view("raw_tweets_from_timeline", "job_related","Job_CityDateTime_count", 1).content.decode("utf-8"))
+Job_CityDateTime = get_view("raw_tweets_from_timeline", "job_related","Job_CityDateTime_count", 1)
 for row in Job_CityDateTime['rows']:
     print(row["key"], row["value"])

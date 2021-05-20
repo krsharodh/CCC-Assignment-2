@@ -2,7 +2,6 @@ from flask import Flask, g, request
 from flask_restful import Resource, Api, request
 from flask_cors import CORS
 import couchdb
-import requests
 import json
 import pandas as pd
 import csv
@@ -18,7 +17,11 @@ password = "admin"
 
 
 def get_view(db_name, doc_name, view_name, group_level):
-    return requests.get(f"http://{user}:{password}@172.26.133.161:5984/{db_name}/_design/{doc_name}/_view/{view_name}?reduce=true&group_level={group_level}")
+    user = "admin"
+    password = "admin"
+    couchserver = couchdb.Server("http://%s:%s@172.26.133.161:5984/" % (user, password))
+    db = couchserver[db_name]
+    return db.view(name = doc_name + '/' + view_name, group_level = group_level, reduce='true')
 
 
 class Cities(Resource):
@@ -56,13 +59,12 @@ class CovidGraph1(Resource):
         data = []
 
         # Count the number of tweets mentioned covid in each city
-        covid_tweet_city = json.loads(
-            get_view(
+        covid_tweet_city = get_view(
                 db_name="raw_tweets_from_timeline",
                 doc_name="covid_related",
                 view_name="CityDateTime_count",
                 group_level=1
-            ).content.decode("utf-8"))
+            )
 
         for row in covid_tweet_city['rows']:
             # print(row["key"], row["value"])
@@ -72,13 +74,12 @@ class CovidGraph1(Resource):
             })
 
         # Count the total number of tweets in each city
-        tweet_city = json.loads(
-            get_view(
+        tweet_city = get_view(
                 db_name="raw_tweets_from_timeline",
                 doc_name="covid_related",
                 view_name="Tweet_count",
                 group_level=1
-            ).content.decode("utf-8"))
+            )
 
         for row in tweet_city['rows']:
             # print(row["key"], row["value"])
@@ -139,13 +140,12 @@ class CovidGraph2(Resource):
                                        == self.cityStateMap[city]]
 
         # Read the number of tweets mentioned covid group/aggregated by location, year, month, date
-        covid_tweet_citymonth = json.loads(
-            get_view(
+        covid_tweet_citymonth = get_view(
                 db_name="raw_tweets_from_timeline",
                 doc_name="covid_related",
                 view_name="CityDateTime_count",
                 group_level=4
-            ).content.decode("utf-8"))
+            )
 
         # Add the number of tweets mentioned covid and date to each city list
         for row in covid_tweet_citymonth['rows']:
