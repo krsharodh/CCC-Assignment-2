@@ -4,6 +4,8 @@ from flask_cors import CORS
 import couchdb
 import requests
 import json
+import pandas as pd
+import csv
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -22,9 +24,13 @@ def get_view(db_name, doc_name, view_name, group_level):
 class Cities(Resource):
     def get(self):
         return ([
-            {"label": 'Melbourne', "value": 1},
-            {"label": 'Adelaide', "value": 2},
-            {"label": 'Sydney', "value": 3}
+            {"label": 'Melbourne', "value": "melbourne"},
+            {"label": 'Adelaide', "value": "adelaide"},
+            {"label": 'Sydney', "value": "sydney"},
+            {"label": 'Canberra', "value": "canberra"},
+            {"label": 'Darwin', "value": "darwin"},
+            {"label": 'Hobart', "value": "hobart"},
+            {"label": 'Perth', "value": "perth"}
         ])
 
 
@@ -86,57 +92,70 @@ class CovidGraph1(Resource):
 
 
 class CovidGraph2(Resource):
-    def get(self):
-        print(request.args['city'])
 
+    data = []
+    case_state = None
+
+    cityStateMap = {
+        "adelaide": "SA",
+        "brisbane": "QLD",
+        "canberra": "ACT",
+        "darwin": "NT",
+        "hobart": "TAS",
+        "melbourne": "VIC",
+        "perth": "WA",
+        "sydney": "NSW",
+    }
+
+    def add_value(self, key, value):
+        Scenario_two_temp = {"time": {}, "tweets": {}}
+        Datetime = [key[1], key[2] + 1, key[3] + 1]
+        Scenario_two_temp["time"] = "-".join(str(e).zfill(2) for e in Datetime)
+        Scenario_two_temp["tweets"] = value
+        self.data.append(Scenario_two_temp)
+
+    #  Function for adding the confirmed cases in each state in particular time to the city list
+    def add_case(self):
+        for i in range(len(self.data)):
+            if self.data[i]["time"] in set(self.case_state.date):
+                index = self.case_state[self.case_state['date'] ==
+                                        self.data[i]["time"]].index.values[0]
+                casesCount = int(self.case_state.at[index, 'confirmed'])
+                casesCount = 0 if casesCount < 0 else casesCount
+                self.data[i]["cases"] = casesCount
+
+    def get(self):
+        city = request.args['city']
+
+        with open('COVID_AU_state_daily_change.csv', newline='') as f:
+            reader = csv.reader(f)
+            case = pd.DataFrame(reader)
+            new_header = case.iloc[0]
+            case = case[1:]
+            case.columns = new_header
+
+            # Create a series of lists to store the confirmed cases information for each state
+            self.case_state = case.loc[case['state_abbrev']
+                                       == self.cityStateMap[city]]
+
+        # Read the number of tweets mentioned covid group/aggregated by location, year, month, date
         covid_tweet_citymonth = json.loads(
             get_view(
                 db_name="raw_tweets_from_timeline",
                 doc_name="covid_related",
                 view_name="CityDateTime_count",
-                group_level=3
+                group_level=4
             ).content.decode("utf-8"))
 
+        # Add the number of tweets mentioned covid and date to each city list
         for row in covid_tweet_citymonth['rows']:
-            print(row["key"], row["value"])
+            if city == row["key"][0]:
+                self.add_value(row["key"], row["value"])
 
-        return ([
-            {
-                "name": "1/01/2021",
-                "tweets": 4000,
-                "cases": 2400,
-            },
-            {
-                "name": "2/01/2021",
-                "tweets": 3000,
-                "cases": 1398,
-            },
-            {
-                "name": "3/01/2021",
-                "tweets": 2000,
-                "cases": 9800,
-            },
-            {
-                "name": "4/01/2021",
-                "tweets": 2780,
-                "cases": 3908,
-            },
-            {
-                "name": "5/01/2021",
-                "tweets": 1890,
-                "cases": 4800,
-            },
-            {
-                "name": "6/01/2021",
-                "tweets": 2390,
-                "cases": 3800,
-            },
-            {
-                "name": "7/01/2021",
-                "tweets": 3490,
-                "cases": 4300,
-            }
-        ])
+        # Add the confirmed cases info to each city list
+        self.add_case()
+
+        return self.data
 
 
 class CovidWordCloudData(Resource):

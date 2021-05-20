@@ -51,8 +51,8 @@ function Covid() {
         const response = await fetch(`${baseURL}/getCities`);
         const responseJson = await response.json();
         setAreasList(responseJson);
-        setSelectedArea(responseJson[0]["value"])
-        getCovidGraph2Data();
+        setSelectedArea(responseJson[0]["value"]);
+        getCovidGraph2Data(responseJson[0]["value"]);
     }
 
     const getCovidGraph1Data = async () => {
@@ -68,9 +68,9 @@ function Covid() {
         setCovidGraph1Data(responseJson);
     }
 
-    const getCovidGraph2Data = async () => {
+    const getCovidGraph2Data = async (city) => {
         const url = new URL(`${baseURL}/getCovidGraph2Data`)
-        const params = { city: selectedArea }
+        const params = { city: city }
         Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
         const response = await fetch(url);
         const responseJson = await response.json();
@@ -83,16 +83,10 @@ function Covid() {
         setCovidWordCloudData(responseJson);
     }
 
-    const getSample = async () => {
-        const response = await fetch(baseURL + "getSample");
-        const responseJson = await response.json();
-        console.log(responseJson);
-    }
-
     const handleAreaChange = (event) => {
         setSelectedArea(event.target.value);
+        getCovidGraph2Data(event.target.value);
     };
-
 
     return (
         <div className={classes.container}>

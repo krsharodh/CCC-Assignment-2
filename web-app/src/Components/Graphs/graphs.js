@@ -63,11 +63,11 @@ const CovidGraph2 = ({ data }) => {
             <LineChart data={data} margin={{ left: 10, right: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis hide dataKey="name" />
-                <YAxis />
+                <YAxis type="number" domain={[0, 'auto']} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="cases" stroke="#8884d8" />
-                <Line type="monotone" dataKey="tweets" stroke="#82ca9d" />
+                <Line type="monotone" dataKey="cases" stroke="#8884d8" dot={false} />
+                <Line type="monotone" dataKey="tweets" stroke="#82ca9d" dot={false} />
             </LineChart>
         </ResponsiveContainer>
     );
