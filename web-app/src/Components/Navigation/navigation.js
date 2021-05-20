@@ -5,19 +5,26 @@ import React from 'react';
 
 // Material UI imports
 import { makeStyles } from '@material-ui/core/styles';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+
+const drawerWidth = 150;
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        flexGrow: 1,
+        display: 'flex',
     },
-    title: {
-        flexGrow: 1,
-        marginLeft: "1rem"
+    drawer: {
+        width: drawerWidth,
+        flexShrink: 0,
     },
+    drawerPaper: {
+        width: drawerWidth,
+    },
+    toolbar: theme.mixins.toolbar
 }));
 
 function Navigation() {
@@ -26,25 +33,26 @@ function Navigation() {
 
     const classes = useStyles();
 
-    const [tabIndex, setTabIndex] = React.useState("/covid");
-
-    const handleTabIndexChange = (event, newTabIndex) => {
-        setTabIndex(newTabIndex);
-        history.push(newTabIndex)
-    };
-
     return (
         <div className={classes.root}>
-            <AppBar position="static">
-                {/* <Typography variant="h6" className={classes.title}>
-                    Cluster and Cloud Computing Assignment 2
-                </Typography> */}
-                <Tabs value={tabIndex} onChange={handleTabIndexChange} aria-label="simple tabs example">
-                    <Tab label="Covid" value="/covid" />
-                    <Tab label="Vaccine" value="/vaccine" />
-                    <Tab label="Job Keeper" value="/job-keeper" />
-                </Tabs>
-            </AppBar>
+            <Drawer
+                className={classes.drawer}
+                variant="permanent"
+                classes={{
+                    paper: classes.drawerPaper,
+                }}
+                anchor="left"
+            >
+                <div className={classes.toolbar} />
+                <Divider />
+                <List>
+                    {[{ text: 'Covid', value: '/covid' }, { text: 'Vaccine', value: '/vaccine' }, { text: 'Keeper', value: '/job-keeper' }].map((el, index) => (
+                        <ListItem button key={el.text} onClick={() => history.push(el.value)}>
+                            <ListItemText primary={el.text} />
+                        </ListItem>
+                    ))}
+                </List>
+            </Drawer>
         </div>
     );
 }
