@@ -18,7 +18,7 @@ const CovidGraph1 = ({ data }) => {
 
     const renderCustomizedLabel = (props) => {
         const { content, ...rest } = props;
-        return <Label {...rest} fontSize="12" fill="#FFFFFF" fontWeight="Bold" value={`${rest.value} %`} />;
+        return <Label {...rest} fontSize="12" fill="white" fontWeight="Bold" value={`${rest.value} %`} />;
     };
 
     return (
@@ -36,7 +36,7 @@ const CovidGraph1 = ({ data }) => {
                     fontSize="12"
                 />
                 <Tooltip />
-                <Bar dataKey="percentage" fill="#dd7876" stackId="a">
+                <Bar dataKey="percentage" fill="#ff6361" stackId="a">
                     <LabelList
                         dataKey="percentage"
                         position="center"

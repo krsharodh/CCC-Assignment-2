@@ -14,14 +14,18 @@ import Typography from '@material-ui/core/Typography';
 
 
 const useStyles = makeStyles({
-    // Styles for component
     container: {
         width: "95%",
         margin: "0 auto",
-        marginTop: 10
+        marginTop: 10,
     },
     chartHeader: {
-        marginBottom: 10
+        marginBottom: 10,
+        display: "inline-block"
+    },
+    descContainer: {
+        // border: "0.5px solid black",
+        // height: 250
     }
 });
 
@@ -39,7 +43,6 @@ function Covid() {
         getCities();
         getCovidGraph1Data();
         getCovidWordCloudData();
-        // getSample();
     }, [])
 
     let baseURL = "http://127.0.0.1:5000"
@@ -63,8 +66,6 @@ function Covid() {
             ...el,
             percentage: ((el.metioned_covid / el.total_tweets) * 100).toFixed(2)
         }))
-
-
         setCovidGraph1Data(responseJson);
     }
 
@@ -98,51 +99,79 @@ function Covid() {
                 alignItems="center"
                 spacing={2}
             >
-                <Grid item xs={6} >
+
+                {/* Graph 1 */}
+                <Grid item xs={12} >
                     <Card>
                         <CardContent>
-                            <Typography variant="h6" className={classes.chartHeader}>
-                                Proportion of tweets mentioning COVID
-                            </Typography>
-                            <CovidGraph1 data={covidGraph1Data} />
-                        </CardContent>
-                    </Card>
-                </Grid>
-
-                <Grid item xs={6} >
-                    <Card >
-                        <CardContent>
-                            <Typography variant="h6" className={classes.chartHeader}>
-                                <Grid
-                                    container
-                                    direction="row"
-                                    justify="center"
-                                    alignItems="center"
-                                >
-                                    <Grid item xs={7}>
-                                        COVID tweets vs COVID cases -
-                                    </Grid>
-                                    <Grid item xs={5}>
-                                        <Filters autoCompleteList={areasList} label={"Select City"} value={selectedArea} handleChange={handleAreaChange} />
-                                    </Grid>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={7}>
+                                    <CovidGraph1 data={covidGraph1Data} />
                                 </Grid>
-                            </Typography>
+                                <Grid item xs={5} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Proportion of tweets mentioning COVID
+                                    </Typography>
+                                </Grid>
+                            </Grid>
 
-                            <CovidGraph2 data={covidGraph2Data} />
                         </CardContent>
                     </Card>
                 </Grid>
 
+
+                {/* Graph 2 */}
                 <Grid item xs={12} >
                     <Card >
                         <CardContent>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={7}>
+                                    <CovidGraph2 data={covidGraph2Data} />
+                                </Grid>
+                                <Grid item xs={5} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Proportion of tweets mentioning COVID
+                                    </Typography>
+                                    <div className={classes.chartHeader}>
+                                        <Filters autoCompleteList={areasList} label={"Select City"} value={selectedArea} handleChange={handleAreaChange} />
+                                    </div>
+                                </Grid>
+                            </Grid>
 
-                            <Typography variant="h6" className={classes.chartHeader}>
-                                Main Topics
-                            </Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
 
-                            <Wordcloud data={covidWordCloudData} />
+                {/* Graph 3 */}
+                <Grid item xs={12} >
+                    <Card >
+                        <CardContent>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={7}>
+                                    <Wordcloud data={covidWordCloudData} />
 
+                                </Grid>
+                                <Grid item xs={5} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Main Topics
+                                     </Typography>
+                                </Grid>
+                            </Grid>
                         </CardContent>
                     </Card>
                 </Grid>
