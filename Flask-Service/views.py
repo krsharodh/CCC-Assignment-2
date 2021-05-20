@@ -35,8 +35,8 @@ map_fun_CityDateTime = '''function (doc) {
     text.indexOf('covid19') != -1)
         var date = new Date(doc.created_at); 
         var year = date.getFullYear();
-        var month = date.getMonth();
-        var day = date.getDay();
+        var month = date.getMonth() + 1;
+        var day = date.getDay() + 1;
         var hour = date.getHours();
         var location = doc.uniform_location
         emit([location, year, month, day, hour], 1)
@@ -77,8 +77,8 @@ map_fun_Vaccine_CityDateTime = '''function (doc) {
     text.indexOf('astrazeneca') != -1)
         var date = new Date(doc.created_at); 
         var year = date.getFullYear();
-        var month = date.getMonth();
-        var day = date.getDay();
+        var month = date.getMonth() + 1;
+        var day = date.getDay() + 1;
         var hour = date.getHours();
         var location = doc.uniform_location
         emit([location, year, month, day, hour], 1)
@@ -114,8 +114,8 @@ map_fun_job_CityDateTime = '''function (doc) {
     text.indexOf('job keeper') != -1 || text.indexOf('job seeker') != -1)
         var date = new Date(doc.created_at); 
         var year = date.getFullYear();
-        var month = date.getMonth();
-        var day = date.getDay();
+        var month = date.getMonth() + 1;
+        var day = date.getDay() + 1;
         var hour = date.getHours();
         var location = doc.uniform_location
         emit([location, year, month, day, hour], 1)
@@ -188,7 +188,7 @@ for row in tweet_city['rows']:
 
 def add_value(scenario_list, key, value):
     Scenario_two_temp = {"time":{}, "tweets": {}}
-    Datetime = [key[1], key[2] + 1, key[3] + 1]
+    Datetime = [key[1], key[2], key[3]]
     Scenario_two_temp["time"] = "-".join(str(e).zfill(2) for e in Datetime)
 
     Scenario_two_temp["tweets"] = value

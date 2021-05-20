@@ -110,7 +110,7 @@ class CovidGraph2(Resource):
 
     def add_value(self, key, value):
         Scenario_two_temp = {"time": {}, "tweets": {}}
-        Datetime = [key[1], key[2] + 1, key[3] + 1]
+        Datetime = [key[1], key[2], key[3]]
         Scenario_two_temp["time"] = "-".join(str(e).zfill(2) for e in Datetime)
         Scenario_two_temp["tweets"] = value
         self.data.append(Scenario_two_temp)
