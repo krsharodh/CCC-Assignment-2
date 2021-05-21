@@ -131,7 +131,7 @@ class CovidGraph2(Resource):
             "StateConfirmedCases_sum", 
             4, 
             'true'
-            )
+        )
         
         for row in covid_cases_statedate:
             Datetime = [row["key"][1], row["key"][2], row["key"][3]]
@@ -146,7 +146,7 @@ class CovidGraph2(Resource):
             "CityDateTime_count", 
             4, 
             'true'
-            )
+        )
 
         # Add the number of tweets mentioned covid and date to each city list
         for row in covid_tweet_citydate:
@@ -174,19 +174,19 @@ class JobGraph(Resource):
             "Job_CityDateTime_count",
             1, 
             'true'
-            )
+        )
         
         for row in job_tweet_city:
             data.append({
                 "city": row["key"][0],
                 "metioned_jobkeeper": row["value"]
-            })
+        })
 
         income_info = get_view(
             "aurin_income", 
             "income_doc", 
             "income"
-            )
+        )
 
         for row in income_info:
             for i in range(len(data)):
