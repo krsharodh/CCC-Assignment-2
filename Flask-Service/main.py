@@ -3,8 +3,7 @@ from flask_restful import Resource, Api, request
 from flask_cors import CORS
 import couchdb
 import json
-import pandas as pd
-import csv
+
 
 app = Flask(__name__)
 cors = CORS(app)
