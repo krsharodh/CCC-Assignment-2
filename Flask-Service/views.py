@@ -1,16 +1,13 @@
 import couchdb
 import json
-import csv
-import pandas as pd
 
 user = "admin"
 password = "admin"
 couchserver = couchdb.Server("http://%s:%s@172.26.133.161:5984/" % (user, password))
 
-db = couchserver["raw_tweets_from_timeline"]
 
 ######################################
-#### General case ####
+####         General case         ####
 ######################################
 
 # Count the total number of tweets in each city
@@ -22,9 +19,11 @@ map_fun_TweetCity = '''function (doc) {
 
 reduce_fun_TweetCity = "_count"
 
-######################################
-#### Scenarion 1: covid related ####
-######################################
+db = couchserver["raw_tweets_from_timeline"]
+
+#######################################
+####   Scenario 1: covid related   ####
+#######################################
 
 # Count the number of tweets mentioned covid in each city in each year/month/day/hour
 
@@ -110,8 +109,10 @@ db.save(data_vaccine)
 
 map_fun_job_CityDateTime = '''function (doc) {
     var text = doc.full_text.toLowerCase()
-    if (text.indexOf('jobkeeper') != -1 || text.indexOf('jobseeker') != -1 ||
-    text.indexOf('job keeper') != -1 || text.indexOf('job seeker') != -1)
+    if (text.indexOf('jobkeeper') != -1 || 
+    text.indexOf('jobseeker') != -1 ||
+    text.indexOf('job keeper') != -1 || 
+    text.indexOf('job seeker') != -1)
         var date = new Date(doc.created_at); 
         var year = date.getFullYear();
         var month = date.getMonth() + 1;
@@ -138,16 +139,82 @@ data_job = {
 
 db.save(data_job)
 
-### Define Get View Function ###
+######################################
+####          AURIN Data          ####
+######################################
 
-def get_view(db_name, doc_name, view_name, group_level):
+map_fun_income = '''function (doc) {
+        emit(doc.properties.lga_code_2016, doc.properties.median_tot_prsnl_inc_weekly)
+    }
+'''
+
+data_income = {
+        "_id": f"_design/income_doc",
+        "views": {
+            "income": {
+                "map": map_fun_income
+            }
+        },
+        "language": "javascript",
+        "options": {"partitioned": False}
+}
+
+AURIN_db = couchserver["aurin_income"]
+AURIN_db.save(data_income)
+
+###########################################
+#### Extra Data: Covid Confirmed Cases ####
+###########################################
+
+# sum the number of covid confirmed cases for each city
+
+map_fun_CovidCases = '''function (doc) { 
+        var date = new Date(doc.date); 
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var day = date.getDay() + 1;
+        emit([doc.state_abbrev, year, month, day], parseInt(doc.confirmed));
+    }
+'''
+
+reduce_fun_CovidCases = "_sum"
+
+# Save Covid_cases related views to DB
+
+Covid_db = couchserver["covid_cases"]
+
+Cases_data = {
+        "_id": f"_design/state_cases",
+        "views": {
+            "StateConfirmedCases_sum": {
+                "map": map_fun_CovidCases,
+                "reduce": reduce_fun_CovidCases
+            }
+        },
+        "language": "javascript",
+        "options": {"partitioned": False}
+}
+
+Covid_db.save(Cases_data)
+
+
+
+################################
+### Define Get View Function ###
+################################
+
+def get_view(db_name, doc_name, view_name, group_level = 0, reduce = 'false'):
     user = "admin"
     password = "admin"
     couchserver = couchdb.Server("http://%s:%s@172.26.133.161:5984/" % (user, password))
     db = couchserver[db_name]
-    return db.view(name = doc_name + '/' + view_name, group_level = group_level, reduce='true')
+    return db.view(name = doc_name + '/' + view_name, group_level = group_level, reduce = reduce)
 
 
+
+###############################################
+####             Data Analysis             ####
+###############################################
 
 ######################################
 ####  Scenarion 1: covid related  ####
@@ -161,8 +228,16 @@ def get_view(db_name, doc_name, view_name, group_level):
 Scenario_one_proportion = []
 
 # Count the number of tweets mentioned covid in each city
-covid_tweet_city = get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 1)
-for row in covid_tweet_city['rows']:
+
+covid_tweet_city = get_view(
+    "raw_tweets_from_timeline", 
+    "covid_related",
+    "CityDateTime_count",
+    1, 
+    'true'
+    )
+
+for row in covid_tweet_city:
     Scenario_one_temp = {"city":{}, "metioned_covid":{}}
     Scenario_one_temp["city"] = row["key"][0]
     Scenario_one_temp["metioned_covid"] = row["value"]
@@ -171,8 +246,15 @@ for row in covid_tweet_city['rows']:
 
 # Count the total number of tweets in each city
 
-tweet_city = get_view("raw_tweets_from_timeline", "covid_related","Tweet_count", 1)
-for row in tweet_city['rows']:
+tweet_city = get_view(
+    "raw_tweets_from_timeline", 
+    "covid_related",
+    "Tweet_count", 
+    1, 
+    'true'
+    )
+
+for row in tweet_city:
     print(row["key"], row["value"])
     for i in range(len(Scenario_one_proportion)):
         if row["key"] == Scenario_one_proportion[i]["city"]:
@@ -184,89 +266,113 @@ for row in tweet_city['rows']:
 # Create a list for each city and each element/dictionary in the list contains three variables
 # e.g. city_list = [{"time":{}, "tweets": {}, "cases": {}}]
 
+Scenario_two_adelaide = []
+Scenario_two_brisbane = []
+Scenario_two_canberra = []
+Scenario_two_darwin = []
+Scenario_two_hobart = []
+Scenario_two_melbourne = []
+Scenario_two_perth = []
+Scenario_two_sydney = []
+
+# Read the number of tweets mentioned covid group/aggregated by location, year, month, date
+
+covid_tweet_citydate = get_view(
+    "raw_tweets_from_timeline", 
+    "covid_related",
+    "CityDateTime_count", 
+    4, 
+    'true'
+    )
+
 # Function for adding the number of tweets mentioned covid in particular city and time to the city list
 
 def add_value(scenario_list, key, value):
     Scenario_two_temp = {"time":{}, "tweets": {}}
     Datetime = [key[1], key[2], key[3]]
     Scenario_two_temp["time"] = "-".join(str(e).zfill(2) for e in Datetime)
-
     Scenario_two_temp["tweets"] = value
     return scenario_list.append(Scenario_two_temp)
 
-#  Function for adding the confirmed cases in each state in particular time to the city list
+# Add the number of tweets mentioned covid and date to each city list 
+
+for row in covid_tweet_citydate:
+    if "adelaide" == row["key"][0]:
+        add_value(Scenario_two_adelaide, row["key"], row["value"])
+    elif "brisbane" == row["key"][0]:
+        add_value(Scenario_two_brisbane, row["key"], row["value"])
+    elif "canberra" == row["key"][0]:
+        add_value(Scenario_two_canberra, row["key"], row["value"])
+    elif "darwin" == row["key"][0]:
+        add_value(Scenario_two_darwin, row["key"], row["value"])
+    elif "hobart" == row["key"][0]:
+        add_value(Scenario_two_hobart, row["key"], row["value"])
+    elif "melbourne" == row["key"][0]:
+        add_value(Scenario_two_melbourne, row["key"], row["value"])
+    elif "perth" == row["key"][0]:
+        add_value(Scenario_two_perth, row["key"], row["value"])
+    elif "sydney" == row["key"][0]:
+        add_value(Scenario_two_sydney, row["key"], row["value"])
+
+# Create a dictionary for each state to store the number of confirmed cases for each state each date
+
+case_ACT = {}
+case_NSW = {}
+case_NT = {}
+case_QLD = {}
+case_SA = {}
+case_TAS = {}
+case_VIC = {}
+case_WA = {}
+
+# Read the number of confirmed cases in each state each date and store in the dictionary
+
+covid_cases_statedate = get_view(
+    "covid_cases", 
+    "state_cases", 
+    "StateConfirmedCases_sum", 
+    4, 
+    'true'
+    )
+
+for row in covid_cases_statedate:
+    Datetime = [row["key"][1], row["key"][2], row["key"][3]]
+    Date_time = "-".join(str(e).zfill(2) for e in Datetime)
+    if(row["key"][0] == 'ACT'):
+        case_ACT[Date_time] = row["value"]
+    elif (row["key"][0] == 'NSW'):
+        case_NSW[Date_time] = row["value"]
+    elif (row["key"][0] == 'NT'):
+        case_NT[Date_time] = row["value"]
+    elif (row["key"][0] == 'QLD'):
+        case_QLD[Date_time] = row["value"]
+    elif (row["key"][0] == 'SA'):
+        case_SA[Date_time] = row["value"]
+    elif (row["key"][0] == 'TAS'):
+        case_TAS[Date_time] = row["value"]
+    elif (row["key"][0] == 'VIC'):
+        case_VIC[Date_time] = row["value"]
+    elif (row["key"][0] == 'WA'):
+        case_WA[Date_time] = row["value"]
+
+# Function for adding the confirmed cases in each state in particular time to the city list
 
 def add_case(scenario_list, case_list):
     for i in range(len(scenario_list)):
-        if scenario_list[i]["time"] in set(case_ACT.date):
-            index = case_list[case_list['date'] == scenario_list[i]["time"]].index.values[0]
-            scenario_list[i]["cases"] = case_list.at[index,'confirmed']
+        if scenario_list[i]["time"] in set(case_list.keys()):
+            scenario_list[i]["cases"] = case_list[scenario_list[i]["time"]]
 
-# Create a series of empty list for each city
+# Add the number of confirmed cases in each state each date to the city list
 
-Scenario_one_adelaide = []
-Scenario_one_brisbane = []
-Scenario_one_canberra = []
-Scenario_one_darwin = []
-Scenario_one_hobart = []
-Scenario_one_melbourne = []
-Scenario_one_perth = []
-Scenario_one_sydney = []
+add_case(Scenario_two_adelaide, case_SA)
+add_case(Scenario_two_brisbane, case_QLD)
+add_case(Scenario_two_canberra, case_ACT)
+add_case(Scenario_two_darwin, case_NT)
+add_case(Scenario_two_hobart, case_TAS)
+add_case(Scenario_two_melbourne, case_VIC)
+add_case(Scenario_two_perth, case_WA)
+add_case(Scenario_two_sydney, case_NSW)
 
-# Read the number of tweets mentioned covid group/aggregated by location, year, month, date
-
-covid_tweet_citymonth = get_view("raw_tweets_from_timeline", "covid_related","CityDateTime_count", 4)
-
-# Add the number of tweets mentioned covid and date to each city list 
-
-for row in covid_tweet_citymonth['rows']:
-    if "adelaide" == row["key"][0]:
-        add_value(Scenario_one_adelaide, row["key"], row["value"])
-    elif "brisbane" == row["key"][0]:
-        add_value(Scenario_one_brisbane, row["key"], row["value"])
-    elif "canberra" == row["key"][0]:
-        add_value(Scenario_one_canberra, row["key"], row["value"])
-    elif "darwin" == row["key"][0]:
-        add_value(Scenario_one_darwin, row["key"], row["value"])
-    elif "hobart" == row["key"][0]:
-        add_value(Scenario_one_hobart, row["key"], row["value"])
-    elif "melbourne" == row["key"][0]:
-        add_value(Scenario_one_melbourne, row["key"], row["value"])
-    elif "perth" == row["key"][0]:
-        add_value(Scenario_one_perth, row["key"], row["value"])
-    elif "sydney" == row["key"][0]:
-        add_value(Scenario_one_sydney, row["key"], row["value"])
-
-# Read the covid cases dataset
-
-with open('COVID_AU_state_daily_change.csv', newline='') as f:
-    reader = csv.reader(f) 
-    case = pd.DataFrame(reader) 
-    new_header = case.iloc[0] 
-    case = case[1:]
-    case.columns = new_header 
-
-    # Create a series of lists to store the confirmed cases information for each state
-
-    case_ACT = case.loc[case['state_abbrev'] == 'ACT']
-    case_NSW = case.loc[case['state_abbrev'] == 'NSW']
-    case_NT = case.loc[case['state_abbrev'] == 'NT']
-    case_QLD = case.loc[case['state_abbrev'] == 'QLD']
-    case_SA = case.loc[case['state_abbrev'] == 'SA']
-    case_TAS = case.loc[case['state_abbrev'] == 'TAS']
-    case_VIC = case.loc[case['state_abbrev'] == 'VIC']
-    case_WA = case.loc[case['state_abbrev'] == 'WA']
-
-# Add the confirmed cases info to each city list
-
-add_case(Scenario_one_adelaide, case_SA)
-add_case(Scenario_one_brisbane, case_QLD)
-add_case(Scenario_one_canberra, case_ACT)
-add_case(Scenario_one_darwin, case_NT)
-add_case(Scenario_one_hobart, case_TAS)
-add_case(Scenario_one_melbourne, case_VIC)
-add_case(Scenario_one_perth, case_WA)
-add_case(Scenario_one_sydney, case_NSW)
 
 
 ######################################
@@ -275,14 +381,22 @@ add_case(Scenario_one_sydney, case_NSW)
 
 ### 1. Proportion of vaccine tweets ###
 
-# Create a list and each element in the list contained info about city name, number of tweets mentioned covid vaccine, total tweets
+# Create a list and each element in the list contained info about city name, number of tweets mentioned vaccine, total tweets
 # e.g. Scenario_two_proportion = [{"city":{}, "metioned_vaccine":{}, "total_tweets": {}}]
 
 Scenario_two_proportion = []
 
-# Count the number of tweets mentioned covid in each city
-vaccine_tweet_city = get_view("raw_tweets_from_timeline", "vaccine_related","Vaccine_CityDateTime_count", 1)
-for row in vaccine_tweet_city['rows']:
+# Count the number of tweets mentioned vaccine in each city
+
+vaccine_tweet_city = get_view(
+    "raw_tweets_from_timeline", 
+    "vaccine_related",
+    "Vaccine_CityDateTime_count", 
+    1, 
+    'true'
+    )
+
+for row in vaccine_tweet_city:
     Scenario_two_temp = {"city":{}, "metioned_vaccine":{}}
     Scenario_two_temp["city"] = row["key"][0]
     Scenario_two_temp["metioned_vaccine"] = row["value"]
@@ -290,17 +404,66 @@ for row in vaccine_tweet_city['rows']:
 
 # Count the total number of tweets in each city
 
-tweet_city = get_view("raw_tweets_from_timeline", "covid_related","Tweet_count", 1)
-for row in tweet_city['rows']:
+tweet_city = get_view(
+    "raw_tweets_from_timeline", 
+    "covid_related",
+    "Tweet_count", 
+    1, 
+    'true'
+    )
+
+for row in tweet_city:
     for i in range(len(Scenario_two_proportion)):
         if row["key"] == Scenario_two_proportion[i]["city"]:
             Scenario_two_proportion[i]["total_tweets"] = row["value"]
+
+
 
 ######################################
 ####   Scenarion 3: job related   ####
 ######################################
 
+# Create a list and each element in the list contained info about city name, number of tweets mentioned job^ and income
+# e.g. Scenario_three = [{"city":{}, "metioned_jobkeeper":{}, "median_weekly_personal_income": {}}]
+Scenario_three = []
+
 # Count the number of tweets mentioned jobkeeper/jobseeker in each city
-Job_CityDateTime = get_view("raw_tweets_from_timeline", "job_related","Job_CityDateTime_count", 1)
-for row in Job_CityDateTime['rows']:
-    print(row["key"], row["value"])
+
+job_tweet_city = get_view(
+    "raw_tweets_from_timeline", 
+    "job_related",
+    "Job_CityDateTime_count", 
+    1, 
+    'true'
+    )
+
+for row in job_tweet_city:
+    Scenario_three_temp = {"city":{}, "metioned_jobkeeper":{}}
+    Scenario_three_temp["city"] = row["key"][0]
+    Scenario_three_temp["metioned_jobkeeper"] = row["value"]
+    Scenario_three.append(Scenario_three_temp)
+
+# add median weekly personal income information to each city
+
+income_info = get_view(
+    "aurin_income", 
+    "income_doc", 
+    "income"
+    )
+
+for row in income_info:
+    for i in range(len(Scenario_three)):
+        if(row['key'] == '40070' and Scenario_three[i]["city"] == 'adelaide'):
+            Scenario_three[i]['median_weekly_personal_income'] = row['value']
+        elif(row['key'] == '31000' and Scenario_three[i]["city"] == 'brisbane'):
+            Scenario_three[i]['median_weekly_personal_income'] = row['value']
+        elif(row['key'] == '71000' and Scenario_three[i]["city"] == 'darwin'):
+            Scenario_three[i]['median_weekly_personal_income'] = row['value']
+        elif(row['key'] == '62810' and Scenario_three[i]["city"] == 'hobart'):
+            Scenario_three[i]['median_weekly_personal_income'] = row['value']
+        elif(row['key'] == '24600' and Scenario_three[i]["city"] == 'melbourne'):
+            Scenario_three[i]['median_weekly_personal_income'] = row['value']
+        elif(row['key'] == '57080' and Scenario_three[i]["city"] == 'perth'):
+            Scenario_three[i]['median_weekly_personal_income'] = row['value']
+        elif(row['key'] == '17200' and Scenario_three[i]["city"] == 'sydney'):
+            Scenario_three[i]['median_weekly_personal_income'] = row['value']
