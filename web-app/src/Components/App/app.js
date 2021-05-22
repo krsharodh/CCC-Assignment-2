@@ -11,9 +11,13 @@ import NotFound from "../NotFound";
 import React from 'react';
 import Navigation from "../Navigation/navigation";
 import Header from "../Header/header"
+import Cover from "../Cover/cover"
 
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+
+import { useState, useEffect } from 'react';
+
 
 // Material UI imports
 
@@ -46,37 +50,48 @@ function App() {
 
   const classes = useStyles();
 
+  const [showGetStarted, setShowGetStarted] = useState(true);
+
+
+  const handleGetStarted = () => {
+    setShowGetStarted(false);
+  }
+
   return (
-    <Router >
-      <div className={classes.root}>
-        <CssBaseline />
-        <Header />
-        <Navigation />
+    showGetStarted
+      ? <Cover handleGetStarted={handleGetStarted} />
+      :
+      <Router >
+        <div className={classes.root}>
+          <CssBaseline />
+          <Header />
+          <Navigation />
 
-        <main className={classes.content}>
-          <div className={classes.toolbar} />
-          <div className="container">
-            <Switch>
-              <Route exact path="/covid">
-                <Covid />
-              </Route>
-              <Route exact path="/vaccine">
-                <Vaccine />
-              </Route>
-              <Route exact path="/job-keeper">
-                <JobKeeper />
-              </Route>
-              <Route path="*">
-                <NotFound />
-              </Route>
-            </Switch>
-          </div>
-        </main>
-      </div>
+          <main className={classes.content}>
+            <div className={classes.toolbar} />
+            <div className="container">
+              <Switch>
+                <Route exact path="/covid">
+                  <Covid />
+                </Route>
+                <Route exact path="/vaccine">
+                  <Vaccine />
+                </Route>
+                <Route exact path="/job-keeper">
+                  <JobKeeper />
+                </Route>
+                <Route path="*">
+                  <NotFound />
+                </Route>
+              </Switch>
+            </div>
+          </main>
+        </div>
 
 
-      <Redirect from="/" to="covid" />
-    </Router>
+        <Redirect from="/" to="covid" />
+      </Router>
+
   );
 }
 
