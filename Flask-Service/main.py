@@ -202,7 +202,7 @@ class VaccineGraph1(Resource):
         return data
 
 
-class JobGraph(Resource):
+class JobGraph1(Resource):
     def get(self):
         data = []
 
@@ -219,6 +219,19 @@ class JobGraph(Resource):
                 "city": row["key"][0],
                 "metioned_jobkeeper": row["value"]
             })
+        
+        tweet_city = get_view(
+            "raw_tweets_from_timeline", 
+            "covid_related",
+            "Tweet_count", 
+            1, 
+            'true'
+        )
+
+        for row in tweet_city:
+            for i in range(len(data)):
+                if row["key"] == data[i]["city"]:
+                    data[i]["total_tweets"] = row["value"]
 
         income_info = get_view(
             "aurin_income",
@@ -245,13 +258,126 @@ class JobGraph(Resource):
 
         return data
 
+class JobGraph2(Resource):
+    def get(self):
+        data = []
+
+        job_tweet_city = get_view(
+            "raw_tweets_from_timeline", 
+            "job_related",
+            "Job_CityDateTime_count",
+            1, 
+            'true'
+        )
+        
+        for row in job_tweet_city:
+            if row["key"][0] != "canberra":
+                data.append({
+                    "city": row["key"][0],
+                    "metioned_jobkeeper": row["value"]
+            })
+
+        tweet_city = get_view(
+            "raw_tweets_from_timeline", 
+            "covid_related",
+            "Tweet_count", 
+            1, 
+            'true'
+        )
+
+        for row in tweet_city:
+            for i in range(len(data)):
+                if row["key"] == data[i]["city"]:
+                    data[i]["total_tweets"] = row["value"]
+        
+        jobseeker_payment_info = get_view(
+            "aurin_quarterly_payment", 
+            "JobseekerPayment_doc", 
+            "quarterly_payment"
+        )
+
+        for row in jobseeker_payment_info:
+            for i in range(len(data)):
+                if(row['key'] == '40070' and data[i]["city"] == 'adelaide'):
+                    data[i]['jobseeker_payment'] = row['value']
+                elif(row['key'] == '31000' and data[i]["city"] == 'brisbane'):
+                    data[i]['jobseeker_payment'] = row['value']
+                elif(row['key'] == '71000' and data[i]["city"] == 'darwin'):
+                    data[i]['jobseeker_payment'] = row['value']
+                elif(row['key'] == '62810' and data[i]["city"] == 'hobart'):
+                    data[i]['jobseeker_payment'] = row['value']
+                elif(row['key'] == '24600' and data[i]["city"] == 'melbourne'):
+                    data[i]['jobseeker_payment'] = row['value']
+                elif(row['key'] == '57080' and data[i]["city"] == 'perth'):
+                    data[i]['jobseeker_payment'] = row['value']
+                elif(row['key'] == '17200' and data[i]["city"] == 'sydney'):
+                    data[i]['jobseeker_payment'] = row['value']
+
+        return data
+
+class JobGraph3(Resource):
+    def get(self):
+        data = []
+
+        job_tweet_city = get_view(
+            "raw_tweets_from_timeline", 
+            "job_related",
+            "Job_CityDateTime_count",
+            1, 
+            'true'
+        )
+        
+        for row in job_tweet_city:
+            if row["key"][0] != "canberra":
+                data.append({
+                    "city": row["key"][0],
+                    "metioned_jobkeeper": row["value"]
+            })
+
+        tweet_city = get_view(
+            "raw_tweets_from_timeline", 
+            "covid_related",
+            "Tweet_count", 
+            1, 
+            'true'
+        )
+
+        for row in tweet_city:
+            for i in range(len(data)):
+                if row["key"] == data[i]["city"]:
+                    data[i]["total_tweets"] = row["value"]
+
+        aged_info = get_view(
+            "aurin_regional_population", 
+            "Aged_15_64_doc", 
+            "Aged_15_64"
+        )
+
+        for row in aged_info:
+            for i in range(len(data)):
+                if(row['key'] == '40070' and data[i]["city"] == 'adelaide'):
+                    data[i]['Aged_15_64_percentage'] = row['value']
+                elif(row['key'] == '31000' and data[i]["city"] == 'brisbane'):
+                    data[i]['Aged_15_64_percentage'] = row['value']
+                elif(row['key'] == '71000' and data[i]["city"] == 'darwin'):
+                    data[i]['Aged_15_64_percentage'] = row['value']
+                elif(row['key'] == '62810' and data[i]["city"] == 'hobart'):
+                    data[i]['Aged_15_64_percentage'] = row['value']
+                elif(row['key'] == '24600' and data[i]["city"] == 'melbourne'):
+                    data[i]['Aged_15_64_percentage'] = row['value']
+                elif(row['key'] == '57080' and data[i]["city"] == 'perth'):
+                    data[i]['Aged_15_64_percentage'] = row['value']
+                elif(row['key'] == '17200' and data[i]["city"] == 'sydney'):
+                    data[i]['Aged_15_64_percentage'] = row['value']
+
+        return data
 
 api.add_resource(Cities, '/api/getCities')
 api.add_resource(CovidGraph1, '/api/getCovidGraph1Data')
 api.add_resource(CovidGraph2, '/api/getCovidGraph2Data')
 api.add_resource(CovidWordCloudData, '/api/getCovidWordCloudData')
 api.add_resource(VaccineGraph1, '/api/getVaccineGraph1Data')
-api.add_resource(JobGraph, '/api/getJobGraphData')
+api.add_resource(JobGraph1, '/api/getJobGraphData')
 
 if __name__ == '__main__':
     app.run(debug=True)

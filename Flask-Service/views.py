@@ -423,9 +423,53 @@ for row in tweet_city:
 ####   Scenarion 3: job related   ####
 ######################################
 
+def get_proportion_tweets(scenario_list, job_tweet_city, tweet_city):
+
+    # Count the number of tweets mentioned jobkeeper/jobseeker in each city
+
+    for row in job_tweet_city:
+        Scenario_temp = {"city":{}, "metioned_jobkeeper":{}}
+        if row["key"][0] != "canberra":
+            scenario_list["city"] = row["key"][0]
+            scenario_list["metioned_jobkeeper"] = row["value"]
+            scenario_list.append(Scenario_temp)
+    
+    # Count the total number of tweets in each city
+
+    for row in tweet_city:
+        for i in range(len(scenario_list)):
+            if row["key"] == scenario_list[i]["city"]:
+                scenario_list[i]["total_tweets"] = row["value"]
+    
+    return scenario_list
+
+def get_aurin_info(scenario_list, aurin_info, info_name):
+    for row in aurin_info:
+        for i in range(len(scenario_list)):
+            if(row['key'] == '40070' and scenario_list[i]["city"] == 'adelaide'):
+                scenario_list[i][info_name] = row['value']
+            elif(row['key'] == '31000' and scenario_list[i]["city"] == 'brisbane'):
+                scenario_list[i][info_name] = row['value']
+            elif(row['key'] == '71000' and scenario_list[i]["city"] == 'darwin'):
+                scenario_list[i][info_name] = row['value']
+            elif(row['key'] == '62810' and scenario_list[i]["city"] == 'hobart'):
+                scenario_list[i][info_name] = row['value']
+            elif(row['key'] == '24600' and scenario_list[i]["city"] == 'melbourne'):
+                scenario_list[i][info_name] = row['value']
+            elif(row['key'] == '57080' and scenario_list[i]["city"] == 'perth'):
+                scenario_list[i][info_name] = row['value']
+            elif(row['key'] == '17200' and scenario_list[i]["city"] == 'sydney'):
+                scenario_list[i][info_name] = row['value']
+    
+    return scenario_list
+
+
+### 1. Proportion of jobkeeper/jobseeker tweets vs median_weekly_personal_income ###
+
 # Create a list and each element in the list contained info about city name, number of tweets mentioned job^ and income
-# e.g. Scenario_three = [{"city":{}, "metioned_jobkeeper":{}, "median_weekly_personal_income": {}}]
-Scenario_three = []
+# e.g. Scenario_three = [{"city":{}, "metioned_jobkeeper":{},, "total_tweets": {}, "median_weekly_personal_income": {}}]
+
+Scenario_three_proportion = []
 
 # Count the number of tweets mentioned jobkeeper/jobseeker in each city
 
@@ -435,13 +479,9 @@ job_tweet_city = get_view(
     "Job_CityDateTime_count", 
     1, 
     'true'
-    )
+)
 
-for row in job_tweet_city:
-    Scenario_three_temp = {"city":{}, "metioned_jobkeeper":{}}
-    Scenario_three_temp["city"] = row["key"][0]
-    Scenario_three_temp["metioned_jobkeeper"] = row["value"]
-    Scenario_three.append(Scenario_three_temp)
+Scenario_three_proportion = get_proportion_tweets(Scenario_three_proportion, job_tweet_city, tweet_city)
 
 # add median weekly personal income information to each city
 
@@ -449,21 +489,36 @@ income_info = get_view(
     "aurin_income", 
     "income_doc", 
     "income"
-    )
+)
 
-for row in income_info:
-    for i in range(len(Scenario_three)):
-        if(row['key'] == '40070' and Scenario_three[i]["city"] == 'adelaide'):
-            Scenario_three[i]['median_weekly_personal_income'] = row['value']
-        elif(row['key'] == '31000' and Scenario_three[i]["city"] == 'brisbane'):
-            Scenario_three[i]['median_weekly_personal_income'] = row['value']
-        elif(row['key'] == '71000' and Scenario_three[i]["city"] == 'darwin'):
-            Scenario_three[i]['median_weekly_personal_income'] = row['value']
-        elif(row['key'] == '62810' and Scenario_three[i]["city"] == 'hobart'):
-            Scenario_three[i]['median_weekly_personal_income'] = row['value']
-        elif(row['key'] == '24600' and Scenario_three[i]["city"] == 'melbourne'):
-            Scenario_three[i]['median_weekly_personal_income'] = row['value']
-        elif(row['key'] == '57080' and Scenario_three[i]["city"] == 'perth'):
-            Scenario_three[i]['median_weekly_personal_income'] = row['value']
-        elif(row['key'] == '17200' and Scenario_three[i]["city"] == 'sydney'):
-            Scenario_three[i]['median_weekly_personal_income'] = row['value']
+Scenario_three_proportion = get_aurin_info(Scenario_three_proportion, income_info, 'median_weekly_personal_income')
+
+
+### 2. Proportion of jobkeeper/jobseeker tweets vs jobkeeper payment ###
+
+Scenario_three_payment = []
+
+Scenario_three_payment = get_proportion_tweets(Scenario_three_payment, job_tweet_city, tweet_city)
+
+jobseeker_payment_info = get_view(
+    "aurin_quarterly_payment", 
+    "JobseekerPayment_doc", 
+    "quarterly_payment"
+)
+
+Scenario_three_payment = get_aurin_info(Scenario_three_payment, jobseeker_payment_info, 'jobseeker_payment')
+
+
+### 3. Proportion of jobkeeper/jobseeker tweets vs aged between 15 and 64 ###
+
+Scenario_three_aged = []
+
+Scenario_three_aged = get_proportion_tweets(Scenario_three_aged, job_tweet_city, tweet_city)
+
+aged_info = get_view(
+    "aurin_regional_population", 
+    "Aged_15_64_doc", 
+    "Aged_15_64"
+)
+
+Scenario_three_aged = get_aurin_info(Scenario_three_aged, aged_info, 'Aged_15_64_percentage')
