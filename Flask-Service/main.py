@@ -3,6 +3,7 @@ from flask_restful import Resource, Api, request
 from flask_cors import CORS
 import couchdb
 import json
+import pandas as pd
 
 
 app = Flask(__name__)
@@ -159,9 +160,42 @@ class CovidGraph2(Resource):
         return self.data
 
 
-class CovidWordCloudData(Resource):
-    def get(self):
-        return ([{'text': 'covid19', 'value': 1814}, {'text': 'covid', 'value': 1657}, {'text': 'people', 'value': 1476}, {'text': 'pfizer', 'value': 1398}, {'text': 'australia', 'value': 1117}, {'text': 'dose', 'value': 908}, {'text': 'astrazeneca', 'value': 897}, {'text': 'us', 'value': 794}, {'text': 'million', 'value': 781}, {'text': 'rollout', 'value': 698}, {'text': 'new', 'value': 641}, {'text': 'health', 'value': 630}, {'text': 'risk', 'value': 626}, {'text': 'year', 'value': 614}, {'text': 'az', 'value': 608}, {'text': 'case', 'value': 540}, {'text': 'good', 'value': 532}, {'text': 'first', 'value': 517}, {'text': 'government', 'value': 494}, {'text': 'death', 'value': 489}, {'text': 'news', 'value': 483}, {'text': 'virus', 'value': 481}, {'text': 'give', 'value': 477}, {'text': 'world', 'value': 476}, {'text': 'countries', 'value': 465}, {'text': 'time', 'value': 454}, {'text': 'variant', 'value': 449}, {'text': '7news', 'value': 430}, {'text': 'uk', 'value': 430}, {'text': 'work', 'value': 425}, {'text': 'auspol', 'value': 418}, {'text': 'week', 'value': 415}, {'text': 'well', 'value': 407}, {'text': 'effective', 'value': 401}, {'text': 'coronavirus', 'value': 392}, {'text': 'immunity', 'value': 372}, {'text': 'trial', 'value': 364}, {'text': 'efficacy', 'value': 360}, {'text': 'cases', 'value': 352}, {'text': 'dose', 'value': 350}, {'text': 'going', 'value': 348}, {'text': 'want', 'value': 348}, {'text': 'work', 'value': 331}, {'text': 'much', 'value': 325}, {'text': 'data', 'value': 320}, {'text': 'mrna', 'value': 319}, {'text': 'see', 'value': 312}, {'text': 'use', 'value': 311}, {'text': 'better', 'value': 304}, {'text': 'population', 'value': 303}, {'text': 'got', 'value': 302}, {'text': 'blood', 'value': 301}, {'text': 'stop', 'value': 298}, {'text': 'safe', 'value': 293}, {'text': 'go', 'value': 284}, {'text': 'say', 'value': 278}, {'text': 'deaths', 'value': 277}, {'text': 'flu', 'value': 275}, {'text': 'yet', 'value': 275}, {'text': 'already', 'value': 274}, {'text': 'says', 'value': 270}, {'text': 'everyone', 'value': 269}, {'text': 'public', 'value': 265}, {'text': 'country', 'value': 264}, {'text': 'right', 'value': 264}, {'text': 'jab', 'value': 263}, {'text': 'australian', 'value': 262}, {'text': 'way', 'value': 262}, {'text': 'australians', 'value': 260}, {'text': 'end', 'value': 260}, {'text': 'said', 'value': 259}, {'text': 'back', 'value': 252}, {'text': 'years', 'value': 251}, {'text': 'long', 'value': 247}, {'text': 'next', 'value': 246}, {'text': 'morrison', 'value': 242}, {'text': 'herd', 'value': 241}, {'text': 'administered', 'value': 240}, {'text': 'quarantine', 'value': 234}, {'text': 'care', 'value': 230}, {'text': 'india', 'value': 228}, {'text': 'infection', 'value': 227}])
+class CovidGraph3(Resource):
+    def post(self):
+        covid_words = ['cases', 'vaccine', 'new', 'people', 'health', 'australia', 'deaths', 'us', 'pandemic', 'government', 'time', 'lockdown', 'nsw', 'need', 'test', 'victoria', 'virus', 'auspol', 'know', 'world', 'many', 'care', 'quarantine', 'risk', 'australian', 'first', 'work', 'live', 'masks', 'says', 'back', 'year', 'restrictions', 'day', 'good', 'news', 'covid19aus', 'state', 'today', 'see', 'help', 'hospital', 'positive', 'community', 'public', 'home', 'due', 'patients', 'well', 'response', 'spread', 'think', 'last', 'workers', 'outbreak', 'melbourne', '7news', 'hotel', 'days', 'sydney', 'support', 'much', 'india', 'million', 'say', 'crisis', 'tested', 'testing', 'great', 'covid19vic', 'vaccination', 'keep', 'right', 'covid19australia', 'travel', 'australians', 'aged', 'research', 'next', 'really', 'want', 'months', 'week', '2020', 'since', 'another', 'said', 'wa', 'long', 'china', 'uk', 'states', 'transmission', 'better', 'safe', 'every', 'country', 'social', 'open', 'use']
+        couchserver = couchdb.Server("http://%s:%s@172.26.133.246:5984/" % (user, password))
+        db = couchserver['raw_tweets_from_timeline']
+        data = []
+        wordcloud_covid_view_result = db.view('covid_related/Wordcloud_covid',group=True, keys=covid_words)
+        word_count_covid = {}
+        for r in wordcloud_covid_view_result :
+            word_count_covid[r.key] = r.value
+        # get top 80 results
+        word_count_covid = sorted(word_count_covid.items(), key=lambda item:item[1], reverse=True)[:80]
+        for item in word_count_covid:
+            data.append({
+                'text': item[0],
+                'value': item[1]
+            })
+        return {'error_code':0,'data':data}
+
+class CovidGraph4(Resource):
+    def post(self):
+        couchserver = couchdb.Server("http://%s:%s@172.26.133.246:5984/" % (user, password))
+        db = couchserver['raw_tweets_from_timeline']
+        data = []
+        wordcloud_covid_view_result = db.view('covid_related/Wordcloud_hashtag_covid',group=True)
+        word_count_covid = {}
+        for r in wordcloud_covid_view_result :
+            if r.key not in ['covid19','covid','coronavirus','covid_19','covidー19']:
+                word_count_covid[r.key] = r.value 
+        word_count_covid = sorted(word_count_covid.items(), key=lambda item:item[1], reverse=True)[:60]
+        for item in word_count_covid:
+            data.append({
+                'text': '#'+ item[0],
+                'value': item[1]
+            })
+        return {'error_code':0,'data':data}
 
 
 class VaccineGraph1(Resource):
@@ -200,6 +234,60 @@ class VaccineGraph1(Resource):
                     data[i]["total_tweets"] = row["value"]
 
         return data
+
+class VaccineGraph2(Resource):
+    def post(self):
+        score_df = pd.read_csv('sentiment_score_vaccine.csv')
+        score_by_date = score_df.groupby(by = ['week'])
+        score_mean = score_by_date.mean()['score_textblob']
+        score_median = score_by_date.quantile(0.5)['score_textblob']
+        score_quantile10 = score_by_date.quantile(0.1)['score_textblob']
+        score_quantile90 = score_by_date.quantile(0.9)['score_textblob']
+        data = []
+        for index in score_mean.index:
+            data_day = {
+                'value': round(score_mean[index],4),
+                'date': index,
+                'range': [round(score_quantile10[index],4),round(score_quantile90[index],4)]
+            }
+            data.append(data_day)
+        return {'error_code':0,'data':data}
+
+class VaccineGraph4(Resource):
+    def post(self):
+        vaccine_words = ['covid19', 'covid', 'people', 'pfizer', 'australia', 'rollout', 'astrazeneca', 'us', 'doses', 'government', 'need', 'az', 'health', 'australians', 'first', 'new', 'risk', 'know', 'million', 'time', 'many', 'virus', 'think', 'good', 'cases', 'says', 'world', 'auspol', 'well', 'morrison', 'jab', 'work', 'coronavirus', 'year', 'deaths', 'quarantine', 'want', 'see', 'said', 'care', 'countries', 'news', 'workers', 'immunity', 'effective', 'scottmorrisonmp', '7news', 'mrna', 'flu', 'blood', 'week', 'clots', 'uk', 'enough', 'public', 'data', 'back', 'govt', 'months', 'next', 'last', 'right', 'program', 'everyone', 'safe', 'available', 'use', 'better', 'day', 'really', 'already', 'aged', 'end', 'moderna', 'federal', 'country', 'today', 'medical', 'long', 'population', 'greghuntmp', 'stop', 'states', 'pandemic', 'open', 'never', 'years', 'sure', 'point', 'days', 'minister', 'must', 'weeks', 'keep', 'roll', 'yes', 'wait', 'borders', 'due', 'india']
+        couchserver = couchdb.Server("http://%s:%s@172.26.133.246:5984/" % (user, password))
+        db = couchserver['raw_tweets_from_timeline']
+        data = []
+        wordcloud_vaccine_view_result = db.view('vaccine_related/Wordcloud_vaccine',group=True, keys=vaccine_words)
+        word_count_vaccine = {}
+        for r in wordcloud_vaccine_view_result :
+            word_count_vaccine[r.key] = r.value
+        # get top 80 results
+        word_count_vaccine = sorted(word_count_vaccine.items(), key=lambda item:item[1], reverse=True)[:80]
+        for item in word_count_vaccine:
+            data.append({
+                'text':  item[0],
+                'value': item[1]
+            })
+        return {'error_code':0,'data':data}
+
+class VaccineGraph5(Resource):
+    def post(self):
+        couchserver = couchdb.Server("http://%s:%s@172.26.133.246:5984/" % (user, password))
+        db = couchserver['raw_tweets_from_timeline']
+        data = []
+        wordcloud_vaccine_view_result = db.view('vaccine_related/Wordcloud_hashtag_vaccine',group=True)
+        word_count_vaccine = {}
+        for r in wordcloud_vaccine_view_result :
+            word_count_vaccine[r.key] = r.value
+        word_count_vaccine = sorted(word_count_vaccine.items(), key=lambda item:item[1], reverse=True)[:50]
+        for item in word_count_vaccine:
+            data.append({
+                'text': '#' + item[0],
+                'value': item[1]
+            })
+        return {'error_code':0,'data':data}
 
 
 class JobGraph1(Resource):
@@ -375,9 +463,14 @@ class JobGraph3(Resource):
 api.add_resource(Cities, '/api/getCities')
 api.add_resource(CovidGraph1, '/api/getCovidGraph1Data')
 api.add_resource(CovidGraph2, '/api/getCovidGraph2Data')
-api.add_resource(CovidWordCloudData, '/api/getCovidWordCloudData')
+# api.add_resource(CovidWordCloudData, '/api/getCovidWordCloudData')
 api.add_resource(VaccineGraph1, '/api/getVaccineGraph1Data')
 api.add_resource(JobGraph1, '/api/getJobGraphData')
+api.add_resource(VaccineGraph2, '/vaccine/sentiment_trend')
+api.add_resource(VaccineGraph4, '/vaccine/words_cloud')
+api.add_resource(VaccineGraph5, '/vaccine/hashtag/words_cloud')
+api.add_resource(CovidGraph3, '/covid/words_cloud')
+api.add_resource(CovidGraph4, '/covid/hashtag/words_cloud')
 
 if __name__ == '__main__':
     app.run(debug=True)
