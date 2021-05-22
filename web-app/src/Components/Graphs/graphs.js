@@ -77,5 +77,47 @@ const Wordcloud = ({ data }) => {
     return <ReactWordcloud words={data} />
 }
 
+const JobGraph = ({ data }) => {
 
-export { CovidGraph1, CovidGraph2, Wordcloud };
+    const renderCustomizedLabel = (props) => {
+        const { content, ...rest } = props;
+        return <Label {...rest} fontSize="12" fill="white" fontWeight="Bold" />;
+    };
+
+    return (
+        <ResponsiveContainer height={250} width={"100%"}>
+            <BarChart
+                layout="vertical"
+                data={data}
+                margin={{ left: 10, right: 10 }}
+                stackOffset="expand"
+            >
+                <XAxis hide type="number" />
+                <YAxis
+                    type="category"
+                    dataKey="city"
+                    stroke="black"
+                    fontSize="12"
+                />
+                <Tooltip />
+                <Bar dataKey="metioned_jobkeeper" fill="#ff6361" stackId="a">
+                    <LabelList
+                        dataKey="metioned_jobkeeper"
+                        position="center"
+                        content={renderCustomizedLabel}
+                    />
+                </Bar>
+                <Bar dataKey="median_weekly_personal_income" fill="#82ba7f" stackId="a">
+                    <LabelList
+                        dataKey="median_weekly_personal_income"
+                        position="center"
+                        content={renderCustomizedLabel}
+                    />
+                </Bar>
+            </BarChart>
+        </ResponsiveContainer>
+    );
+}
+
+
+export { CovidGraph1, CovidGraph2, Wordcloud, JobGraph };

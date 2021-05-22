@@ -45,7 +45,7 @@ function Covid() {
         getCovidWordCloudData();
     }, [])
 
-    let baseURL = "http://127.0.0.1:5000"
+    let baseURL = "http://127.0.0.1:5000/api"
     if (process.env.NODE_ENV === 'production') {
         baseURL = `${process.env.REACT_APP_PROD_URL}`
     };
@@ -149,7 +149,7 @@ function Covid() {
                                         Proportion of tweets mentioning COVID
                                     </Typography>
                                     <div className={classes.chartHeader}>
-                                        <Filters autoCompleteList={areasList} label={"Select City"} value={selectedArea} handleChange={handleAreaChange} />
+                                        <Filters data={areasList} value={selectedArea} handleChange={handleAreaChange} />
                                     </div>
                                     <p>
                                         The graph describes the correlation betweet COVID keyword in tweets and the actual number of cases in a specific city.

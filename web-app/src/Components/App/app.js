@@ -1,4 +1,3 @@
-import './style.css';
 import {
   BrowserRouter as Router,
   Switch,
@@ -39,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
   },
   container: {
-    backgroundColor: "rgb(0 0 0 / 6 %)"
+    backgroundColor: "rgba(0, 0, 0, 0.08)"
   }
 }));
 

@@ -1,5 +1,6 @@
 import {
-    useHistory
+    useHistory,
+    useLocation
 } from "react-router-dom";
 import React from 'react';
 
@@ -20,11 +21,15 @@ const useStyles = makeStyles((theme) => ({
     drawer: {
         width: drawerWidth,
         flexShrink: 0,
+        "& .Mui-selected": {
+            borderRight: "1px solid blue"
+        }
     },
     drawerPaper: {
         width: drawerWidth,
     },
-    toolbar: theme.mixins.toolbar
+    toolbar: theme.mixins.toolbar,
+
 }));
 
 function Navigation() {
@@ -32,6 +37,8 @@ function Navigation() {
     const history = useHistory();
 
     const classes = useStyles();
+
+    const location = useLocation();
 
     return (
         <div className={classes.root}>
@@ -47,13 +54,14 @@ function Navigation() {
                 <Divider />
                 <List>
                     {[{ text: 'Covid', value: '/covid' }, { text: 'Vaccine', value: '/vaccine' }, { text: 'Keeper', value: '/job-keeper' }].map((el, index) => (
-                        <ListItem button key={el.text} onClick={() => history.push(el.value)}>
+                        <ListItem button key={el.text} onClick={() => history.push(el.value)} selected={location.pathname === el.value}>
                             <ListItemText primary={el.text} />
                         </ListItem>
                     ))}
                 </List>
             </Drawer>
         </div>
+
     );
 }
 
