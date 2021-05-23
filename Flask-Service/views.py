@@ -429,10 +429,9 @@ def get_proportion_tweets(scenario_list, job_tweet_city, tweet_city):
 
     for row in job_tweet_city:
         Scenario_temp = {"city":{}, "metioned_jobkeeper":{}}
-        if row["key"][0] != "canberra":
-            scenario_list["city"] = row["key"][0]
-            scenario_list["metioned_jobkeeper"] = row["value"]
-            scenario_list.append(Scenario_temp)
+        scenario_list["city"] = row["key"][0]
+        scenario_list["metioned_jobkeeper"] = row["value"]
+        scenario_list.append(Scenario_temp)
     
     # Count the total number of tweets in each city
 
@@ -450,6 +449,8 @@ def get_aurin_info(scenario_list, aurin_info, info_name):
                 scenario_list[i][info_name] = row['value']
             elif(row['key'] == '31000' and scenario_list[i]["city"] == 'brisbane'):
                 scenario_list[i][info_name] = row['value']
+            elif(row['key'] == '89399' and scenario_list[i]["city"] == 'canberra'):
+                scenario_list[i][info_name] = row['value']           
             elif(row['key'] == '71000' and scenario_list[i]["city"] == 'darwin'):
                 scenario_list[i][info_name] = row['value']
             elif(row['key'] == '62810' and scenario_list[i]["city"] == 'hobart'):
