@@ -1,8 +1,9 @@
 import './style.css';
-import Filters from '../Filters/filters';
 import React, { useState, useEffect } from 'react';
 
 import { JobGraph } from "../Graphs/graphs";
+
+import { GetJobGraphData } from "../agent";
 
 // Material UI imports
 import Card from '@material-ui/core/Card';
@@ -37,14 +38,8 @@ function JobKeeper() {
         getJobGraphData();
     }, [])
 
-    let baseURL = "http://127.0.0.1:5000/api"
-    if (process.env.NODE_ENV === 'production') {
-        baseURL = `${process.env.REACT_APP_PROD_URL}:${process.env.REACT_APP_PORT_NUMBER}`
-    };
-
     const getJobGraphData = async () => {
-        const response = await fetch(`${baseURL}/getJobGraphData`);
-        let responseJson = await response.json();
+        let responseJson = await GetJobGraphData();
         setJobGraphData(responseJson);
     }
 

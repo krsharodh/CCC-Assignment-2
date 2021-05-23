@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 
 import { CovidGraph1 } from "../Graphs/graphs";
 
+
+import { GetVaccineGraph1Data } from "../agent";
+
 import { MapContainer, CircleMarker, TileLayer } from "react-leaflet";
 
 // Material UI imports
@@ -37,32 +40,14 @@ function Vaccine() {
         getVaccineGraph1Data();
     }, [])
 
-    let baseURL = "http://127.0.0.1:5000/api"
-    if (process.env.NODE_ENV === 'production') {
-        baseURL = `${process.env.REACT_APP_PROD_URL}:${process.env.REACT_APP_PORT_NUMBER}`
-    };
-
     const getVaccineGraph1Data = async () => {
-        const response = await fetch(`${baseURL}/getVaccineGraph1Data`);
-        let responseJson = await response.json();
-
+        let responseJson = await GetVaccineGraph1Data();
         responseJson = responseJson.map(el => ({
             ...el,
             percentage: ((el.metioned_vaccine / el.total_tweets) * 100).toFixed(2)
         }))
         setVaccineGraph1Data(responseJson);
     }
-
-    const center = [51.505, -0.09]
-    const rectangle = [
-        [51.49, -0.08],
-        [51.5, -0.06],
-    ]
-
-    const fillBlueOptions = { fillColor: 'blue' }
-    const fillRedOptions = { fillColor: 'red' }
-    const greenOptions = { color: 'green', fillColor: 'green' }
-    const purpleOptions = { color: 'purple' }
 
     return (
         <div className={classes.container}>

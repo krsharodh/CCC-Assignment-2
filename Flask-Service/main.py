@@ -161,41 +161,52 @@ class CovidGraph2(Resource):
 
 
 class CovidGraph3(Resource):
-    def post(self):
-        covid_words = ['cases', 'vaccine', 'new', 'people', 'health', 'australia', 'deaths', 'us', 'pandemic', 'government', 'time', 'lockdown', 'nsw', 'need', 'test', 'victoria', 'virus', 'auspol', 'know', 'world', 'many', 'care', 'quarantine', 'risk', 'australian', 'first', 'work', 'live', 'masks', 'says', 'back', 'year', 'restrictions', 'day', 'good', 'news', 'covid19aus', 'state', 'today', 'see', 'help', 'hospital', 'positive', 'community', 'public', 'home', 'due', 'patients', 'well', 'response', 'spread', 'think', 'last', 'workers', 'outbreak', 'melbourne', '7news', 'hotel', 'days', 'sydney', 'support', 'much', 'india', 'million', 'say', 'crisis', 'tested', 'testing', 'great', 'covid19vic', 'vaccination', 'keep', 'right', 'covid19australia', 'travel', 'australians', 'aged', 'research', 'next', 'really', 'want', 'months', 'week', '2020', 'since', 'another', 'said', 'wa', 'long', 'china', 'uk', 'states', 'transmission', 'better', 'safe', 'every', 'country', 'social', 'open', 'use']
-        couchserver = couchdb.Server("http://%s:%s@172.26.133.246:5984/" % (user, password))
-        db = couchserver['raw_tweets_from_timeline']
+    def get(self):
+        covid_words = ['cases', 'vaccine', 'new', 'people', 'health', 'australia', 'deaths', 'us', 'pandemic', 'government', 'time', 'lockdown', 'nsw', 'need', 'test', 'victoria', 'virus', 'auspol', 'know', 'world', 'many', 'care', 'quarantine', 'risk', 'australian', 'first', 'work', 'live', 'masks', 'says', 'back', 'year', 'restrictions', 'day', 'good', 'news', 'covid19aus', 'state', 'today', 'see', 'help', 'hospital', 'positive', 'community', 'public', 'home', 'due', 'patients', 'well', 'response',
+                       'spread', 'think', 'last', 'workers', 'outbreak', 'melbourne', '7news', 'hotel', 'days', 'sydney', 'support', 'much', 'india', 'million', 'say', 'crisis', 'tested', 'testing', 'great', 'covid19vic', 'vaccination', 'keep', 'right', 'covid19australia', 'travel', 'australians', 'aged', 'research', 'next', 'really', 'want', 'months', 'week', '2020', 'since', 'another', 'said', 'wa', 'long', 'china', 'uk', 'states', 'transmission', 'better', 'safe', 'every', 'country', 'social', 'open', 'use']
         data = []
-        wordcloud_covid_view_result = db.view('covid_related/Wordcloud_covid',group=True, keys=covid_words)
+
+        couchserver = couchdb.Server(
+            "http://%s:%s@172.26.133.246:5984/" % (user, password))
+        db = couchserver['raw_tweets_from_timeline']
+        wordcloud_covid_view_result = db.view(
+            'covid_related/Wordcloud_covid', group=True, keys=covid_words)
+
         word_count_covid = {}
-        for r in wordcloud_covid_view_result :
+        for r in wordcloud_covid_view_result:
             word_count_covid[r.key] = r.value
         # get top 80 results
-        word_count_covid = sorted(word_count_covid.items(), key=lambda item:item[1], reverse=True)[:80]
+        word_count_covid = sorted(word_count_covid.items(
+        ), key=lambda item: item[1], reverse=True)[:80]
         for item in word_count_covid:
             data.append({
                 'text': item[0],
                 'value': item[1]
             })
-        return {'error_code':0,'data':data}
+
+        return data
+
 
 class CovidGraph4(Resource):
-    def post(self):
-        couchserver = couchdb.Server("http://%s:%s@172.26.133.246:5984/" % (user, password))
+    def get(self):
+        couchserver = couchdb.Server(
+            "http://%s:%s@172.26.133.246:5984/" % (user, password))
         db = couchserver['raw_tweets_from_timeline']
         data = []
-        wordcloud_covid_view_result = db.view('covid_related/Wordcloud_hashtag_covid',group=True)
+        wordcloud_covid_view_result = db.view(
+            'covid_related/Wordcloud_hashtag_covid', group=True)
         word_count_covid = {}
-        for r in wordcloud_covid_view_result :
-            if r.key not in ['covid19','covid','coronavirus','covid_19','covidー19']:
-                word_count_covid[r.key] = r.value 
-        word_count_covid = sorted(word_count_covid.items(), key=lambda item:item[1], reverse=True)[:60]
+        for r in wordcloud_covid_view_result:
+            if r.key not in ['covid19', 'covid', 'coronavirus', 'covid_19', 'covidー19']:
+                word_count_covid[r.key] = r.value
+        word_count_covid = sorted(word_count_covid.items(
+        ), key=lambda item: item[1], reverse=True)[:60]
         for item in word_count_covid:
             data.append({
-                'text': '#'+ item[0],
+                'text': '#' + item[0],
                 'value': item[1]
             })
-        return {'error_code':0,'data':data}
+        return data
 
 
 class VaccineGraph1(Resource):
@@ -235,10 +246,11 @@ class VaccineGraph1(Resource):
 
         return data
 
+
 class VaccineGraph2(Resource):
     def post(self):
         score_df = pd.read_csv('sentiment_score_vaccine.csv')
-        score_by_date = score_df.groupby(by = ['week'])
+        score_by_date = score_df.groupby(by=['week'])
         score_mean = score_by_date.mean()['score_textblob']
         score_median = score_by_date.quantile(0.5)['score_textblob']
         score_quantile10 = score_by_date.quantile(0.1)['score_textblob']
@@ -246,48 +258,57 @@ class VaccineGraph2(Resource):
         data = []
         for index in score_mean.index:
             data_day = {
-                'value': round(score_mean[index],4),
+                'value': round(score_mean[index], 4),
                 'date': index,
-                'range': [round(score_quantile10[index],4),round(score_quantile90[index],4)]
+                'range': [round(score_quantile10[index], 4), round(score_quantile90[index], 4)]
             }
             data.append(data_day)
-        return {'error_code':0,'data':data}
+        return {'error_code': 0, 'data': data}
+
 
 class VaccineGraph4(Resource):
     def post(self):
-        vaccine_words = ['covid19', 'covid', 'people', 'pfizer', 'australia', 'rollout', 'astrazeneca', 'us', 'doses', 'government', 'need', 'az', 'health', 'australians', 'first', 'new', 'risk', 'know', 'million', 'time', 'many', 'virus', 'think', 'good', 'cases', 'says', 'world', 'auspol', 'well', 'morrison', 'jab', 'work', 'coronavirus', 'year', 'deaths', 'quarantine', 'want', 'see', 'said', 'care', 'countries', 'news', 'workers', 'immunity', 'effective', 'scottmorrisonmp', '7news', 'mrna', 'flu', 'blood', 'week', 'clots', 'uk', 'enough', 'public', 'data', 'back', 'govt', 'months', 'next', 'last', 'right', 'program', 'everyone', 'safe', 'available', 'use', 'better', 'day', 'really', 'already', 'aged', 'end', 'moderna', 'federal', 'country', 'today', 'medical', 'long', 'population', 'greghuntmp', 'stop', 'states', 'pandemic', 'open', 'never', 'years', 'sure', 'point', 'days', 'minister', 'must', 'weeks', 'keep', 'roll', 'yes', 'wait', 'borders', 'due', 'india']
-        couchserver = couchdb.Server("http://%s:%s@172.26.133.246:5984/" % (user, password))
+        vaccine_words = ['covid19', 'covid', 'people', 'pfizer', 'australia', 'rollout', 'astrazeneca', 'us', 'doses', 'government', 'need', 'az', 'health', 'australians', 'first', 'new', 'risk', 'know', 'million', 'time', 'many', 'virus', 'think', 'good', 'cases', 'says', 'world', 'auspol', 'well', 'morrison', 'jab', 'work', 'coronavirus', 'year', 'deaths', 'quarantine', 'want', 'see', 'said', 'care', 'countries', 'news', 'workers', 'immunity', 'effective', 'scottmorrisonmp', '7news',
+                         'mrna', 'flu', 'blood', 'week', 'clots', 'uk', 'enough', 'public', 'data', 'back', 'govt', 'months', 'next', 'last', 'right', 'program', 'everyone', 'safe', 'available', 'use', 'better', 'day', 'really', 'already', 'aged', 'end', 'moderna', 'federal', 'country', 'today', 'medical', 'long', 'population', 'greghuntmp', 'stop', 'states', 'pandemic', 'open', 'never', 'years', 'sure', 'point', 'days', 'minister', 'must', 'weeks', 'keep', 'roll', 'yes', 'wait', 'borders', 'due', 'india']
+        couchserver = couchdb.Server(
+            "http://%s:%s@172.26.133.246:5984/" % (user, password))
         db = couchserver['raw_tweets_from_timeline']
         data = []
-        wordcloud_vaccine_view_result = db.view('vaccine_related/Wordcloud_vaccine',group=True, keys=vaccine_words)
+        wordcloud_vaccine_view_result = db.view(
+            'vaccine_related/Wordcloud_vaccine', group=True, keys=vaccine_words)
         word_count_vaccine = {}
-        for r in wordcloud_vaccine_view_result :
+        for r in wordcloud_vaccine_view_result:
             word_count_vaccine[r.key] = r.value
         # get top 80 results
-        word_count_vaccine = sorted(word_count_vaccine.items(), key=lambda item:item[1], reverse=True)[:80]
+        word_count_vaccine = sorted(word_count_vaccine.items(
+        ), key=lambda item: item[1], reverse=True)[:80]
         for item in word_count_vaccine:
             data.append({
                 'text':  item[0],
                 'value': item[1]
             })
-        return {'error_code':0,'data':data}
+        return {'error_code': 0, 'data': data}
+
 
 class VaccineGraph5(Resource):
     def post(self):
-        couchserver = couchdb.Server("http://%s:%s@172.26.133.246:5984/" % (user, password))
+        couchserver = couchdb.Server(
+            "http://%s:%s@172.26.133.246:5984/" % (user, password))
         db = couchserver['raw_tweets_from_timeline']
         data = []
-        wordcloud_vaccine_view_result = db.view('vaccine_related/Wordcloud_hashtag_vaccine',group=True)
+        wordcloud_vaccine_view_result = db.view(
+            'vaccine_related/Wordcloud_hashtag_vaccine', group=True)
         word_count_vaccine = {}
-        for r in wordcloud_vaccine_view_result :
+        for r in wordcloud_vaccine_view_result:
             word_count_vaccine[r.key] = r.value
-        word_count_vaccine = sorted(word_count_vaccine.items(), key=lambda item:item[1], reverse=True)[:50]
+        word_count_vaccine = sorted(word_count_vaccine.items(
+        ), key=lambda item: item[1], reverse=True)[:50]
         for item in word_count_vaccine:
             data.append({
                 'text': '#' + item[0],
                 'value': item[1]
             })
-        return {'error_code':0,'data':data}
+        return {'error_code': 0, 'data': data}
 
 
 class JobGraph1(Resource):
@@ -307,12 +328,12 @@ class JobGraph1(Resource):
                 "city": row["key"][0],
                 "metioned_jobkeeper": row["value"]
             })
-        
+
         tweet_city = get_view(
-            "raw_tweets_from_timeline", 
+            "raw_tweets_from_timeline",
             "covid_related",
-            "Tweet_count", 
-            1, 
+            "Tweet_count",
+            1,
             'true'
         )
 
@@ -346,30 +367,31 @@ class JobGraph1(Resource):
 
         return data
 
+
 class JobGraph2(Resource):
     def get(self):
         data = []
 
         job_tweet_city = get_view(
-            "raw_tweets_from_timeline", 
+            "raw_tweets_from_timeline",
             "job_related",
             "Job_CityDateTime_count",
-            1, 
+            1,
             'true'
         )
-        
+
         for row in job_tweet_city:
             if row["key"][0] != "canberra":
                 data.append({
                     "city": row["key"][0],
                     "metioned_jobkeeper": row["value"]
-            })
+                })
 
         tweet_city = get_view(
-            "raw_tweets_from_timeline", 
+            "raw_tweets_from_timeline",
             "covid_related",
-            "Tweet_count", 
-            1, 
+            "Tweet_count",
+            1,
             'true'
         )
 
@@ -377,10 +399,10 @@ class JobGraph2(Resource):
             for i in range(len(data)):
                 if row["key"] == data[i]["city"]:
                     data[i]["total_tweets"] = row["value"]
-        
+
         jobseeker_payment_info = get_view(
-            "aurin_quarterly_payment", 
-            "JobseekerPayment_doc", 
+            "aurin_quarterly_payment",
+            "JobseekerPayment_doc",
             "quarterly_payment"
         )
 
@@ -403,30 +425,31 @@ class JobGraph2(Resource):
 
         return data
 
+
 class JobGraph3(Resource):
     def get(self):
         data = []
 
         job_tweet_city = get_view(
-            "raw_tweets_from_timeline", 
+            "raw_tweets_from_timeline",
             "job_related",
             "Job_CityDateTime_count",
-            1, 
+            1,
             'true'
         )
-        
+
         for row in job_tweet_city:
             if row["key"][0] != "canberra":
                 data.append({
                     "city": row["key"][0],
                     "metioned_jobkeeper": row["value"]
-            })
+                })
 
         tweet_city = get_view(
-            "raw_tweets_from_timeline", 
+            "raw_tweets_from_timeline",
             "covid_related",
-            "Tweet_count", 
-            1, 
+            "Tweet_count",
+            1,
             'true'
         )
 
@@ -436,8 +459,8 @@ class JobGraph3(Resource):
                     data[i]["total_tweets"] = row["value"]
 
         aged_info = get_view(
-            "aurin_regional_population", 
-            "Aged_15_64_doc", 
+            "aurin_regional_population",
+            "Aged_15_64_doc",
             "Aged_15_64"
         )
 
@@ -460,17 +483,23 @@ class JobGraph3(Resource):
 
         return data
 
+
 api.add_resource(Cities, '/api/getCities')
-api.add_resource(CovidGraph1, '/api/getCovidGraph1Data')
-api.add_resource(CovidGraph2, '/api/getCovidGraph2Data')
+
+api.add_resource(CovidGraph1, '/api/covid/getGraph1Data')
+api.add_resource(CovidGraph2, '/api/covid/getGraph2Data')
+api.add_resource(CovidGraph3, '/api/covid/words_cloud')
+api.add_resource(CovidGraph4, '/api/covid/hashtag/words_cloud')
 # api.add_resource(CovidWordCloudData, '/api/getCovidWordCloudData')
-api.add_resource(VaccineGraph1, '/api/getVaccineGraph1Data')
-api.add_resource(JobGraph1, '/api/getJobGraphData')
-api.add_resource(VaccineGraph2, '/vaccine/sentiment_trend')
-api.add_resource(VaccineGraph4, '/vaccine/words_cloud')
-api.add_resource(VaccineGraph5, '/vaccine/hashtag/words_cloud')
-api.add_resource(CovidGraph3, '/covid/words_cloud')
-api.add_resource(CovidGraph4, '/covid/hashtag/words_cloud')
+
+api.add_resource(VaccineGraph1, '/api/vaccine/getGraph1Data')
+api.add_resource(VaccineGraph2, '/api/vaccine/sentiment_trend')
+api.add_resource(VaccineGraph4, '/api/vaccine/words_cloud')
+api.add_resource(VaccineGraph5, '/api/vaccine/hashtag/words_cloud')
+
+api.add_resource(JobGraph1, '/api/job-keeper/getGraph1Data')
+api.add_resource(JobGraph2, '/api/job-keeper/getGraph2Data')
+api.add_resource(JobGraph3, '/api/job-keeper/getGraph3Data')
 
 if __name__ == '__main__':
     app.run(debug=True)
