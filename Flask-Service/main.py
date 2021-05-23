@@ -354,6 +354,8 @@ class JobGraph1(Resource):
                     data[i]['median_weekly_personal_income'] = row['value']
                 elif(row['key'] == '31000' and data[i]["city"] == 'brisbane'):
                     data[i]['median_weekly_personal_income'] = row['value']
+                elif(row['key'] == '89399' and data[i]["city"] == 'canberra'):
+                    data[i]['median_weekly_personal_income'] = row['value']
                 elif(row['key'] == '71000' and data[i]["city"] == 'darwin'):
                     data[i]['median_weekly_personal_income'] = row['value']
                 elif(row['key'] == '62810' and data[i]["city"] == 'hobart'):
@@ -412,6 +414,8 @@ class JobGraph2(Resource):
                     data[i]['jobseeker_payment'] = row['value']
                 elif(row['key'] == '31000' and data[i]["city"] == 'brisbane'):
                     data[i]['jobseeker_payment'] = row['value']
+                elif(row['key'] == '89399' and data[i]["city"] == 'canberra'):
+                    data[i]['jobseeker_payment'] = row['value']
                 elif(row['key'] == '71000' and data[i]["city"] == 'darwin'):
                     data[i]['jobseeker_payment'] = row['value']
                 elif(row['key'] == '62810' and data[i]["city"] == 'hobart'):
@@ -469,6 +473,8 @@ class JobGraph3(Resource):
                 if(row['key'] == '40070' and data[i]["city"] == 'adelaide'):
                     data[i]['Aged_15_64_percentage'] = row['value']
                 elif(row['key'] == '31000' and data[i]["city"] == 'brisbane'):
+                    data[i]['Aged_15_64_percentage'] = row['value']
+                elif(row['key'] == '89399' and data[i]["city"] == 'canberra'):
                     data[i]['Aged_15_64_percentage'] = row['value']
                 elif(row['key'] == '71000' and data[i]["city"] == 'darwin'):
                     data[i]['Aged_15_64_percentage'] = row['value']
