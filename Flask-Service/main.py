@@ -248,7 +248,7 @@ class VaccineGraph1(Resource):
 
 
 class VaccineGraph2(Resource):
-    def post(self):
+    def get(self):
         score_df = pd.read_csv('sentiment_score_vaccine.csv')
         score_by_date = score_df.groupby(by=['week'])
         score_mean = score_by_date.mean()['score_textblob']
@@ -263,11 +263,11 @@ class VaccineGraph2(Resource):
                 'range': [round(score_quantile10[index], 4), round(score_quantile90[index], 4)]
             }
             data.append(data_day)
-        return {'error_code': 0, 'data': data}
+        return data
 
 
 class VaccineGraph4(Resource):
-    def post(self):
+    def get(self):
         vaccine_words = ['covid19', 'covid', 'people', 'pfizer', 'australia', 'rollout', 'astrazeneca', 'us', 'doses', 'government', 'need', 'az', 'health', 'australians', 'first', 'new', 'risk', 'know', 'million', 'time', 'many', 'virus', 'think', 'good', 'cases', 'says', 'world', 'auspol', 'well', 'morrison', 'jab', 'work', 'coronavirus', 'year', 'deaths', 'quarantine', 'want', 'see', 'said', 'care', 'countries', 'news', 'workers', 'immunity', 'effective', 'scottmorrisonmp', '7news',
                          'mrna', 'flu', 'blood', 'week', 'clots', 'uk', 'enough', 'public', 'data', 'back', 'govt', 'months', 'next', 'last', 'right', 'program', 'everyone', 'safe', 'available', 'use', 'better', 'day', 'really', 'already', 'aged', 'end', 'moderna', 'federal', 'country', 'today', 'medical', 'long', 'population', 'greghuntmp', 'stop', 'states', 'pandemic', 'open', 'never', 'years', 'sure', 'point', 'days', 'minister', 'must', 'weeks', 'keep', 'roll', 'yes', 'wait', 'borders', 'due', 'india']
         couchserver = couchdb.Server(
@@ -287,11 +287,11 @@ class VaccineGraph4(Resource):
                 'text':  item[0],
                 'value': item[1]
             })
-        return {'error_code': 0, 'data': data}
+        return data
 
 
 class VaccineGraph5(Resource):
-    def post(self):
+    def get(self):
         couchserver = couchdb.Server(
             "http://%s:%s@172.26.133.246:5984/" % (user, password))
         db = couchserver['raw_tweets_from_timeline']
@@ -308,7 +308,7 @@ class VaccineGraph5(Resource):
                 'text': '#' + item[0],
                 'value': item[1]
             })
-        return {'error_code': 0, 'data': data}
+        return data
 
 
 class JobGraph1(Resource):

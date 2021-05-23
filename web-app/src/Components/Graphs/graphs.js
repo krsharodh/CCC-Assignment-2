@@ -10,7 +10,8 @@ import {
     Label,
     LabelList,
     Legend,
-    CartesianGrid
+    CartesianGrid,
+    ComposedChart
 } from "recharts";
 import ReactWordcloud from 'react-wordcloud';
 import { select } from "d3-selection";
@@ -149,44 +150,78 @@ const Wordcloud = ({ data }) => {
     return <ReactWordcloud words={data} options={options} />
 }
 
-const JobGraph = ({ data }) => {
+const formatTicks = (tick) => {
+    if (tick >= 1000) {
+        return `${tick / 1000}K`
+    }
+    return tick
+}
+
+const JobGraph = ({ data, lineDataKey, yAxisLabel }) => {
 
     const renderCustomizedLabel = (props) => {
         const { content, ...rest } = props;
-        return <Label {...rest} fontSize="12" fill="white" fontWeight="Bold" />;
+        return <Label {...rest} fontSize="12" fill="white" fontWeight="Bold" value={`${rest.value} %`} />;
+
     };
 
     return (
         <ResponsiveContainer height={250} width={"100%"}>
-            <BarChart
-                layout="vertical"
+            <ComposedChart
                 data={data}
                 margin={{ left: 10, right: 10 }}
-                stackOffset="expand"
             >
-                <XAxis hide type="number" />
-                <YAxis
+                <XAxis
                     type="category"
                     dataKey="city"
                     stroke="black"
-                    fontSize="12"
-                />
+                    fontSize="12" />
+
+                <YAxis
+                    width={80}
+                    yAxisId="left"
+                    tick={{ fontSize: 10 }}
+                    dataKey="percentage"
+                >
+                    <Label
+                        value={"% of tweets"}
+                        angle={-90}
+                        position='outside'
+                        fill='#676767'
+                        fontSize={14}
+                    />
+                </YAxis>
+                <YAxis
+                    width={80}
+                    yAxisId="right"
+                    orientation="right"
+                    tick={{ fontSize: 10, }}
+                    dataKey={lineDataKey}
+                    tickFormatter={tick => formatTicks(tick)}
+                >
+                    <Label
+                        value={yAxisLabel}
+                        angle={-90}
+                        position='outside'
+                        fill='#676767'
+                        fontSize={14}
+                    />
+                </YAxis>
                 <Tooltip />
-                <Bar dataKey="metioned_jobkeeper" fill="#ff6361" stackId="a">
+                <Bar dataKey="percentage" fill="#ff6361" stackId="a" yAxisId="left">
                     <LabelList
-                        dataKey="metioned_jobkeeper"
+                        dataKey="percentage"
                         position="center"
                         content={renderCustomizedLabel}
                     />
                 </Bar>
-                <Bar dataKey="median_weekly_personal_income" fill="#82ba7f" stackId="a">
-                    <LabelList
-                        dataKey="median_weekly_personal_income"
-                        position="center"
-                        content={renderCustomizedLabel}
-                    />
-                </Bar>
-            </BarChart>
+                <Line
+                    type="linear"
+                    dataKey={lineDataKey}
+                    stroke="#b0b0b0"
+                    yAxisId="right"
+                />
+            </ComposedChart>
         </ResponsiveContainer>
     );
 }

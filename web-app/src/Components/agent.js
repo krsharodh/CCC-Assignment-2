@@ -43,8 +43,38 @@ const GetVaccineGraph1Data = async () => {
     return responseJson;
 }
 
-const GetJobGraphData = async () => {
+const GetVaccineGraph2Data = async () => {
+    const response = await fetch(`${baseURL}/vaccine/sentiment_trend`);
+    let responseJson = await response.json();
+    return responseJson;
+}
+
+const GetVaccineGraph3Data = async () => {
+    const response = await fetch(`${baseURL}/vaccine/words_cloud`);
+    let responseJson = await response.json();
+    return responseJson;
+}
+
+const GetVaccineGraph4Data = async () => {
+    const response = await fetch(`${baseURL}/vaccine/hashtag/words_cloud`);
+    let responseJson = await response.json();
+    return responseJson;
+}
+
+const GetJobGraph1Data = async () => {
     const response = await fetch(`${baseURL}/job-keeper/getGraph1Data`);
+    let responseJson = await response.json();
+    return responseJson;
+}
+
+const GetJobGraph2Data = async () => {
+    const response = await fetch(`${baseURL}/job-keeper/getGraph2Data`);
+    let responseJson = await response.json();
+    return responseJson;
+}
+
+const GetJobGraph3Data = async () => {
+    const response = await fetch(`${baseURL}/job-keeper/getGraph3Data`);
     let responseJson = await response.json();
     return responseJson;
 }
@@ -59,6 +89,11 @@ export {
     GetCovidHashtagsData,
 
     GetVaccineGraph1Data,
+    GetVaccineGraph2Data,
+    GetVaccineGraph3Data,
+    GetVaccineGraph4Data,
 
-    GetJobGraphData
+    GetJobGraph1Data,
+    GetJobGraph2Data,
+    GetJobGraph3Data
 };

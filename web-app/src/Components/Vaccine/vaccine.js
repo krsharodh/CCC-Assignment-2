@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-import { CovidGraph1 } from "../Graphs/graphs";
+import { CovidGraph1, Wordcloud } from "../Graphs/graphs";
 
 
-import { GetVaccineGraph1Data } from "../agent";
+import { GetVaccineGraph1Data, GetVaccineGraph2Data, GetVaccineGraph3Data, GetVaccineGraph4Data } from "../agent";
 
 import { MapContainer, CircleMarker, TileLayer } from "react-leaflet";
 
@@ -35,9 +35,15 @@ function Vaccine() {
     const classes = useStyles();
 
     const [vaccineGraph1Data, setVaccineGraph1Data] = useState([]);
+    const [vaccineGraph2Data, setVaccineGraph2Data] = useState([]);
+    const [vaccineGraph3Data, setVaccineGraph3Data] = useState([]);
+    const [vaccineGraph4Data, setVaccineGraph4Data] = useState([]);
 
     useEffect(() => {
         getVaccineGraph1Data();
+        getVaccineGraph2Data();
+        getVaccineGraph3Data();
+        getVaccineGraph4Data();
     }, [])
 
     const getVaccineGraph1Data = async () => {
@@ -47,6 +53,26 @@ function Vaccine() {
             percentage: ((el.metioned_vaccine / el.total_tweets) * 100).toFixed(2)
         }))
         setVaccineGraph1Data(responseJson);
+    }
+
+    const getVaccineGraph2Data = async () => {
+        let responseJson = await GetVaccineGraph2Data();
+        responseJson = responseJson.map(el => ({
+            ...el,
+            percentage: ((el.metioned_vaccine / el.total_tweets) * 100).toFixed(2)
+        }))
+        setVaccineGraph2Data(responseJson);
+    }
+
+
+    const getVaccineGraph3Data = async () => {
+        let responseJson = await GetVaccineGraph3Data();
+        setVaccineGraph3Data(responseJson);
+    }
+
+    const getVaccineGraph4Data = async () => {
+        let responseJson = await GetVaccineGraph4Data();
+        setVaccineGraph4Data(responseJson);
     }
 
     return (
@@ -90,8 +116,114 @@ function Vaccine() {
                     </Card>
                 </Grid>
 
+                {/* <Grid
+                    container
+                    direction="row"
+                    justify="center"
+                    alignItems="center"
+                    spacing={2}
+                ></Grid> */}
+
+                {/* Graph 2 */}
+                <Grid item xs={12} >
+                    <Card>
+                        <CardContent>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={7}>
+                                    <CovidGraph1 data={vaccineGraph2Data} />
+                                </Grid>
+                                <Grid item xs={5} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Proportion of tweets mentioning Vaccine
+                                    </Typography>
+                                    <p>
+                                        The graph describes the percentage of Vaccine keyword in tweets across various major in cities in Australia.
+                                        <p></p>
+                                        <strong>Highest Percentage:</strong>  Adelaide<br></br>
+                                        <strong>Lowest Percentage:</strong>  Hobart
+                                    </p>
+                                </Grid>
+                            </Grid>
+
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                {/* Graph 3 */}
+                <Grid item xs={12} >
+                    <Card >
+                        <CardContent>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={7}>
+                                    <Wordcloud data={vaccineGraph3Data} />
+
+                                </Grid>
+                                <Grid item xs={5} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Main Topics
+                                     </Typography>
+                                    <p>
+                                        The wordcloud describes the main topics used in COVID related tweets.
+                                        <p></p>
+                                        <strong>Top 3 topics</strong>
+                                        <ul>
+                                            {vaccineGraph3Data
+                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                .map(el => <li>{el.text}</li>)}
+                                        </ul>
+                                    </p>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                {/* Graph 4 */}
+                <Grid item xs={12} >
+                    <Card >
+                        <CardContent>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={7}>
+
+                                    <Wordcloud data={vaccineGraph4Data} />
+                                </Grid>
+                                <Grid item xs={5} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Main Topics
+                                     </Typography>
+                                    <p>
+                                        The wordcloud describes the main topics used in COVID related tweets.
+                                        <p></p>
+                                        <strong>Top 3 topics</strong>
+                                        <ul>
+                                            {vaccineGraph4Data
+                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                .map(el => <li>{el.text}</li>)}
+                                        </ul>
+                                    </p>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
                 {/* Map Container */}
-                <Grid item xs={12}>
+                {/* <Grid item xs={12}>
                     <Card>
                         <CardContent>
                             <MapContainer
@@ -102,7 +234,7 @@ function Vaccine() {
                             </MapContainer>
                         </CardContent>
                     </Card>
-                </Grid>
+                </Grid> */}
 
             </Grid>
         </div>

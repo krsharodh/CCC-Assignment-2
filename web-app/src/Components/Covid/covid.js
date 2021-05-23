@@ -52,7 +52,6 @@ function Covid() {
 
     const getCities = async () => {
         let responseJson = await GetCities();
-        console.log(responseJson);
         setAreasList(responseJson);
         setSelectedArea(responseJson[0]["value"]);
         getCovidGraph2Data(responseJson[0]["value"]);
