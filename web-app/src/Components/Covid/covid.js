@@ -209,12 +209,12 @@ function Covid() {
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
-                                        Main Topics
+                                        Main Hashtags
                                      </Typography>
                                     <p>
                                         The wordcloud describes the main topics used in COVID related tweets.
                                         <p></p>
-                                        <strong>Top 3 topics</strong>
+                                        <strong>Top 3 Hashtags</strong>
                                         <ul>
                                             {covidHashtagsData
                                                 .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)

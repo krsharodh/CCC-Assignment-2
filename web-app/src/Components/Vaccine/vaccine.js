@@ -128,27 +128,25 @@ function Vaccine() {
                 <Grid item xs={12} >
                     <Card>
                         <CardContent>
-                            <Grid
+                            <SentimentAnalysis data={vaccineGraph2Data} />
+                            {/* <Grid
                                 container
                                 direction="row"
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
+                                <Grid item xs={12}>
                                     <SentimentAnalysis data={vaccineGraph2Data} />
-                                </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                </Grid> */}
+                            {/* <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
-                                        Proportion of tweets mentioning Vaccine
+                                        Sentiment Analysis
                                     </Typography>
                                     <p>
-                                        The graph describes the percentage of Vaccine keyword in tweets across various major in cities in Australia.
-                                        <p></p>
-                                        <strong>Highest Percentage:</strong>  Adelaide<br></br>
-                                        <strong>Lowest Percentage:</strong>  Hobart
+                                        The graph describes the sentiment score of tweets related to Vaccine keyword in Australia.
                                     </p>
-                                </Grid>
-                            </Grid>
+                                </Grid> */}
+                            {/* </Grid> */}
 
                         </CardContent>
                     </Card>
@@ -170,12 +168,12 @@ function Vaccine() {
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
-                                        Main Topics
+                                        Main Topics of Vaccine
                                      </Typography>
                                     <p>
-                                        The wordcloud describes the main topics used in COVID related tweets.
+                                        The wordcloud describes the main topics used in Vaccine related tweets.
                                         <p></p>
-                                        <strong>Top 3 topics</strong>
+                                        <strong>Top 3 Topics</strong>
                                         <ul>
                                             {vaccineGraph3Data
                                                 .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
@@ -204,12 +202,12 @@ function Vaccine() {
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
-                                        Main Topics
+                                        Main Hashtags
                                      </Typography>
                                     <p>
-                                        The wordcloud describes the main topics used in COVID related tweets.
+                                        The wordcloud describes the main hashtags used in Vaccine related tweets.
                                         <p></p>
-                                        <strong>Top 3 topics</strong>
+                                        <strong>Top 3 Hashtags</strong>
                                         <ul>
                                             {vaccineGraph4Data
                                                 .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
