@@ -11,7 +11,9 @@ import {
     LabelList,
     Legend,
     CartesianGrid,
-    ComposedChart
+    ComposedChart,
+    Area,
+    ReferenceLine
 } from "recharts";
 import ReactWordcloud from 'react-wordcloud';
 import { select } from "d3-selection";
@@ -226,5 +228,24 @@ const JobGraph = ({ data, lineDataKey, yAxisLabel }) => {
     );
 }
 
+const SentimentAnalysis = ({ data }) => {
+    return (
+        <ComposedChart
+            width={550}
+            height={250}
+            data={data}
+        >
+            <CartesianGrid stroke="#f5f5f5" />
+            <XAxis dataKey="date" interval={5} hide />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Area type="monotone" name="80% confidence band" dataKey="range" fill="#8884d8" stroke="#8884d8" fillOpacity={0.3} strokeOpacity={0.5} />
+            <ReferenceLine y={0} stroke="red" strokeDasharray="5 5" />
+            <Line type="monotone" name="avg_sentiment_score" dataKey="value" stroke="#8884d8" strokeWidth={3} />
+        </ComposedChart>
+    )
+}
 
-export { CovidGraph1, CovidGraph2, Wordcloud, JobGraph };
+
+export { CovidGraph1, CovidGraph2, Wordcloud, JobGraph, SentimentAnalysis };

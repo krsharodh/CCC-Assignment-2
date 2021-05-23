@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { CovidGraph1, Wordcloud } from "../Graphs/graphs";
+import { CovidGraph1, Wordcloud, SentimentAnalysis } from "../Graphs/graphs";
 
 
 import { GetVaccineGraph1Data, GetVaccineGraph2Data, GetVaccineGraph3Data, GetVaccineGraph4Data } from "../agent";
@@ -135,7 +135,7 @@ function Vaccine() {
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={7}>
-                                    <CovidGraph1 data={vaccineGraph2Data} />
+                                    <SentimentAnalysis data={vaccineGraph2Data} />
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
