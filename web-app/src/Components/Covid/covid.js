@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 
 // ReChars
 import { CovidGraph1, CovidGraph2, Wordcloud } from "../Graphs/graphs";
-
+import WordCloudCovid from "./WordCloudCovid"
+import WordCloudCovidHashTag from "./WordCloudCovidHashTag"
 // Agent
 import { GetCities, GetCovidGraph1Data, GetCovidGraph2Data, GetCovidTopicsData, GetCovidHashtagsData } from "../agent";
 
@@ -170,7 +171,7 @@ function Covid() {
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={7}>
-                                    <Wordcloud data={covidTopicsData} />
+                                    <WordCloudCovid data={covidTopicsData}/>
 
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
@@ -205,7 +206,7 @@ function Covid() {
                                 spacing={2}>
                                 <Grid item xs={7}>
 
-                                    <Wordcloud data={covidHashtagsData} />
+                                    <WordCloudCovidHashTag data={covidHashtagsData}/>
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>

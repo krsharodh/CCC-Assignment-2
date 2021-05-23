@@ -229,7 +229,11 @@ const JobGraph = ({ data, lineDataKey, yAxisLabel }) => {
 }
 
 const formatDateTicks = (tick) => {
-    return (new Date(tick)).toLocaleDateString('en-US')
+    var date = new Date(tick)
+    var dd = date.getDate()
+    var mm = date.getMonth() + 1
+    var yy = date.getFullYear()
+    return dd + '/' + mm + '/' + yy.toString().slice(2,4)
 }
 
 const SentimentAnalysis = ({ data }) => {
@@ -240,15 +244,21 @@ const SentimentAnalysis = ({ data }) => {
             </p>
 
             <ComposedChart
-                width={950}
-                height={250}
+                width={1200}
+                height={500}
+                margin={{
+                    top: 20,
+                    right: 20,
+                    bottom: 20,
+                    left: 20,
+                }}
                 data={data}
             >
                 <CartesianGrid stroke="#f5f5f5" />
                 <XAxis dataKey="date" interval={5}
                     tickFormatter={tick => formatDateTicks(tick)}
                 />
-                <YAxis />
+                <YAxis type="number" domain={[-0.8,0.8]}/>
                 <Tooltip />
                 <Legend />
                 <Area type="monotone" name="80% confidence band" dataKey="range" fill="#8884d8" stroke="#8884d8" fillOpacity={0.3} strokeOpacity={0.5} />

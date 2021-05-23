@@ -1,9 +1,13 @@
-from flask import Flask, g, request
+from flask import Flask, g, request, jsonify
 from flask_restful import Resource, Api, request
 from flask_cors import CORS
 import couchdb
 import json
 import pandas as pd
+import random
+from nltk.corpus import stopwords
+import nltk
+nltk.download('stopwords')
 
 
 app = Flask(__name__)
@@ -14,7 +18,6 @@ api = Api(app)
 
 user = "admin"
 password = "admin"
-
 
 def get_view(db_name, doc_name, view_name, group_level=0, reduce='false'):
     user = "admin"
@@ -162,19 +165,25 @@ class CovidGraph2(Resource):
 
 class CovidGraph3(Resource):
     def get(self):
-        covid_words = ['cases', 'vaccine', 'new', 'people', 'health', 'australia', 'deaths', 'us', 'pandemic', 'government', 'time', 'lockdown', 'nsw', 'need', 'test', 'victoria', 'virus', 'auspol', 'know', 'world', 'many', 'care', 'quarantine', 'risk', 'australian', 'first', 'work', 'live', 'masks', 'says', 'back', 'year', 'restrictions', 'day', 'good', 'news', 'covid19aus', 'state', 'today', 'see', 'help', 'hospital', 'positive', 'community', 'public', 'home', 'due', 'patients', 'well', 'response',
-                       'spread', 'think', 'last', 'workers', 'outbreak', 'melbourne', '7news', 'hotel', 'days', 'sydney', 'support', 'much', 'india', 'million', 'say', 'crisis', 'tested', 'testing', 'great', 'covid19vic', 'vaccination', 'keep', 'right', 'covid19australia', 'travel', 'australians', 'aged', 'research', 'next', 'really', 'want', 'months', 'week', '2020', 'since', 'another', 'said', 'wa', 'long', 'china', 'uk', 'states', 'transmission', 'better', 'safe', 'every', 'country', 'social', 'open', 'use']
         data = []
-
         couchserver = couchdb.Server(
             "http://%s:%s@172.26.133.246:5984/" % (user, password))
         db = couchserver['raw_tweets_from_timeline']
         wordcloud_covid_view_result = db.view(
-            'covid_related/Wordcloud_covid', group=True, keys=covid_words)
-
+            'covid_related/Wordcloud_covid', group=True)
+        stop_words = stopwords.words('english')
+        stop_words_manual1 = ['covid19','covid','coronavirus','amp','get','getting','got','one','two','1','2','3','4','via','like','would','still','could','it’s','go','going','…','may','also','even','take','make','way','dont','don’t','cant','im','i’m','around','–']
         word_count_covid = {}
-        for r in wordcloud_covid_view_result:
-            word_count_covid[r.key] = r.value
+        for r in wordcloud_covid_view_result :
+            if r.key not in stop_words and r.key != '' and r.key not in stop_words_manual1:
+                word_count_covid[r.key] = r.value
+        for word in ['vaccine','vaccination','health','government','lockdown','know','risk','test','spread','response','live','help','support','hotel','travel','million','hospital','outbreak']:
+            word_count_covid[word] = word_count_covid[word] + word_count_covid[word+'s']
+            word_count_covid[word+'s'] = 0
+            
+        for word in ['cases','deaths','restrictions','patients','workers','masks','symptoms']:
+            word_count_covid[word] = word_count_covid[word] + word_count_covid[word[:-1]]
+            word_count_covid[word[:-1]] = 0
         # get top 80 results
         word_count_covid = sorted(word_count_covid.items(
         ), key=lambda item: item[1], reverse=True)[:80]
@@ -208,6 +217,30 @@ class CovidGraph4(Resource):
             })
         return data
 
+class CovidGetTweetByHashtag(Resource):
+    def post(self):
+        word = json.loads(request.get_data(as_text=True))['word'][1:]
+        contents = []
+        couchserver = couchdb.Server(
+            "http://%s:%s@172.26.133.246:5984/" % (user, password))
+        db = couchserver['raw_tweets_from_timeline']
+        data = []
+        for item in db.view('covid_related/Wordcloud_hashtag_covid',include_docs=True,key=word, reduce=False,limit=100):
+            contents.append(item.doc['full_text'])
+        random_index = random.randint(0,len(contents) - 1)
+        return contents[random_index]
+
+class CovidGetTweetByWord(Resource):
+    def post(self):
+        word = json.loads(request.get_data(as_text=True))['word']
+        contents = []
+        couchserver = couchdb.Server(
+            "http://%s:%s@172.26.133.246:5984/" % (user, password))
+        db = couchserver['raw_tweets_from_timeline']
+        for item in db.view('covid_related/Wordcloud_covid',include_docs=True,key=word, reduce=False,limit=100):
+            contents.append(item.doc['full_text'])
+        random_index = random.randint(0,len(contents) - 1)
+        return contents[random_index]
 
 class VaccineGraph1(Resource):
     def get(self):
@@ -310,6 +343,29 @@ class VaccineGraph5(Resource):
             })
         return data
 
+class VaccineGetTweetByHashtag(Resource):
+    def post(self):
+        word = json.loads(request.get_data(as_text=True))['word'][1:]
+        contents = []
+        couchserver = couchdb.Server(
+            "http://%s:%s@172.26.133.246:5984/" % (user, password))
+        db = couchserver['raw_tweets_from_timeline']
+        for item in db.view('vaccine_related/Wordcloud_hashtag_vaccine',include_docs=True,key=word, reduce=False,limit=100):
+            contents.append(item.doc['full_text'])
+        random_index = random.randint(0,len(contents) - 1)
+        return contents[random_index]
+
+class VaccineGetTweetByWord(Resource):
+    def post(self):
+        word = json.loads(request.get_data(as_text=True))['word']
+        contents = []
+        couchserver = couchdb.Server(
+            "http://%s:%s@172.26.133.246:5984/" % (user, password))
+        db = couchserver['raw_tweets_from_timeline']
+        for item in db.view('covid_related/Wordcloud_covid',include_docs=True,key=word, reduce=False,limit=100):
+            contents.append(item.doc['full_text'])
+        random_index = random.randint(0,len(contents) - 1)
+        return contents[random_index]
 
 class JobGraph1(Resource):
     def get(self):
@@ -496,12 +552,16 @@ api.add_resource(CovidGraph1, '/api/covid/getGraph1Data')
 api.add_resource(CovidGraph2, '/api/covid/getGraph2Data')
 api.add_resource(CovidGraph3, '/api/covid/words_cloud')
 api.add_resource(CovidGraph4, '/api/covid/hashtag/words_cloud')
+api.add_resource(CovidGetTweetByHashtag, '/api/covid/hashtag/get_tweet_by_word')
+api.add_resource(CovidGetTweetByWord, '/api/covid/get_tweet_by_word')
 # api.add_resource(CovidWordCloudData, '/api/getCovidWordCloudData')
 
 api.add_resource(VaccineGraph1, '/api/vaccine/getGraph1Data')
 api.add_resource(VaccineGraph2, '/api/vaccine/sentiment_trend')
 api.add_resource(VaccineGraph4, '/api/vaccine/words_cloud')
 api.add_resource(VaccineGraph5, '/api/vaccine/hashtag/words_cloud')
+api.add_resource(VaccineGetTweetByHashtag, '/api/vaccine/hashtag/get_tweet_by_word')
+api.add_resource(VaccineGetTweetByWord, '/api/vaccine/get_tweet_by_word')
 
 api.add_resource(JobGraph1, '/api/job-keeper/getGraph1Data')
 api.add_resource(JobGraph2, '/api/job-keeper/getGraph2Data')

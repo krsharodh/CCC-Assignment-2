@@ -8,6 +8,7 @@ import {
 
 import "tippy.js/dist/tippy.css";
 import "tippy.js/animations/scale.css";
+import { GetVaccineTweetByWord } from "../agent";
 
 const options = {
   colors: ['#1f77b4', '#ff7f0e', "#2ca02c", "#d62728", "#9467bd", "#8c564b"],
@@ -30,8 +31,30 @@ const options = {
   }
 };
 
-const size = [1000, 600];
-var tweet = ''
+const size = [700, 400];
+
+const getTweetByWord = async (word) => {
+    var json = await GetVaccineTweetByWord(word);
+    var element = document.getElementById(word.text)
+    var startIndex = json.toLowerCase().indexOf(word.text)
+    var endIndex = startIndex + word.text.length
+    if (element !== null) {
+        var innerHtml = ""
+        if (startIndex === 0) {
+            innerHtml = innerHtml + "<text><text style='color:#ff8000'>" + json.slice(0,endIndex) + "</text>" + json.slice(endIndex,json.length) + "</text>"
+        } else if (startIndex === -1) {
+            innerHtml = "<text>" + json + "</text>"
+        } else {
+            innerHtml = innerHtml + "<text>" + json.slice(0,startIndex) + "<text style='color: #ff8000'>" + json.slice(startIndex,endIndex) + "</text>" +json.slice(endIndex,json.length) + "</text>"
+        }
+        element.innerHTML = innerHtml
+    }
+    var content = document.getElementById(word.text + '_1')
+    if (content !== null) {
+        content.innerText = 'Example tweet with "' + word.text + '": '
+    }
+}
+
 function getCallback(callback) {
     return function (word, event) {
         const isActive = callback !== "onWordMouseOut";
@@ -41,32 +64,7 @@ function getCallback(callback) {
         .transition()
         .attr("font-size", isActive ? word.size * 1.2 + 'px' : word.size + 'px')
         if (callback === 'onWordClick') {
-            fetch("http://127.0.0.1:5000/vaccine/get_tweet_by_word", {
-            method: 'POST',
-            method: 'POST',
-            headers: {
-            "Content-Type": "application/json"
-            },
-            body: JSON.stringify({'word':word.text
-            })
-            }).then(res => res.json()).then(json => {
-                var element = document.getElementById(word.text)
-                var startIndex = json.data.toLowerCase().indexOf(word.text)
-                var endIndex = startIndex + word.text.length
-                if (element !== null) {
-                    var innerHtml = ""
-                    if (startIndex === 0) {
-                        innerHtml = innerHtml + "<text><text style='color:#ff8000'>" + json.data.slice(0,endIndex) + "</text>" + json.data.slice(endIndex,json.data.length) + "</text>"
-                    } else {
-                        innerHtml = innerHtml + "<text>" + json.data.slice(0,startIndex) + "<text style='color: #ff8000'>" + json.data.slice(startIndex,endIndex) + "</text>" +json.data.slice(endIndex,json.data.length) + "</text>"
-                    }
-                    element.innerHTML = innerHtml
-                }
-                var content = document.getElementById(word.text + '_1')
-                if (content !== null) {
-                    content.innerText = 'Example tweet with "' + word.text + '": '
-                }
-            })
+            getTweetByWord(word)
         }
     };
   }
@@ -80,40 +78,14 @@ const callbacks = {
   };
 
 
-class WordCloud extends Component{
-    constructor(props){
-        super(props);
-        this.state={
-            data: []
-        }
-    }
+const WordCloudVaccine = ({ data }) => {
 
-    getWordCloud() {
-        fetch("http://127.0.0.1:5000/vaccine/words_cloud", {
-            method: 'POST',
-            headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-            },
-            body: JSON.stringify({
-            })
-        }).then(res => res.json()).then(json => {
-            this.setState({data: json.data})
-            console.log(this.state)
-        })
-    };
-
-    componentWillMount(){
-		this.getWordCloud();
-	}
-
-    render() {
-        return (
-            <div>
-                <span>Word Cloud of Top frequent words in vcaccine-related tweets</span>
-                <ReactWordcloud callbacks={callbacks} words={this.state.data} options={options} size={size} />
-            </div>
-        );
-    }
+    return (
+        <div>
+            {/* <span>Word Cloud of Top frequent words in vcaccine-related tweets</span> */}
+            <ReactWordcloud callbacks={callbacks} words={data} options={options} size={size} />
+        </div>
+    );
 }
 
-export default WordCloud;
+export default WordCloudVaccine;

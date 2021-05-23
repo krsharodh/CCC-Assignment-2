@@ -13,6 +13,8 @@ import Grid from '@material-ui/core/Grid';
 import CardContent from '@material-ui/core/CardContent';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import WordCloudVaccine from './WordcloudVaccine'
+import WordCloudVaccineHashTag from './WordCloudVaccineHashTag'
 
 const useStyles = makeStyles({
     container: {
@@ -163,7 +165,7 @@ function Vaccine() {
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={7}>
-                                    <Wordcloud data={vaccineGraph3Data} />
+                                    <WordCloudVaccine data={vaccineGraph3Data} />
 
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
@@ -198,7 +200,7 @@ function Vaccine() {
                                 spacing={2}>
                                 <Grid item xs={7}>
 
-                                    <Wordcloud data={vaccineGraph4Data} />
+                                    <WordCloudVaccineHashTag data={vaccineGraph4Data} />
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
