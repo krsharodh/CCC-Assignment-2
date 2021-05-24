@@ -240,12 +240,10 @@ const SentimentAnalysis = ({ data }) => {
     return (
         <>
             <p style={{ 'text-align': "center", 'font-size': '22px', "margin-top": '20px' }}>
-                Sentiment Score of Vaccine-Related Score Over Time
+                Sentiment Score of Vaccine-Related Tweets Over Time
             </p>
-
+            <ResponsiveContainer height={500} width={"100%"}>
             <ComposedChart
-                width={1200}
-                height={500}
                 margin={{
                     top: 20,
                     right: 20,
@@ -265,9 +263,80 @@ const SentimentAnalysis = ({ data }) => {
                 <ReferenceLine y={0} stroke="red" strokeDasharray="5 5" />
                 <Line type="monotone" name="avg_sentiment_score" dataKey="value" stroke="#8884d8" strokeWidth={3} />
             </ComposedChart>
+            </ResponsiveContainer>
         </>
     )
 }
 
+const VaccineBarGraph = ({ data, lineDataKey, yAxisLabel }) => {
 
-export { CovidGraph1, CovidGraph2, Wordcloud, JobGraph, SentimentAnalysis };
+    const renderCustomizedLabel = (props) => {
+        const { content, ...rest } = props;
+        return <Label {...rest} fontSize="12" fill="white" fontWeight="Bold" value={`${rest.value}`} />;
+
+    };
+
+    return (
+        <ResponsiveContainer height={250} width={"100%"}>
+            <ComposedChart
+                data={data}
+                margin={{ left: 10, right: 10 }}
+            >
+                <XAxis
+                    type="category"
+                    dataKey="city"
+                    stroke="black"
+                    fontSize="12" />
+
+                <YAxis
+                    width={80}
+                    yAxisId="left"
+                    tick={{ fontSize: 10 }}
+                    dataKey="value"
+                >
+                    <Label
+                        value={"avg sentiment score"}
+                        angle={-90}
+                        position='outside'
+                        fill='#676767'
+                        fontSize={14}
+                    />
+                </YAxis>
+                <YAxis
+                    width={80}
+                    yAxisId="right"
+                    orientation="right"
+                    tick={{ fontSize: 10, }}
+                    dataKey={lineDataKey}
+                    tickFormatter={tick => formatTicks(tick)}
+                >
+                    <Label
+                        value={yAxisLabel}
+                        angle={-90}
+                        position='outside'
+                        fill='#676767'
+                        fontSize={14}
+                    />
+                </YAxis>
+                <Tooltip />
+                <Bar dataKey="value" fill="#ff9d2f" stackId="a" yAxisId="left">
+                    <LabelList
+                        dataKey="value"
+                        position="center"
+                        content={renderCustomizedLabel}
+                    />
+                </Bar>
+                <Line
+                    type="linear"
+                    dataKey={lineDataKey}
+                    stroke="#8884d8"
+                    strokeWidth={3}
+                    yAxisId="right"
+                />
+            </ComposedChart>
+        </ResponsiveContainer>
+    );
+}
+
+
+export { CovidGraph1, CovidGraph2, Wordcloud, JobGraph, SentimentAnalysis, VaccineBarGraph };

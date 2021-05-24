@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-import { CovidGraph1, Wordcloud, SentimentAnalysis } from "../Graphs/graphs";
+import { CovidGraph1, Wordcloud, SentimentAnalysis, VaccineBarGraph } from "../Graphs/graphs";
 
 
-import { GetVaccineGraph1Data, GetVaccineGraph2Data, GetVaccineGraph3Data, GetVaccineGraph4Data } from "../agent";
+import { GetVaccineGraph1Data, GetVaccineGraph2Data, GetVaccineGraph3Data, GetVaccineGraph4Data, GetVaccineGraph5Data } from "../agent";
 
 import { MapContainer, CircleMarker, TileLayer } from "react-leaflet";
 
@@ -40,12 +40,14 @@ function Vaccine() {
     const [vaccineGraph2Data, setVaccineGraph2Data] = useState([]);
     const [vaccineGraph3Data, setVaccineGraph3Data] = useState([]);
     const [vaccineGraph4Data, setVaccineGraph4Data] = useState([]);
+    const [vaccineGraph5Data, setVaccineGraph5Data] = useState([]);
 
     useEffect(() => {
         getVaccineGraph1Data();
         getVaccineGraph2Data();
         getVaccineGraph3Data();
         getVaccineGraph4Data();
+        getVaccineGraph5Data();
     }, [])
 
     const getVaccineGraph1Data = async () => {
@@ -66,7 +68,6 @@ function Vaccine() {
         setVaccineGraph2Data(responseJson);
     }
 
-
     const getVaccineGraph3Data = async () => {
         let responseJson = await GetVaccineGraph3Data();
         setVaccineGraph3Data(responseJson);
@@ -75,6 +76,11 @@ function Vaccine() {
     const getVaccineGraph4Data = async () => {
         let responseJson = await GetVaccineGraph4Data();
         setVaccineGraph4Data(responseJson);
+    }
+
+    const getVaccineGraph5Data = async () => {
+        let responseJson = await GetVaccineGraph5Data();
+        setVaccineGraph5Data(responseJson);
     }
 
     return (
@@ -165,23 +171,23 @@ function Vaccine() {
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={7}>
-                                    <WordCloudVaccine data={vaccineGraph3Data} />
+                                    <VaccineBarGraph data={vaccineGraph3Data} lineDataKey={"median_weekly_personal_income"} yAxisLabel={"Median Weekly Personal Income"} />
 
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
-                                        Main Topics of Vaccine
+                                        Average Sentiment Score of Vaccine-related Tweets and Median Weekly Personal Income
                                      </Typography>
-                                    <p>
+                                    {/* <p>
                                         The wordcloud describes the main topics used in Vaccine related tweets.
                                         <p></p>
                                         <strong>Top 3 Topics</strong>
                                         <ul>
-                                            {vaccineGraph3Data
+                                            {vaccineGraph4Data
                                                 .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
                                                 .map(el => <li>{el.text}</li>)}
                                         </ul>
-                                    </p>
+                                    </p> */}
                                 </Grid>
                             </Grid>
                         </CardContent>
@@ -199,8 +205,42 @@ function Vaccine() {
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={7}>
+                                    <WordCloudVaccine data={vaccineGraph4Data} />
 
-                                    <WordCloudVaccineHashTag data={vaccineGraph4Data} />
+                                </Grid>
+                                <Grid item xs={5} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Main Topics of Vaccine
+                                     </Typography>
+                                    <p>
+                                        The wordcloud describes the main topics used in Vaccine related tweets.
+                                        <p></p>
+                                        <strong>Top 3 Topics</strong>
+                                        <ul>
+                                            {vaccineGraph4Data
+                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                .map(el => <li>{el.text}</li>)}
+                                        </ul>
+                                    </p>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                {/* Graph 5 */}
+                <Grid item xs={12} >
+                    <Card >
+                        <CardContent>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={7}>
+
+                                    <WordCloudVaccineHashTag data={vaccineGraph5Data} />
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
@@ -211,7 +251,7 @@ function Vaccine() {
                                         <p></p>
                                         <strong>Top 3 Hashtags</strong>
                                         <ul>
-                                            {vaccineGraph4Data
+                                            {vaccineGraph5Data
                                                 .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
                                                 .map(el => <li>{el.text}</li>)}
                                         </ul>

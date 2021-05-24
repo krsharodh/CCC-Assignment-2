@@ -8,13 +8,13 @@ import {
 
 import "tippy.js/dist/tippy.css"
 import "tippy.js/animations/scale.css";
-import { GetCovidTopicsData, GetCovidTweetByWord } from "../agent";
+import { GetCovidTweetByWord } from "../agent";
 
 const options = {
   colors: ['#1f77b4', '#ff7f0e', "#2ca02c", "#d62728", "#9467bd", "#8c564b"],
-  deterministic: false,
+  deterministic: true,
   fontFamily: "Times New Roman",
-  fontSizes: [15, 100],
+  fontSizes: [20, 80],
   fontStyle: "normal",
   fontWeight: "normal",
   padding: 1,
@@ -22,7 +22,7 @@ const options = {
   rotationAngles: [0, 90],
   scale: "log",
   spiral: "archimedean",
-  transitionDuration: 1000,
+  transitionDuration: 500,
   tooltipOptions: {
     allowHTML: true,
     appendTo: document.body,
@@ -31,7 +31,7 @@ const options = {
   }
 };
 
-const size = [700, 400];
+const size = [600, 400];
 
 const getTweetByWord = async (word) => {
     var json = await GetCovidTweetByWord(word);

@@ -51,6 +51,12 @@ const GetCovidHashtagsData = async () => {
     return responseJson;
 }
 
+const GetCovidMapData = async () => {
+    const response = await fetch(`${baseURL}/covid/map`);
+    const responseJson = await response.json();
+    return responseJson;
+}
+
 const GetCovidTweetByHashtag = async (word) => {
     const response = await fetch(`${baseURL}/covid/hashtag/get_tweet_by_word`, 
     {
@@ -78,12 +84,18 @@ const GetVaccineGraph2Data = async () => {
 }
 
 const GetVaccineGraph3Data = async () => {
-    const response = await fetch(`${baseURL}/vaccine/words_cloud`);
+    const response = await fetch(`${baseURL}/vaccine/getGraph3Data`);
     let responseJson = await response.json();
     return responseJson;
 }
 
 const GetVaccineGraph4Data = async () => {
+    const response = await fetch(`${baseURL}/vaccine/words_cloud`);
+    let responseJson = await response.json();
+    return responseJson;
+}
+
+const GetVaccineGraph5Data = async () => {
     const response = await fetch(`${baseURL}/vaccine/hashtag/words_cloud`);
     let responseJson = await response.json();
     return responseJson;
@@ -148,6 +160,7 @@ export {
     GetVaccineGraph2Data,
     GetVaccineGraph3Data,
     GetVaccineGraph4Data,
+    GetVaccineGraph5Data,
 
     GetJobGraph1Data,
     GetJobGraph2Data,
@@ -155,5 +168,6 @@ export {
     GetCovidTweetByWord,
     GetCovidTweetByHashtag,
     GetVaccineTweetByWord,
-    GetVaccineTweetByHashtag
+    GetVaccineTweetByHashtag,
+    GetCovidMapData
 };
