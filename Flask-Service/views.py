@@ -35,7 +35,7 @@ map_fun_CityDateTime = '''function (doc) {
         var date = new Date(doc.created_at); 
         var year = date.getFullYear();
         var month = date.getMonth() + 1;
-        var day = date.getDay() + 1;
+        var day = date.getDate();
         var hour = date.getHours();
         var location = doc.uniform_location
         emit([location, year, month, day, hour], 1)
@@ -77,7 +77,7 @@ map_fun_Vaccine_CityDateTime = '''function (doc) {
         var date = new Date(doc.created_at); 
         var year = date.getFullYear();
         var month = date.getMonth() + 1;
-        var day = date.getDay() + 1;
+        var day = date.getDate();
         var hour = date.getHours();
         var location = doc.uniform_location
         emit([location, year, month, day, hour], 1)
@@ -116,7 +116,7 @@ map_fun_job_CityDateTime = '''function (doc) {
         var date = new Date(doc.created_at); 
         var year = date.getFullYear();
         var month = date.getMonth() + 1;
-        var day = date.getDay() + 1;
+        var day = date.getDate();
         var hour = date.getHours();
         var location = doc.uniform_location
         emit([location, year, month, day, hour], 1)
@@ -172,7 +172,7 @@ map_fun_CovidCases = '''function (doc) {
         var date = new Date(doc.date); 
         var year = date.getFullYear();
         var month = date.getMonth() + 1;
-        var day = date.getDay() + 1;
+        var day = date.getDate();
         emit([doc.state_abbrev, year, month, day], parseInt(doc.confirmed));
     }
 '''
@@ -278,6 +278,8 @@ Scenario_two_perth = []
 Scenario_two_sydney = []
 
 
+# Read the covid cases dataset
+
 covid_cases_statedate = get_view(
     "covid_cases", 
     "state_cases", 
@@ -286,6 +288,7 @@ covid_cases_statedate = get_view(
     'true'
     )
 
+# Function for adding the confirmed cases in each state in particular time to the city list
 
 covid_tweet_citymonth = get_view(
     "raw_tweets_from_timeline", 
@@ -295,6 +298,7 @@ covid_tweet_citymonth = get_view(
     'true'
     )
 
+# Function for adding the number of tweets mentioned covid in particular city and time to the city list
 
 def add_case(scenario_list, datetime, cases):
     Scenario_two_temp = {"time":{}, "cases": {}}
@@ -329,6 +333,7 @@ def add_tweets(scenario_list):
             Date_time = "-".join(str(e).zfill(2) for e in Datetime)
             if scenario_list[i]["time"] == Date_time:
                 scenario_list[i]["tweets"] = row["value"]
+                break
             else:
                 scenario_list[i]["tweets"] = 0
 
@@ -340,7 +345,6 @@ add_tweets(Scenario_two_adelaide)
 add_tweets(Scenario_two_hobart)
 add_tweets(Scenario_two_melbourne)
 add_tweets(Scenario_two_perth)
-
 
 ######################################
 #### Scenarion 2: vaccine related ####

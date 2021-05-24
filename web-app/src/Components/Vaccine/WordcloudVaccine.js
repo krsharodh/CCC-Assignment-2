@@ -31,7 +31,7 @@ const options = {
   }
 };
 
-const size = [700, 400];
+const size = [600, 400];
 
 const getTweetByWord = async (word) => {
     var json = await GetVaccineTweetByWord(word);

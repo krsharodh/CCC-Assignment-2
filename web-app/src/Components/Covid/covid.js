@@ -5,9 +5,10 @@ import React, { useState, useEffect } from 'react';
 // ReChars
 import { CovidGraph1, CovidGraph2, Wordcloud } from "../Graphs/graphs";
 import WordCloudCovid from "./WordCloudCovid"
+import Map from "./Map"
 import WordCloudCovidHashTag from "./WordCloudCovidHashTag"
 // Agent
-import { GetCities, GetCovidGraph1Data, GetCovidGraph2Data, GetCovidTopicsData, GetCovidHashtagsData } from "../agent";
+import { GetCities, GetCovidGraph1Data, GetCovidGraph2Data, GetCovidTopicsData, GetCovidHashtagsData, GetCovidMapData } from "../agent";
 
 // Material UI imports
 import Card from '@material-ui/core/Card';
@@ -43,12 +44,14 @@ function Covid() {
     const [covidGraph2Data, setCovidGraph2Data] = useState([]);
     const [covidTopicsData, setCovidTopicsData] = useState([]);
     const [covidHashtagsData, setCovidHashtagsData] = useState([]);
+    const [covidMapData, setCovidMapData] = useState([]);
 
     useEffect(() => {
         getCities();
         getCovidGraph1Data();
         getCovidTopicsData();
         getCovidHashtagsData();
+        getCovidMapData();
     }, [])
 
     const getCities = async () => {
@@ -80,6 +83,11 @@ function Covid() {
     const getCovidHashtagsData = async () => {
         const responseJson = await GetCovidHashtagsData();
         setCovidHashtagsData(responseJson);
+    }
+
+    const getCovidMapData = async () => {
+        const responseJson = await GetCovidMapData();
+        setCovidMapData(responseJson);
     }
 
     const handleAreaChange = (event) => {
@@ -159,6 +167,40 @@ function Covid() {
                         </CardContent>
                     </Card>
                 </Grid>
+
+                {/* Graph 3 */}
+                {/* <Grid item xs={12} >
+                    <Card >
+                        <CardContent>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={7}>
+                                    <Map data={covidMapData}/>
+
+                                </Grid>
+                                <Grid item xs={5} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Main Topics
+                                     </Typography>
+                                    <p>
+                                        The wordcloud describes the main topics used in COVID related tweets.
+                                        <p></p>
+                                        <strong>Top 3 topics</strong>
+                                        <ul>
+                                            {covidTopicsData
+                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                .map(el => <li>{el.text}</li>)}
+                                        </ul>
+                                    </p>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid> */}
 
                 {/* Graph 3 */}
                 <Grid item xs={12} >

@@ -80,7 +80,7 @@ class VaccineTrend extends Component {
     render() {
         return (
             <div>
-                <p style={{'text-align': "center",'font-size':'22px',"margin-top":'20px'}}>Sentiment Score of Vaccine-Related Score Over Time</p>
+                <p style={{'text-align': "center",'font-size':'22px',"margin-top":'20px'}}>Sentiment Score of Vaccine-Related Tweets Over Time</p>
                 <ComposedChart
                     width={1200}
                     height={600}
