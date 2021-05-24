@@ -266,6 +266,8 @@ for row in tweet_city:
 # Create a list for each city and each element/dictionary in the list contains three variables
 # e.g. city_list = [{"time":{}, "tweets": {}, "cases": {}}]
 
+# Create a series of empty list for each city
+
 Scenario_two_adelaide = []
 Scenario_two_brisbane = []
 Scenario_two_canberra = []
@@ -275,57 +277,6 @@ Scenario_two_melbourne = []
 Scenario_two_perth = []
 Scenario_two_sydney = []
 
-# Read the number of tweets mentioned covid group/aggregated by location, year, month, date
-
-covid_tweet_citydate = get_view(
-    "raw_tweets_from_timeline", 
-    "covid_related",
-    "CityDateTime_count", 
-    4, 
-    'true'
-    )
-
-# Function for adding the number of tweets mentioned covid in particular city and time to the city list
-
-def add_value(scenario_list, key, value):
-    Scenario_two_temp = {"time":{}, "tweets": {}}
-    Datetime = [key[1], key[2], key[3]]
-    Scenario_two_temp["time"] = "-".join(str(e).zfill(2) for e in Datetime)
-    Scenario_two_temp["tweets"] = value
-    return scenario_list.append(Scenario_two_temp)
-
-# Add the number of tweets mentioned covid and date to each city list 
-
-for row in covid_tweet_citydate:
-    if "adelaide" == row["key"][0]:
-        add_value(Scenario_two_adelaide, row["key"], row["value"])
-    elif "brisbane" == row["key"][0]:
-        add_value(Scenario_two_brisbane, row["key"], row["value"])
-    elif "canberra" == row["key"][0]:
-        add_value(Scenario_two_canberra, row["key"], row["value"])
-    elif "darwin" == row["key"][0]:
-        add_value(Scenario_two_darwin, row["key"], row["value"])
-    elif "hobart" == row["key"][0]:
-        add_value(Scenario_two_hobart, row["key"], row["value"])
-    elif "melbourne" == row["key"][0]:
-        add_value(Scenario_two_melbourne, row["key"], row["value"])
-    elif "perth" == row["key"][0]:
-        add_value(Scenario_two_perth, row["key"], row["value"])
-    elif "sydney" == row["key"][0]:
-        add_value(Scenario_two_sydney, row["key"], row["value"])
-
-# Create a dictionary for each state to store the number of confirmed cases for each state each date
-
-case_ACT = {}
-case_NSW = {}
-case_NT = {}
-case_QLD = {}
-case_SA = {}
-case_TAS = {}
-case_VIC = {}
-case_WA = {}
-
-# Read the number of confirmed cases in each state each date and store in the dictionary
 
 covid_cases_statedate = get_view(
     "covid_cases", 
@@ -335,44 +286,60 @@ covid_cases_statedate = get_view(
     'true'
     )
 
+
+covid_tweet_citymonth = get_view(
+    "raw_tweets_from_timeline", 
+    "covid_related",
+    "CityDateTime_count", 
+    4, 
+    'true'
+    )
+
+
+def add_case(scenario_list, datetime, cases):
+    Scenario_two_temp = {"time":{}, "cases": {}}
+    Scenario_two_temp["time"] = datetime
+    Scenario_two_temp["cases"] = cases
+    return scenario_list.append(Scenario_two_temp)
+
 for row in covid_cases_statedate:
     Datetime = [row["key"][1], row["key"][2], row["key"][3]]
     Date_time = "-".join(str(e).zfill(2) for e in Datetime)
     if(row["key"][0] == 'ACT'):
-        case_ACT[Date_time] = row["value"]
+        add_case(Scenario_two_canberra , Date_time, row["value"])
     elif (row["key"][0] == 'NSW'):
-        case_NSW[Date_time] = row["value"]
+        add_case(Scenario_two_sydney , Date_time, row["value"])
     elif (row["key"][0] == 'NT'):
-        case_NT[Date_time] = row["value"]
+        add_case(Scenario_two_darwin , Date_time, row["value"])
     elif (row["key"][0] == 'QLD'):
-        case_QLD[Date_time] = row["value"]
+        add_case(Scenario_two_brisbane , Date_time, row["value"])
     elif (row["key"][0] == 'SA'):
-        case_SA[Date_time] = row["value"]
+        add_case(Scenario_two_adelaide , Date_time, row["value"])
     elif (row["key"][0] == 'TAS'):
-        case_TAS[Date_time] = row["value"]
+        add_case(Scenario_two_hobart , Date_time, row["value"])
     elif (row["key"][0] == 'VIC'):
-        case_VIC[Date_time] = row["value"]
+        add_case(Scenario_two_melbourne , Date_time, row["value"])
     elif (row["key"][0] == 'WA'):
-        case_WA[Date_time] = row["value"]
+        add_case(Scenario_two_perth , Date_time, row["value"])
 
-# Function for adding the confirmed cases in each state in particular time to the city list
-
-def add_case(scenario_list, case_list):
+def add_tweets(scenario_list):
     for i in range(len(scenario_list)):
-        if scenario_list[i]["time"] in set(case_list.keys()):
-            scenario_list[i]["cases"] = case_list[scenario_list[i]["time"]]
+        for row in covid_tweet_citymonth:
+            Datetime = [row["key"][1], row["key"][2], row["key"][3]]
+            Date_time = "-".join(str(e).zfill(2) for e in Datetime)
+            if scenario_list[i]["time"] == Date_time:
+                scenario_list[i]["tweets"] = row["value"]
+            else:
+                scenario_list[i]["tweets"] = 0
 
-# Add the number of confirmed cases in each state each date to the city list
-
-add_case(Scenario_two_adelaide, case_SA)
-add_case(Scenario_two_brisbane, case_QLD)
-add_case(Scenario_two_canberra, case_ACT)
-add_case(Scenario_two_darwin, case_NT)
-add_case(Scenario_two_hobart, case_TAS)
-add_case(Scenario_two_melbourne, case_VIC)
-add_case(Scenario_two_perth, case_WA)
-add_case(Scenario_two_sydney, case_NSW)
-
+add_tweets(Scenario_two_canberra)
+add_tweets(Scenario_two_sydney)
+add_tweets(Scenario_two_darwin)
+add_tweets(Scenario_two_brisbane)
+add_tweets(Scenario_two_adelaide)
+add_tweets(Scenario_two_hobart)
+add_tweets(Scenario_two_melbourne)
+add_tweets(Scenario_two_perth)
 
 
 ######################################
