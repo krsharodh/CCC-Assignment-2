@@ -53,7 +53,7 @@ function Navigation() {
                 <div className={classes.toolbar} />
                 <Divider />
                 <List>
-                    {[{ text: 'Covid', value: '/covid' }, { text: 'Vaccine', value: '/vaccine' }, { text: 'Keeper', value: '/job-keeper' }].map((el, index) => (
+                    {[{ text: 'Covid', value: '/covid' }, { text: 'Vaccine', value: '/vaccine' }, { text: 'Job Keeper', value: '/job-keeper' }].map((el, index) => (
                         <ListItem button key={el.text} onClick={() => history.push(el.value)} selected={location.pathname === el.value}>
                             <ListItemText primary={el.text} />
                         </ListItem>

@@ -67,7 +67,7 @@ const CovidGraph2 = ({ data }) => {
 
             <LineChart data={data} margin={{ left: 10, right: 10 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis hide dataKey="name" />
+                <XAxis dataKey="time" />
                 <YAxis type="number" domain={[0, 'auto']} />
                 <Tooltip />
                 <Legend />
@@ -233,7 +233,7 @@ const formatDateTicks = (tick) => {
     var dd = date.getDate()
     var mm = date.getMonth() + 1
     var yy = date.getFullYear()
-    return dd + '/' + mm + '/' + yy.toString().slice(2,4)
+    return dd + '/' + mm + '/' + yy.toString().slice(2, 4)
 }
 
 const SentimentAnalysis = ({ data }) => {
@@ -258,7 +258,7 @@ const SentimentAnalysis = ({ data }) => {
                 <XAxis dataKey="date" interval={5}
                     tickFormatter={tick => formatDateTicks(tick)}
                 />
-                <YAxis type="number" domain={[-0.8,0.8]}/>
+                <YAxis type="number" domain={[-0.8, 0.8]} />
                 <Tooltip />
                 <Legend />
                 <Area type="monotone" name="80% confidence band" dataKey="range" fill="#8884d8" stroke="#8884d8" fillOpacity={0.3} strokeOpacity={0.5} />
