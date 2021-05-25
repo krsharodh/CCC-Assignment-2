@@ -187,7 +187,7 @@ const formatDateTicks = (tick) => {
     var dd = date.getDate()
     var mm = date.getMonth() + 1
     var yy = date.getFullYear()
-    return dd + '/' + mm + '/' + yy.toString().slice(2, 4)
+    return yy.toString().slice(2, 4) + '-' + mm + '-' + dd
 }
 
 const SentimentAnalysis = ({ data }) => {
@@ -248,7 +248,7 @@ const VaccineBarGraph = ({ data, lineDataKey, yAxisLabel }) => {
                     width={80}
                     yAxisId="left"
                     tick={{ fontSize: 10 }}
-                    dataKey="value"
+                    dataKey="avg sentiment score"
                 >
                     <Label
                         value={"avg sentiment score"}
@@ -275,9 +275,9 @@ const VaccineBarGraph = ({ data, lineDataKey, yAxisLabel }) => {
                     />
                 </YAxis>
                 <Tooltip />
-                <Bar dataKey="value" fill="#ff6827" stackId="a" yAxisId="left">
+                <Bar dataKey="avg sentiment score" fill="#ff6827" stackId="a" yAxisId="left">
                     <LabelList
-                        dataKey="value"
+                        dataKey="avg sentiment score"
                         position="center"
                         content={renderCustomizedLabel}
                     />

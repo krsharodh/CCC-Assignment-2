@@ -140,8 +140,11 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                                 </Grid>
                                 <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
-                                        Average Sentiment Score of Vaccine-related Tweets and Median Weekly Personal Income
-                                     </Typography>
+                                        Sentiment score of vaccine-related tweets and Income level
+                                    </Typography>
+                                    <p>This graph describes the average sentiment score of vaccine-related tweets and the median weekly personal income across the 8 cities of interest.</p>
+                                    <strong>City with highest sentiment score:</strong>  Canberra<br></br>
+                                    <strong>City with lowest sentiment score:</strong>  Hobart
                                 </Grid>
                             </Grid>
                         </CardContent>
@@ -173,12 +176,12 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                                     <p>
                                         The wordcloud describes the main topics used in Vaccine related tweets.
                                         <p></p>
-                                        <strong>Top 3 Topics</strong>
+                                        <strong>Top 5 Topics</strong>
                                         {
                                             vaccineGraph4Data &&
                                             <ul>
                                                 {vaccineGraph4Data
-                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 5)
                                                     .map(el => <li>{el.text}</li>)}
                                             </ul>
                                         }
@@ -214,13 +217,13 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                                     <p>
                                         The wordcloud describes the main hashtags used in Vaccine related tweets.
                                         <p></p>
-                                        <strong>Top 3 Hashtags</strong>
+                                        <strong>Top 5 Hashtags</strong>
                                         {
                                             vaccineGraph5Data &&
 
                                             <ul>
                                                 {vaccineGraph5Data
-                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 5)
                                                     .map(el => <li>{el.text}</li>)}
                                             </ul>
                                         }
@@ -230,20 +233,6 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                         </CardContent>
                     </Card>
                 </Grid>
-
-                {/* Map Container */}
-                {/* <Grid item xs={12}>
-                    <Card>
-                        <CardContent>
-                            <MapContainer
-                                style={{ height: "480px", width: "100%" }}
-                                zoom={1}
-                                center={[-0.09, 51.505]}>
-                                <TileLayer url="http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                            </MapContainer>
-                        </CardContent>
-                    </Card>
-                </Grid> */}
 
             </Grid>
         </div>

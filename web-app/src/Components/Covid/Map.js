@@ -4,11 +4,38 @@ import geoJson from './AU';
 import Typography from '@material-ui/core/Typography';
 import Slider from '@material-ui/core/Slider';
 import { makeStyles } from '@material-ui/core/styles';
+import Tooltip from '@material-ui/core/Tooltip';
 
-const cities = [{
-    name: "Melbourne",
-    value: [144.946457, -37.840935, 120]
-}]
+const cities = [
+    {
+        name: "Melbourne",
+        value: [144.946457, -37.840935, Infinity]
+    },
+    {
+        name: "Sydney",
+        value: [151.2093, -33.8688, Infinity]
+    },
+    {
+        name: "Brisbane",
+        value: [153.0260, -27.4705, Infinity]
+    },
+    {
+        name: "Adelaide",
+        value: [138.6007, -34.9285, Infinity]
+    },
+    {
+        name: "Perth",
+        value: [115.8613, -31.9523, Infinity]
+    },
+    {
+        name: "Hobart",
+        value: [147.3257, -42.8826, Infinity]
+    },
+    {
+        name: "Darwin",
+        value: [130.8444, -12.4637, Infinity]
+    }
+]
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -20,31 +47,33 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const loadMap = async (mapData) => {
-    console.log('mapdata: ', mapData.data)
     setTimeout(() => {
         if (mapData.data.length !== 0) {
-            max = mapData.data.max
+            mapData.data.data.forEach(item => {
+                dates.push(item.date)
+            })
+            max = mapData.data.max_count
             sliderMax = mapData.data.data.length
-            drawMap(mapData.data.data[0])
+            drawMap(mapData.data.data[currentValue].tweet_count_data)
         }
     }, 500);
 }
 
 var max = 0
 var sliderMax = 0
+var currentValue = 0
+var dates = []
 function drawMap(data) {
-    var myChart = echarts.init(document.getElementById('echartsmap'));
+    var dom = document.getElementById('echartsmap')
+    var myChart = echarts.init(dom);
     echarts.registerMap('AU', geoJson);
     let option = {
-        title: {
-            text: 'sentiment_score',
-        },
         visualMap: {
-            left: 'right',
+            left: 'left',
             min: 0,
-            max: max,
+            max: max * 1.2,
             inRange: {
-                color: ['#ffffff', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026']
+                color: ['#ffffff', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026', 'black']
             },
             text: ['High', 'Low'],
             calculable: true
@@ -69,7 +98,6 @@ function drawMap(data) {
         },
         series: [
             {
-                name: 'cities',
                 type: 'scatter',
                 coordinateSystem: 'geo',
                 data: cities,
@@ -86,14 +114,14 @@ function drawMap(data) {
                     emphasis: { show: true }
                 },
                 itemStyle: {
-                    normal: { color: '#040404' }
+                    normal: { color: 'black' }
                 },
                 tooltip: {
                     show: false,
                 }
             },
             {
-                name: 'sentiment_score',
+                name: '# tweets',
                 type: 'map',
                 mapType: 'AU',
                 label: {
@@ -107,16 +135,27 @@ function drawMap(data) {
     myChart.hideLoading();
 };
 
+function ValueLabelComponent(props) {
+    const { children, open, value } = props;
+  
+    return (
+      <Tooltip open={open} enterTouchDelay={0} placement="top" title={dates[value]}>
+        {children}
+      </Tooltip>
+    );
+  }
+
 export default function Map(mapData) {
     const classes = useStyles();
     const handleChange = (event, newValue) => {
-        drawMap(mapData.data.data[newValue])
+        currentValue = newValue
+        drawMap(mapData.data.data[newValue].tweet_count_data)
     }
     loadMap(mapData)
     return (
         <div>
             <div id="echartsmap" style={{ width: '80%', height: "500px" }}></div>
-            <div className={classes.root} style={{ 'margin-left': '25%' }}>
+            <div className={classes.root} style={{ 'margin-left': '15%' }}>
                 <Typography id="discrete-slider-always" gutterBottom>
                 </Typography>
                 <Slider
@@ -126,6 +165,7 @@ export default function Map(mapData) {
                     onChange={handleChange}
                     valueLabelDisplay="on"
                     max={sliderMax - 1}
+                    ValueLabelComponent={ValueLabelComponent}
                 />
             </div>
         </div>

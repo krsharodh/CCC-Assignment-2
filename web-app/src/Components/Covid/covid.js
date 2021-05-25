@@ -37,7 +37,7 @@ const useStyles = makeStyles({
     }
 });
 
-function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, covidHashtagsData, handleAreaChange, selectedArea }) {
+function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, covidHashtagsData, covidMapData, handleAreaChange, selectedArea }) {
 
     const classes = useStyles();
 
@@ -132,7 +132,7 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                 </Grid>
 
                 {/* Graph 3 */}
-                {/* <Grid item xs={12} >
+                <Grid item xs={12} >
                     <Card >
                         <CardContent>
                             <Grid
@@ -147,23 +147,18 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
-                                        Main Topics
+                                        Number of tweets mentioning COVID over time
                                      </Typography>
                                     <p>
-                                        The wordcloud describes the main topics used in COVID related tweets.
-                                        <p></p>
-                                        <strong>Top 3 topics</strong>
-                                        <ul>
-                                            {covidTopicsData
-                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
-                                                .map(el => <li>{el.text}</li>)}
-                                        </ul>
+                                        The map shows the number of COVID-related tweets in each month from Feb 2020 to now, comparing across the 8 cities of interest, each representing a state in Australia.
+                                        <p>Darker colours represent higher number of tweets.</p>
+                                        <p>Sydney and Melbourne tend to have the most tweets mentioning COVID across all times studied.</p>
                                     </p>
                                 </Grid>
                             </Grid>
                         </CardContent>
                     </Card>
-                </Grid> */}
+                </Grid>
 
                 {/* Graph 3 */}
                 <Grid item xs={12} >
@@ -191,12 +186,12 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                                     <p>
                                         The wordcloud describes the main topics used in COVID related tweets.
                                         <p></p>
-                                        <strong>Top 3 topics</strong>
+                                        <strong>Top 5 topics</strong>
                                         {
                                             covidTopicsData &&
                                             <ul>
                                                 {covidTopicsData
-                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 5)
                                                     .map(el => <li>{el.text}</li>)}
                                             </ul>
                                         }
@@ -232,12 +227,12 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                                     <p>
                                         The wordcloud describes the main topics used in COVID related tweets.
                                         <p></p>
-                                        <strong>Top 3 Hashtags</strong>
+                                        <strong>Top 5 Hashtags</strong>
                                         {
                                             covidHashtagsData &&
                                             <ul>
                                                 {covidHashtagsData
-                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 5)
                                                     .map(el => <li>{el.text}</li>)}
                                             </ul>
                                         }

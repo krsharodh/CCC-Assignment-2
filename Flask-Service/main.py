@@ -34,10 +34,19 @@ def get_view(db_name, doc_name, view_name, group_level=0, reduce='false'):
 
 
 def get_sentiment_score_vaccine_df():
+    score_df = pd.read_csv('sentiment_score_vaccine.csv')
+    score_df_dict = {}
+    for index, row in score_df.iterrows():
+        score_df_dict[str(row['id'])] = None
     couchserver = couchdb.Server(
         "http://%s:%s@172.26.133.161:5984/" % (user, password))
     db = couchserver['raw_tweets_from_timeline']
-    vaccine_tweets_view_result = db.view('vaccine_related/Vaccine_tweets')
+    vaccine_tweets_id_view = db.view('vaccine_related/Vaccine_tweets_id')
+    keys = []
+    for r in vaccine_tweets_id_view:
+        if r.key not in score_df_dict:
+            keys.append(r.key)
+    vaccine_tweets_view_result = db.view('vaccine_related/Vaccine_tweets', keys=keys)
     sentiment_score_vaccine = {}
     for r in vaccine_tweets_view_result:
         sentiment_score_vaccine[r.key] = r.value
@@ -60,7 +69,6 @@ def get_sentiment_score_vaccine_df():
         if (time_converted - end_date).days >= 0:
             end_date = end_date + datetime.timedelta(days=7)
         time_created.append(time_to_str(time_converted))
-        # print(time_to_str(end_date))
         week.append(time_to_str(end_date))
         location.append(sentiment_score_vaccine[key][1])
         full_text.append(sentiment_score_vaccine[key][2])
@@ -68,7 +76,7 @@ def get_sentiment_score_vaccine_df():
 
     sentiment_score_vaccine_df = pd.DataFrame(
         {'id': sentiment_score_vaccine.keys(), 'time_created': time_created, 'location': location, 'full_text': full_text, 'score_textblob': score_textblob, 'week': week})
-    return sentiment_score_vaccine_df
+    return score_df.append(sentiment_score_vaccine_df)
 
 
 def clean_tweet(tweet):
@@ -104,6 +112,7 @@ class Cities(Resource):
         return ([
             {"label": 'Melbourne', "value": "melbourne"},
             {"label": 'Adelaide', "value": "adelaide"},
+            {"label": 'Brisbane', "value": "brisbane"},
             {"label": 'Sydney', "value": "sydney"},
             {"label": 'Canberra', "value": "canberra"},
             {"label": 'Darwin', "value": "darwin"},
@@ -199,7 +208,7 @@ class CovidGraph2(Resource):
             for row in self.covid_tweet_citymonth:
                 datetime = [row["key"][1], row["key"][2], row["key"][3]]
                 datetime = "-".join(str(e).zfill(2) for e in datetime)
-                if data[i]["time"] == datetime:
+                if data[i]["time"] == datetime and row["key"][0] == city:
                     data[i]["tweets"] = row["value"]
                     break
                 else:
@@ -268,20 +277,48 @@ class CovidGraph4(Resource):
 
 class CovidMap(Resource):
     def get(self):
+        cityStateMap = {
+            "adelaide": "SA",
+            "brisbane": "QLD",
+            "canberra": "ACT",
+            "darwin": "NT",
+            "hobart": "TAS",
+            "melbourne": "VIC",
+            "perth": "WA",
+            "sydney": "NSW",
+        }
         # couchserver = couchdb.Server(
         #     "http://%s:%s@172.26.133.161:5984/" % (user, password))
         # db = couchserver['raw_tweets_from_timeline']
+        covid_tweet_citymonth = get_view(
+            "raw_tweets_from_timeline",
+            "covid_related",
+            "CityDateTime_count",
+            3,
+            'true'
+        )
+        covid_tweet_citymonth_dict = {}
+        max_count = 0
+        for r in covid_tweet_citymonth:
+            # get max count
+            if r.value > max_count:
+                max_count = r.value
+            # use YYYY-MM as the key, add tweet count of each city to the dictionary
+            key = str(r.key[1]) + '-' + str(r.key[2])
+            if key not in covid_tweet_citymonth_dict:
+                covid_tweet_citymonth_dict[key] = [{'name':cityStateMap[r.key[0]], 'value': r.value}]
+            else:
+                covid_tweet_citymonth_dict[key].append({'name':cityStateMap[r.key[0]], 'value': r.value})
         data = []
-        for i in range(20):
-            a = [{'name': 'NSW', 'value': 2 * i},
-                 {'name': 'QLD', 'value': 2 * i},
-                 {'name': 'SA', 'value': 2 * i},
-                 {'name': 'WA', 'value': 2 * i},
-                 {'name': 'VIC', 'value': i},
-                 {'name': 'NT', 'value': i},
-                 {'name': 'ACT', 'value': i}]
-            data.append(a)
-        return {'max': 20, 'data': data}
+        # sort the date
+        dates = sorted(covid_tweet_citymonth_dict.keys(), key = lambda item: (int(item.split('-')[0]), int(item.split('-')[1])))
+        for date in dates:
+            info_by_date = {
+                'date': date,
+                'tweet_count_data': covid_tweet_citymonth_dict[date]
+            }
+            data.append(info_by_date)
+        return {'max_count': max_count, 'data': data}
 
 
 class CovidGetTweetByHashtag(Resource):
@@ -375,7 +412,7 @@ class VaccineGraph3(Resource):
         data = []
         for index in score_mean.index:
             data_location = {
-                'value': round(score_mean[index], 4),
+                'avg sentiment score': round(score_mean[index], 4),
                 'city': index,
             }
             data.append(data_location)
@@ -416,10 +453,20 @@ class VaccineGraph4(Resource):
         db = couchserver['raw_tweets_from_timeline']
         data = []
         wordcloud_vaccine_view_result = db.view(
-            'vaccine_related/Wordcloud_vaccine', group=True, keys=vaccine_words)
+            'vaccine_related/Wordcloud_vaccine', group=True)
+        stop_words = stopwords.words('english')
+        stop_words_manual2 = ['vaccine','vaccines','vaccinated','vaccinate','vaccination','vaccinations','amp','get','getting','got','say','one','two','1','2','3','4','50','via','like','would','still','could','it’s','go','going','…','may','also','even','take','make','made','way','dont','don’t','cant','im','i’m','around','–','yet','much','give','given','every','thats','another','without']
         word_count_vaccine = {}
-        for r in wordcloud_vaccine_view_result:
-            word_count_vaccine[r.key] = r.value
+        for r in wordcloud_vaccine_view_result :
+            if r.key not in stop_words and r.key != '' and r.key not in stop_words_manual2:
+                word_count_vaccine[r.key] = r.value
+        for word in ['australia','health','government','morrison','quarantine','know','think','risk','million','work','flu','jab','mrna','program','pfizer','astrazeneca','moderna']:
+            word_count_vaccine[word] = word_count_vaccine[word] + word_count_vaccine[word+'s']
+            word_count_vaccine[word+'s'] = 0
+            
+        for word in ['doses','cases','deaths','australians','workers','clots']:
+            word_count_vaccine[word] = word_count_vaccine[word] + word_count_vaccine[word[:-1]]
+            word_count_vaccine[word[:-1]] = 0
         # get top 80 results
         word_count_vaccine = sorted(word_count_vaccine.items(
         ), key=lambda item: item[1], reverse=True)[:80]

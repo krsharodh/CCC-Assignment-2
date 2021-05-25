@@ -224,6 +224,7 @@ function App() {
                     covidGraph2Data={covidGraph2Data}
                     covidTopicsData={covidTopicsData}
                     covidHashtagsData={covidHashtagsData}
+                    covidMapData={covidMapData}
                     handleAreaChange={handleAreaChange}
                   />
                 </Route>
