@@ -60,24 +60,31 @@ function Covid() {
     }, [])
 
     const getCities = async () => {
-        let responseJson = await GetCities();
-        setAreasList(responseJson);
-        setSelectedArea(responseJson[0]["value"]);
-        getCovidGraph2Data(responseJson[0]["value"]);
+        console.log(areasList);
+        if (areasList.length === 0) {
+            let responseJson = await GetCities();
+            setAreasList(responseJson);
+            setSelectedArea(responseJson[0]["value"]);
+            getCovidGraph2Data(responseJson[0]["value"]);
+        }
     }
 
     const getCovidGraph1Data = async () => {
-        let responseJson = await GetCovidGraph1Data();
-        responseJson = responseJson.map(el => ({
-            ...el,
-            percentage: ((el.metioned_covid / el.total_tweets) * 100).toFixed(2)
-        }))
-        setCovidGraph1Data(responseJson);
+        if (covidGraph1Data.length === 0) {
+            let responseJson = await GetCovidGraph1Data();
+            responseJson = responseJson.map(el => ({
+                ...el,
+                percentage: ((el.metioned_covid / el.total_tweets) * 100).toFixed(2)
+            }))
+            setCovidGraph1Data(responseJson);
+        }
     }
 
-    const getCovidGraph2Data = async (city) => {
-        const responseJson = await GetCovidGraph2Data(city);
-        setCovidGraph2Data(responseJson);
+    const getCovidGraph2Data = async (city, override = false) => {
+        if (covidGraph2Data.length === 0 || override) {
+            const responseJson = await GetCovidGraph2Data(city);
+            setCovidGraph2Data(responseJson);
+        }
     }
 
     const getCovidTopicsData = async () => {
@@ -97,7 +104,7 @@ function Covid() {
 
     const handleAreaChange = (event) => {
         setSelectedArea(event.target.value);
-        getCovidGraph2Data(event.target.value);
+        getCovidGraph2Data(event.target.value, true);
     };
 
     return (

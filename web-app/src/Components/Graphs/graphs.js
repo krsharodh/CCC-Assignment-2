@@ -220,9 +220,10 @@ const JobGraph = ({ data, lineDataKey, yAxisLabel }) => {
                     />
                 </Bar>
                 <Line
-                    type="monotone"
+                    type="linear"
                     dataKey={lineDataKey}
                     stroke="#8884d8"
+                    strokeWidth={3}
                     yAxisId="right"
                 />
             </ComposedChart>
@@ -321,7 +322,7 @@ const VaccineBarGraph = ({ data, lineDataKey, yAxisLabel }) => {
                     />
                 </YAxis>
                 <Tooltip />
-                <Bar dataKey="value" fill="#ff9d2f" stackId="a" yAxisId="left">
+                <Bar dataKey="value" fill="#ff6827" stackId="a" yAxisId="left">
                     <LabelList
                         dataKey="value"
                         position="center"
