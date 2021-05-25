@@ -120,7 +120,7 @@ function Cover({
                             <FontAwesomeIcon icon={faVirus} size="6x" className={classes.covidIcon} />
                         </CardContent>
                     </Card>
-                </Grid> ``
+                </Grid>
                 <Grid item xs>
                     <Card>
                         <CardContent>

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import * as echarts from 'echarts';
 import geoJson from './AU';
 import Typography from '@material-ui/core/Typography';
@@ -7,17 +7,17 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const cities = [{
     name: "Melbourne",
-    value: [144.946457, -37.840935,120]
+    value: [144.946457, -37.840935, 120]
 }]
 
 const useStyles = makeStyles((theme) => ({
     root: {
-      width: 300,
+        width: 300,
     },
     margin: {
-      height: theme.spacing(3),
+        height: theme.spacing(3),
     },
-  }));
+}));
 
 const loadMap = async (mapData) => {
     console.log('mapdata: ', mapData.data)
@@ -27,7 +27,7 @@ const loadMap = async (mapData) => {
             sliderMax = mapData.data.data.length
             drawMap(mapData.data.data[0])
         }
-    },500);
+    }, 500);
 }
 
 var max = 0
@@ -35,7 +35,7 @@ var sliderMax = 0
 function drawMap(data) {
     var myChart = echarts.init(document.getElementById('echartsmap'));
     echarts.registerMap('AU', geoJson);
-    let option={
+    let option = {
         title: {
             text: 'sentiment_score',
         },
@@ -114,19 +114,19 @@ export default function Map(mapData) {
     }
     loadMap(mapData)
     return (
-        <div>    
+        <div>
             <div id="echartsmap" style={{ width: '80%', height: "500px" }}></div>
-            <div className={classes.root} style={{'margin-left': '25%'}}>
-            <Typography id="discrete-slider-always" gutterBottom>
-            </Typography>
-            <Slider
-                defaultValue={0}
-                aria-labelledby="discrete-slider-always"
-                step={1}
-                onChange={handleChange}
-                valueLabelDisplay="on"
-                max={sliderMax - 1}
-            />
+            <div className={classes.root} style={{ 'margin-left': '25%' }}>
+                <Typography id="discrete-slider-always" gutterBottom>
+                </Typography>
+                <Slider
+                    defaultValue={0}
+                    aria-labelledby="discrete-slider-always"
+                    step={1}
+                    onChange={handleChange}
+                    valueLabelDisplay="on"
+                    max={sliderMax - 1}
+                />
             </div>
         </div>
     );

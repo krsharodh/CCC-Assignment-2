@@ -1,9 +1,7 @@
 import './style.css';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 import { JobGraph } from "../Graphs/graphs";
-
-import { GetJobGraph1Data, GetJobGraph2Data, GetJobGraph3Data } from "../agent";
 
 // Material UI imports
 import Card from '@material-ui/core/Card';
@@ -23,10 +21,6 @@ const useStyles = makeStyles({
     chartHeader: {
         marginBottom: 10,
         display: "inline-block"
-    },
-    descContainer: {
-        // border: "0.5px solid black",
-        // height: 250
     }
 });
 
