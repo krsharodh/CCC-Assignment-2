@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
         width: drawerWidth,
         flexShrink: 0,
         "& .Mui-selected": {
-            borderRight: "1px solid blue"
+            borderRight: "1px solid #ff6126"
         }
     },
     drawerPaper: {

@@ -41,7 +41,7 @@ const CovidGraph1 = ({ data }) => {
                     fontSize="12"
                 />
                 <Tooltip />
-                <Bar dataKey="percentage" fill="#ff6361" stackId="a">
+                <Bar dataKey="percentage" fill="#ff6827" stackId="a">
                     <LabelList
                         dataKey="percentage"
                         position="center"
@@ -210,7 +210,7 @@ const JobGraph = ({ data, lineDataKey, yAxisLabel }) => {
                     />
                 </YAxis>
                 <Tooltip />
-                <Bar dataKey="percentage" fill="#ff6361" stackId="a" yAxisId="left">
+                <Bar dataKey="percentage" fill="#ff6827" stackId="a" yAxisId="left">
                     <LabelList
                         dataKey="percentage"
                         position="center"
@@ -218,9 +218,9 @@ const JobGraph = ({ data, lineDataKey, yAxisLabel }) => {
                     />
                 </Bar>
                 <Line
-                    type="linear"
+                    type="monotone"
                     dataKey={lineDataKey}
-                    stroke="#b0b0b0"
+                    stroke="#8884d8"
                     yAxisId="right"
                 />
             </ComposedChart>
@@ -243,26 +243,26 @@ const SentimentAnalysis = ({ data }) => {
                 Sentiment Score of Vaccine-Related Tweets Over Time
             </p>
             <ResponsiveContainer height={500} width={"100%"}>
-            <ComposedChart
-                margin={{
-                    top: 20,
-                    right: 20,
-                    bottom: 20,
-                    left: 20,
-                }}
-                data={data}
-            >
-                <CartesianGrid stroke="#f5f5f5" />
-                <XAxis dataKey="date" interval={5}
-                    tickFormatter={tick => formatDateTicks(tick)}
-                />
-                <YAxis type="number" domain={[-0.8, 0.8]} />
-                <Tooltip />
-                <Legend />
-                <Area type="monotone" name="80% confidence band" dataKey="range" fill="#8884d8" stroke="#8884d8" fillOpacity={0.3} strokeOpacity={0.5} />
-                <ReferenceLine y={0} stroke="red" strokeDasharray="5 5" />
-                <Line type="monotone" name="avg_sentiment_score" dataKey="value" stroke="#8884d8" strokeWidth={3} />
-            </ComposedChart>
+                <ComposedChart
+                    margin={{
+                        top: 20,
+                        right: 20,
+                        bottom: 20,
+                        left: 20,
+                    }}
+                    data={data}
+                >
+                    <CartesianGrid stroke="#f5f5f5" />
+                    <XAxis dataKey="date" interval={5}
+                        tickFormatter={tick => formatDateTicks(tick)}
+                    />
+                    <YAxis type="number" domain={[-0.8, 0.8]} />
+                    <Tooltip />
+                    <Legend />
+                    <Area type="monotone" name="80% confidence band" dataKey="range" fill="#8884d8" stroke="#8884d8" fillOpacity={0.3} strokeOpacity={0.5} />
+                    <ReferenceLine y={0} stroke="red" strokeDasharray="5 5" />
+                    <Line type="monotone" name="avg_sentiment_score" dataKey="value" stroke="#8884d8" strokeWidth={3} />
+                </ComposedChart>
             </ResponsiveContainer>
         </>
     )

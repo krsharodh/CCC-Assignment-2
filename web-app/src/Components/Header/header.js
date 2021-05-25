@@ -9,6 +9,7 @@ const drawerWidth = 150;
 const useStyles = makeStyles((theme) => ({
     appBar: {
         width: `calc(100% - ${drawerWidth}px)`,
+        backgroundImage: "linear-gradient(#ff9d2f, #ff6126)",
         marginLeft: drawerWidth,
     }
 }));
@@ -21,7 +22,7 @@ function Header() {
         <AppBar position="fixed" className={classes.appBar}>
             <Toolbar>
                 <Typography variant="h6" noWrap>
-                    Cluster and Cloud Computing Assignment 2
+                    Twitter Data Analysis
             </Typography>
             </Toolbar>
         </AppBar>

@@ -3,12 +3,13 @@ import Filters from '../Filters/filters';
 import React, { useState, useEffect } from 'react';
 
 // ReChars
-import { CovidGraph1, CovidGraph2, Wordcloud } from "../Graphs/graphs";
+import { CovidGraph1, CovidGraph2 } from "../Graphs/graphs";
 import WordCloudCovid from "./WordCloudCovid"
 import Map from "./Map"
 import WordCloudCovidHashTag from "./WordCloudCovidHashTag"
 // Agent
 import { GetCities, GetCovidGraph1Data, GetCovidGraph2Data, GetCovidTopicsData, GetCovidHashtagsData, GetCovidMapData } from "../agent";
+
 
 // Material UI imports
 import Card from '@material-ui/core/Card';
@@ -27,6 +28,10 @@ const useStyles = makeStyles({
     chartHeader: {
         marginBottom: 10,
         display: "inline-block"
+    },
+    chartHeaderCenter: {
+        marginBottom: 10,
+        textAlign: "center"
     },
     descContainer: {
         // border: "0.5px solid black",
@@ -146,11 +151,18 @@ function Covid() {
                                 direction="row"
                                 justify="center"
                                 alignItems="center"
-                                spacing={2}>
-                                <Grid item xs={7}>
+                            // spacing={2}
+                            >
+                                <Grid item xs={12}>
+                                    <Typography variant="h6" className={classes.chartHeaderCenter}>
+                                        Proportion of tweets mentioning COVID vs Cases
+                                    </Typography>
+                                    <div className={classes.chartHeaderCenter}>
+                                        <Filters data={areasList} value={selectedArea} handleChange={handleAreaChange} />
+                                    </div>
                                     <CovidGraph2 data={covidGraph2Data} />
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                {/* <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Proportion of tweets mentioning COVID
                                     </Typography>
@@ -161,7 +173,7 @@ function Covid() {
                                         The graph describes the correlation betweet COVID keyword in tweets and the actual number of cases in a specific city.
                                         <p></p>
                                     </p>
-                                </Grid>
+                                </Grid> */}
                             </Grid>
 
                         </CardContent>
@@ -213,7 +225,7 @@ function Covid() {
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={7}>
-                                    <WordCloudCovid data={covidTopicsData}/>
+                                    <WordCloudCovid data={covidTopicsData} />
 
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
@@ -248,7 +260,7 @@ function Covid() {
                                 spacing={2}>
                                 <Grid item xs={7}>
 
-                                    <WordCloudCovidHashTag data={covidHashtagsData}/>
+                                    <WordCloudCovidHashTag data={covidHashtagsData} />
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
