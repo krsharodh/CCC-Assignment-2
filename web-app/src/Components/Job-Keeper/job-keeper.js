@@ -135,7 +135,7 @@ function JobKeeper({ jobGraph1Data, jobGraph2Data, jobGraph3Data }) {
                                 </Grid>
                                 <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
-                                        Proportion of tweets mentioning Vaccine and Aged 15 to 64 %
+                                        Proportion of tweets mentioning Job Keeper and Aged 15 to 64 %
                                     </Typography>
                                     <p>
                                         The graph describes the percentage of Job Keeper keyword in tweets and Aged 15 to 64 % across various major in cities in Australia.
