@@ -8,6 +8,11 @@ import { faVirus } from '@fortawesome/free-solid-svg-icons';
 import { faShieldVirus } from '@fortawesome/free-solid-svg-icons';
 import { faUserShield } from '@fortawesome/free-solid-svg-icons';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import couchdb from "../../Assets/couchdb.svg";
+import ansible from "../../Assets/ansible.svg";
+import twitter from "../../Assets/twitter.svg";
+import flask from "../../Assets/flask.png";
+import react from "../../Assets/react.svg";
 
 const useStyles = makeStyles((theme) => ({
     banner: {
@@ -18,12 +23,15 @@ const useStyles = makeStyles((theme) => ({
         borderBottomRightRadius: "50% 20%",
         "& h1": {
             margin: 0,
-            padding: "80px 0",
+            padding: "30px 0",
             font: "44px Arial",
             textAlign: "center",
             color: "white"
         },
-
+        "& h4": {
+            color: "white",
+            fontFamily: "Roboto, sans-serif"
+        }
     },
     cards: {
         width: "80%",
@@ -62,6 +70,35 @@ function Cover({
         <div>
             <header className={classes.banner}>
                 <h1>Twitter Data Analysis</h1>
+                <Grid
+                    container
+                    direction="row"
+                    justify="space-evenly"
+                    alignItems="center"
+                    spacing={3}
+                    className={classes.cards}
+                >
+                    <Grid item xs>
+                        <img src={ansible} alt="React Logo" width="50" height="50" />
+                        <h4>Ansible</h4>
+                    </Grid>
+                    <Grid item xs>
+                        <img src={couchdb} alt="React Logo" width="50" height="50" />
+                        <h4>Couch DB</h4>
+                    </Grid>
+                    <Grid item xs>
+                        <img src={twitter} alt="React Logo" width="50" height="50" />
+                        <h4>Twitter</h4>
+                    </Grid>
+                    <Grid item xs>
+                        <img src={flask} alt="React Logo" width="50" height="50" />
+                        <h4>Flask</h4>
+                    </Grid>
+                    <Grid item xs>
+                        <img src={react} alt="React Logo" width="50" height="50" />
+                        <h4>React</h4>
+                    </Grid>
+                </Grid>
                 <div className={classes.btn}>
                     <Button variant="outlined" onClick={handleGetStarted}>Get Started <KeyboardArrowRightIcon /></Button>
                 </div>
