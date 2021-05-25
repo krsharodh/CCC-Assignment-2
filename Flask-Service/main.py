@@ -111,7 +111,6 @@ class Cities(Resource):
         return ([
             {"label": 'Melbourne', "value": "melbourne"},
             {"label": 'Adelaide', "value": "adelaide"},
-            {"label": 'Brisbane', "value": "brisbane"},
             {"label": 'Sydney', "value": "sydney"},
             {"label": 'Canberra', "value": "canberra"},
             {"label": 'Darwin', "value": "darwin"},
