@@ -20,8 +20,10 @@ then
 fi
 done
 
-mpirun -n 4 -host $STR python3 harvester.py -master_node_ip $1 -username admin -password admin -couchdb_port 5984 -location australia
-mpirun -n 4 -host $STR python3 user_slicemaker.py -master_node_ip $1 -username admin -password admin -couchdb_port 5984
+echo STR
+
+mpirun -n $# -host $STR python3 harvester.py -master_node_ip $1 -username admin -password admin -couchdb_port 5984 -location australia
+mpirun -n $# -host $STR python3 user_slicemaker.py -master_node_ip $1 -username admin -password admin -couchdb_port 5984
 
 
 
