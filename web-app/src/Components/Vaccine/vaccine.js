@@ -1,11 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-import { CovidGraph1, Wordcloud, SentimentAnalysis, VaccineBarGraph } from "../Graphs/graphs";
-
-
-import { GetVaccineGraph1Data, GetVaccineGraph2Data, GetVaccineGraph3Data, GetVaccineGraph4Data, GetVaccineGraph5Data } from "../agent";
-
-import { MapContainer, CircleMarker, TileLayer } from "react-leaflet";
+import { CovidGraph1, SentimentAnalysis, VaccineBarGraph } from "../Graphs/graphs";
 
 // Material UI imports
 import Card from '@material-ui/core/Card';
@@ -27,10 +22,6 @@ const useStyles = makeStyles({
     chartHeader: {
         marginBottom: 10,
         display: "inline-block"
-    },
-    descContainer: {
-        // border: "0.5px solid black",
-        // height: 250
     }
 });
 
@@ -83,39 +74,17 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                     </Card>
                 </Grid>
 
-                {/* <Grid
-                    container
-                    direction="row"
-                    justify="center"
-                    alignItems="center"
-                    spacing={2}
-                ></Grid> */}
 
                 {/* Graph 2 */}
                 <Grid item xs={12} >
-
+                    {vaccineGraph2Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card>
                         <CardContent>
-                            <SentimentAnalysis data={vaccineGraph2Data} />
-                            {/* <Grid
-                                container
-                                direction="row"
-                                justify="center"
-                                alignItems="center"
-                                spacing={2}>
-                                <Grid item xs={12}>
-                                    <SentimentAnalysis data={vaccineGraph2Data} />
-                                </Grid> */}
-                            {/* <Grid item xs={5} className={classes.descContainer}>
-                                    <Typography variant="h6" className={classes.chartHeader}>
-                                        Sentiment Analysis
-                                    </Typography>
-                                    <p>
-                                        The graph describes the sentiment score of tweets related to Vaccine keyword in Australia.
-                                    </p>
-                                </Grid> */}
-                            {/* </Grid> */}
-
+                            {vaccineGraph2Data.length === 0
+                                ? <Skeleton animation="pulse" height={350} width="100%" />
+                                : <SentimentAnalysis data={vaccineGraph2Data} />
+                            }
                         </CardContent>
                     </Card>
                 </Grid>

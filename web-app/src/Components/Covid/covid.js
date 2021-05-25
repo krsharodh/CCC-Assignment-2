@@ -30,10 +30,6 @@ const useStyles = makeStyles({
     chartHeaderCenter: {
         marginBottom: 10,
         textAlign: "center"
-    },
-    descContainer: {
-        // border: "0.5px solid black",
-        // height: 250
     }
 });
 
@@ -160,7 +156,7 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                     </Card>
                 </Grid>
 
-                {/* Graph 3 */}
+                {/* Graph 4 */}
                 <Grid item xs={12} >
                     {covidTopicsData.length === 0 &&
                         <LinearProgress color="secondary" />}
@@ -202,7 +198,7 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                     </Card>
                 </Grid>
 
-                {/* Graph 4 */}
+                {/* Graph 5 */}
                 <Grid item xs={12} >
                     {covidHashtagsData.length === 0 &&
                         <LinearProgress color="secondary" />}

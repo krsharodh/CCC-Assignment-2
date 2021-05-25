@@ -16,7 +16,6 @@ nltk.download('stopwords')
 
 app = Flask(__name__)
 cors = CORS(app)
-# cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 api = Api(app)
 
 
@@ -117,7 +116,8 @@ class Cities(Resource):
             {"label": 'Canberra', "value": "canberra"},
             {"label": 'Darwin', "value": "darwin"},
             {"label": 'Hobart', "value": "hobart"},
-            {"label": 'Perth', "value": "perth"}
+            {"label": 'Perth', "value": "perth"},
+            {"label": 'Brisbane', "value": 'brisbane'}
         ])
 
 
