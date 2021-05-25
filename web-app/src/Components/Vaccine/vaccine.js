@@ -83,39 +83,17 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                     </Card>
                 </Grid>
 
-                {/* <Grid
-                    container
-                    direction="row"
-                    justify="center"
-                    alignItems="center"
-                    spacing={2}
-                ></Grid> */}
 
                 {/* Graph 2 */}
                 <Grid item xs={12} >
-
+                    {vaccineGraph2Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card>
                         <CardContent>
-                            <SentimentAnalysis data={vaccineGraph2Data} />
-                            {/* <Grid
-                                container
-                                direction="row"
-                                justify="center"
-                                alignItems="center"
-                                spacing={2}>
-                                <Grid item xs={12}>
-                                    <SentimentAnalysis data={vaccineGraph2Data} />
-                                </Grid> */}
-                            {/* <Grid item xs={5} className={classes.descContainer}>
-                                    <Typography variant="h6" className={classes.chartHeader}>
-                                        Sentiment Analysis
-                                    </Typography>
-                                    <p>
-                                        The graph describes the sentiment score of tweets related to Vaccine keyword in Australia.
-                                    </p>
-                                </Grid> */}
-                            {/* </Grid> */}
-
+                            {vaccineGraph2Data.length === 0
+                                ? <Skeleton animation="pulse" height={350} width="100%" />
+                                : <SentimentAnalysis data={vaccineGraph2Data} />
+                            }
                         </CardContent>
                     </Card>
                 </Grid>

@@ -108,7 +108,8 @@ class Cities(Resource):
             {"label": 'Canberra', "value": "canberra"},
             {"label": 'Darwin', "value": "darwin"},
             {"label": 'Hobart', "value": "hobart"},
-            {"label": 'Perth', "value": "perth"}
+            {"label": 'Perth', "value": "perth"},
+            {"label": 'Brisbane', "value": 'brisbane'}
         ])
 
 
