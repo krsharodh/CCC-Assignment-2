@@ -16,7 +16,6 @@ nltk.download('stopwords')
 
 app = Flask(__name__)
 cors = CORS(app)
-# cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 api = Api(app)
 
 
