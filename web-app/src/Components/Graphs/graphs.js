@@ -100,55 +100,6 @@ const Wordcloud = ({ data }) => {
         }
     };
 
-    // function getCallback(callback) {
-    //     return function (word, event) {
-    //         const isActive = callback !== "onWordMouseOut";
-    //         const element = event.target;
-    //         const text = select(element);
-    //         text
-    //             .transition()
-    //             .attr("font-size", isActive ? word.size * 1.2 + 'px' : word.size + 'px')
-    //         if (callback === 'onWordClick') {
-    //             fetch("http://127.0.0.1:5000/covid/get_tweet_by_word", {
-    //                 method: 'POST',
-    //                 headers: {
-    //                     "Content-Type": "application/json"
-    //                 },
-    //                 body: JSON.stringify({
-    //                     'word': word.text
-    //                 })
-    //             }).then(res => res.json()).then(json => {
-    //                 var element = document.getElementById(word.text)
-    //                 var startIndex = json.data.toLowerCase().indexOf(word.text)
-    //                 var endIndex = startIndex + word.text.length
-    //                 if (element !== null) {
-    //                     var innerHtml = ""
-    //                     if (startIndex === 0) {
-    //                         innerHtml = innerHtml + "<text><text style='color:#ff8000'>" + json.data.slice(0, endIndex) + "</text>" + json.data.slice(endIndex, json.data.length) + "</text>"
-    //                     } else {
-    //                         innerHtml = innerHtml + "<text>" + json.data.slice(0, startIndex) + "<text style='color: #ff8000'>" + json.data.slice(startIndex, endIndex) + "</text>" + json.data.slice(endIndex, json.data.length) + "</text>"
-    //                     }
-    //                     element.innerHTML = innerHtml
-    //                 }
-    //                 var content = document.getElementById(word.text + '_1')
-    //                 if (content !== null) {
-    //                     content.innerText = 'Example tweet with "' + word.text + '": '
-    //                 }
-    //             })
-    //         }
-    //     };
-    // }
-
-    // const callbacks = {
-    //     getWordTooltip: (word) =>
-    //         `<p id='${word.text + "_1"}'>The word "${word.text}" appears ${word.value} times.</p>
-    //   <div id='${word.text}'></div>`,
-    //     onWordClick: getCallback('onWordClick'),
-    //     onWordMouseOut: getCallback("onWordMouseOut"),
-    //     onWordMouseOver: getCallback('onMouseOver')
-    // };
-
-
     return <ReactWordcloud words={data} options={options} />
 }
 
@@ -289,7 +240,9 @@ const VaccineBarGraph = ({ data, lineDataKey, yAxisLabel }) => {
                     type="category"
                     dataKey="city"
                     stroke="black"
-                    fontSize="12" />
+                    fontSize="12"
+                    interval={0}
+                />
 
                 <YAxis
                     width={80}

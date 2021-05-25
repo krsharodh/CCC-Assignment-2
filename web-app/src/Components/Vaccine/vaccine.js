@@ -132,13 +132,13 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
+                                <Grid item xs={8}>
                                     {vaccineGraph3Data.length === 0
                                         ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <VaccineBarGraph data={vaccineGraph3Data} lineDataKey={"median_weekly_personal_income"} yAxisLabel={"Median Weekly Personal Income"} />
                                     }
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Average Sentiment Score of Vaccine-related Tweets and Median Weekly Personal Income
                                      </Typography>
