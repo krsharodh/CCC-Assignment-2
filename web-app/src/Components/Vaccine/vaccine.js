@@ -15,6 +15,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import WordCloudVaccine from './WordcloudVaccine'
 import WordCloudVaccineHashTag from './WordCloudVaccineHashTag'
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const useStyles = makeStyles({
     container: {
@@ -32,56 +34,8 @@ const useStyles = makeStyles({
     }
 });
 
-function Vaccine() {
-
+function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vaccineGraph4Data, vaccineGraph5Data }) {
     const classes = useStyles();
-
-    const [vaccineGraph1Data, setVaccineGraph1Data] = useState([]);
-    const [vaccineGraph2Data, setVaccineGraph2Data] = useState([]);
-    const [vaccineGraph3Data, setVaccineGraph3Data] = useState([]);
-    const [vaccineGraph4Data, setVaccineGraph4Data] = useState([]);
-    const [vaccineGraph5Data, setVaccineGraph5Data] = useState([]);
-
-    useEffect(() => {
-        getVaccineGraph1Data();
-        getVaccineGraph2Data();
-        getVaccineGraph3Data();
-        getVaccineGraph4Data();
-        getVaccineGraph5Data();
-    }, [])
-
-    const getVaccineGraph1Data = async () => {
-        let responseJson = await GetVaccineGraph1Data();
-        responseJson = responseJson.map(el => ({
-            ...el,
-            percentage: ((el.metioned_vaccine / el.total_tweets) * 100).toFixed(2)
-        }))
-        setVaccineGraph1Data(responseJson);
-    }
-
-    const getVaccineGraph2Data = async () => {
-        let responseJson = await GetVaccineGraph2Data();
-        responseJson = responseJson.map(el => ({
-            ...el,
-            percentage: ((el.metioned_vaccine / el.total_tweets) * 100).toFixed(2)
-        }))
-        setVaccineGraph2Data(responseJson);
-    }
-
-    const getVaccineGraph3Data = async () => {
-        let responseJson = await GetVaccineGraph3Data();
-        setVaccineGraph3Data(responseJson);
-    }
-
-    const getVaccineGraph4Data = async () => {
-        let responseJson = await GetVaccineGraph4Data();
-        setVaccineGraph4Data(responseJson);
-    }
-
-    const getVaccineGraph5Data = async () => {
-        let responseJson = await GetVaccineGraph5Data();
-        setVaccineGraph5Data(responseJson);
-    }
 
     return (
         <div className={classes.container}>
@@ -96,6 +50,8 @@ function Vaccine() {
 
                 {/* Graph 1 */}
                 <Grid item xs={12} >
+                    {vaccineGraph1Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card>
                         <CardContent>
                             <Grid
@@ -104,10 +60,13 @@ function Vaccine() {
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
-                                    <CovidGraph1 data={vaccineGraph1Data} />
+                                <Grid item xs={8}>
+                                    {vaccineGraph1Data.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <CovidGraph1 data={vaccineGraph1Data} />
+                                    }
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Proportion of tweets mentioning Vaccine
                                     </Typography>
@@ -134,6 +93,7 @@ function Vaccine() {
 
                 {/* Graph 2 */}
                 <Grid item xs={12} >
+
                     <Card>
                         <CardContent>
                             <SentimentAnalysis data={vaccineGraph2Data} />
@@ -162,6 +122,8 @@ function Vaccine() {
 
                 {/* Graph 3 */}
                 <Grid item xs={12} >
+                    {vaccineGraph3Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card >
                         <CardContent>
                             <Grid
@@ -171,23 +133,15 @@ function Vaccine() {
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={7}>
-                                    <VaccineBarGraph data={vaccineGraph3Data} lineDataKey={"median_weekly_personal_income"} yAxisLabel={"Median Weekly Personal Income"} />
-
+                                    {vaccineGraph3Data.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <VaccineBarGraph data={vaccineGraph3Data} lineDataKey={"median_weekly_personal_income"} yAxisLabel={"Median Weekly Personal Income"} />
+                                    }
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Average Sentiment Score of Vaccine-related Tweets and Median Weekly Personal Income
                                      </Typography>
-                                    {/* <p>
-                                        The wordcloud describes the main topics used in Vaccine related tweets.
-                                        <p></p>
-                                        <strong>Top 3 Topics</strong>
-                                        <ul>
-                                            {vaccineGraph4Data
-                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
-                                                .map(el => <li>{el.text}</li>)}
-                                        </ul>
-                                    </p> */}
                                 </Grid>
                             </Grid>
                         </CardContent>
@@ -196,6 +150,8 @@ function Vaccine() {
 
                 {/* Graph 4 */}
                 <Grid item xs={12} >
+                    {vaccineGraph4Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card >
                         <CardContent>
                             <Grid
@@ -204,11 +160,13 @@ function Vaccine() {
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
-                                    <WordCloudVaccine data={vaccineGraph4Data} />
-
+                                <Grid item xs={8}>
+                                    {vaccineGraph4Data.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <WordCloudVaccine data={vaccineGraph4Data} />
+                                    }
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Main Topics of Vaccine
                                      </Typography>
@@ -216,11 +174,14 @@ function Vaccine() {
                                         The wordcloud describes the main topics used in Vaccine related tweets.
                                         <p></p>
                                         <strong>Top 3 Topics</strong>
-                                        <ul>
-                                            {vaccineGraph4Data
-                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
-                                                .map(el => <li>{el.text}</li>)}
-                                        </ul>
+                                        {
+                                            vaccineGraph4Data &&
+                                            <ul>
+                                                {vaccineGraph4Data
+                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                    .map(el => <li>{el.text}</li>)}
+                                            </ul>
+                                        }
                                     </p>
                                 </Grid>
                             </Grid>
@@ -230,6 +191,8 @@ function Vaccine() {
 
                 {/* Graph 5 */}
                 <Grid item xs={12} >
+                    {vaccineGraph5Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card >
                         <CardContent>
                             <Grid
@@ -238,11 +201,13 @@ function Vaccine() {
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
-
-                                    <WordCloudVaccineHashTag data={vaccineGraph5Data} />
+                                <Grid item xs={8}>
+                                    {vaccineGraph5Data.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <WordCloudVaccineHashTag data={vaccineGraph5Data} />
+                                    }
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Main Hashtags
                                      </Typography>
@@ -250,11 +215,15 @@ function Vaccine() {
                                         The wordcloud describes the main hashtags used in Vaccine related tweets.
                                         <p></p>
                                         <strong>Top 3 Hashtags</strong>
-                                        <ul>
-                                            {vaccineGraph5Data
-                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
-                                                .map(el => <li>{el.text}</li>)}
-                                        </ul>
+                                        {
+                                            vaccineGraph5Data &&
+
+                                            <ul>
+                                                {vaccineGraph5Data
+                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                    .map(el => <li>{el.text}</li>)}
+                                            </ul>
+                                        }
                                     </p>
                                 </Grid>
                             </Grid>

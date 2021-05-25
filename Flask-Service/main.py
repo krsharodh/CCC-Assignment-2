@@ -112,22 +112,6 @@ class Cities(Resource):
         ])
 
 
-# class Sample(Resource):
-#     def get(self):
-#         user = "admin"
-#         password = "admin"
-#         couchserver = couchdb.Server(
-#             "http://%s:%s@172.26.133.34:5984/" % (user, password))
-#         for dbname in couchserver:
-#             dbname = "twitter"
-#             if dbname in couchserver:
-#                 db = couchserver[dbname]
-#                 # Create a view
-#                 # Do the processing
-#                 # return (result)
-#                 return (db.get('51f39676462cca21859bd92d8e000f24'))
-
-
 class CovidGraph1(Resource):
     def get(self):
 
@@ -203,12 +187,13 @@ class CovidGraph2(Resource):
             datetime = [row["key"][1], row["key"][2], row["key"][3]]
             datetime = "-".join(str(e).zfill(2) for e in datetime)
             if(row["key"][0] == self.cityStateMap[city]):
-                data.append(
-                    {
-                        "time": datetime,
-                        "cases": row["value"]
-                    }
-                )
+                if row["value"] >= 0:
+                    data.append(
+                        {
+                            "time": datetime,
+                            "cases": row["value"]
+                        }
+                    )
 
         for i in range(len(data)):
             for row in self.covid_tweet_citymonth:

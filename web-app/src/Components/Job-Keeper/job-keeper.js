@@ -11,6 +11,8 @@ import Grid from '@material-ui/core/Grid';
 import CardContent from '@material-ui/core/CardContent';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const useStyles = makeStyles({
     container: {
@@ -28,46 +30,9 @@ const useStyles = makeStyles({
     }
 });
 
-function JobKeeper() {
+function JobKeeper({ jobGraph1Data, jobGraph2Data, jobGraph3Data }) {
 
     const classes = useStyles();
-
-    const [jobGraph1Data, setJobGraph1Data] = useState([]);
-    const [jobGraph2Data, setJobGraph2Data] = useState([]);
-    const [jobGraph3Data, setJobGraph3Data] = useState([]);
-
-    useEffect(() => {
-        getJobGraph1Data();
-        getJobGraph2Data();
-        getJobGraph3Data();
-    }, [])
-
-    const getJobGraph1Data = async () => {
-        let responseJson = await GetJobGraph1Data();
-        responseJson = responseJson.map(el => ({
-            ...el,
-            percentage: ((el.metioned_jobkeeper / el.total_tweets) * 100).toFixed(2)
-        }))
-        setJobGraph1Data(responseJson);
-    }
-
-    const getJobGraph2Data = async () => {
-        let responseJson = await GetJobGraph2Data();
-        responseJson = responseJson.map(el => ({
-            ...el,
-            percentage: ((el.metioned_jobkeeper / el.total_tweets) * 100).toFixed(2)
-        }))
-        setJobGraph2Data(responseJson);
-    }
-
-    const getJobGraph3Data = async () => {
-        let responseJson = await GetJobGraph3Data();
-        responseJson = responseJson.map(el => ({
-            ...el,
-            percentage: ((el.metioned_jobkeeper / el.total_tweets) * 100).toFixed(2)
-        }))
-        setJobGraph3Data(responseJson);
-    }
 
     return (
         <div className={classes.container}>
@@ -82,6 +47,8 @@ function JobKeeper() {
 
                 {/* Graph 1 */}
                 <Grid item xs={12} >
+                    {jobGraph1Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card>
                         <CardContent>
                             <Grid
@@ -91,7 +58,10 @@ function JobKeeper() {
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={8}>
-                                    <JobGraph data={jobGraph1Data} lineDataKey={"median_weekly_personal_income"} yAxisLabel={"Median Weekly Personal Income"} />
+                                    {jobGraph1Data.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <JobGraph data={jobGraph1Data} lineDataKey={"median_weekly_personal_income"} yAxisLabel={"Median Weekly Personal Income"} />
+                                    }
                                 </Grid>
                                 <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
@@ -113,6 +83,8 @@ function JobKeeper() {
                 {/* Graph 2 */}
                 <Grid item xs={12} >
                     <Card>
+                        {jobGraph2Data.length === 0 &&
+                            <LinearProgress color="secondary" />}
                         <CardContent>
                             <Grid
                                 container
@@ -121,7 +93,10 @@ function JobKeeper() {
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={8}>
-                                    <JobGraph data={jobGraph2Data} lineDataKey={"jobseeker_payment"} yAxisLabel={"Jobseeker Payment"} />
+                                    {jobGraph2Data.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <JobGraph data={jobGraph2Data} lineDataKey={"jobseeker_payment"} yAxisLabel={"Jobseeker Payment"} />
+                                    }
                                 </Grid>
                                 <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
@@ -142,6 +117,8 @@ function JobKeeper() {
 
                 {/* Graph 3 */}
                 <Grid item xs={12} >
+                    {jobGraph3Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card>
                         <CardContent>
                             <Grid
@@ -151,7 +128,10 @@ function JobKeeper() {
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={8}>
-                                    <JobGraph data={jobGraph3Data} lineDataKey={"Aged_15_64_percentage"} yAxisLabel={"Aged 15 to 64 %"} />
+                                    {jobGraph3Data.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <JobGraph data={jobGraph3Data} lineDataKey={"Aged_15_64_percentage"} yAxisLabel={"Aged 15 to 64 %"} />
+                                    }
                                 </Grid>
                                 <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>

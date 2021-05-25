@@ -1,15 +1,12 @@
 import './style.css';
 import Filters from '../Filters/filters';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 // ReChars
 import { CovidGraph1, CovidGraph2 } from "../Graphs/graphs";
 import WordCloudCovid from "./WordCloudCovid"
 import Map from "./Map"
 import WordCloudCovidHashTag from "./WordCloudCovidHashTag"
-// Agent
-import { GetCities, GetCovidGraph1Data, GetCovidGraph2Data, GetCovidTopicsData, GetCovidHashtagsData, GetCovidMapData } from "../agent";
-
 
 // Material UI imports
 import Card from '@material-ui/core/Card';
@@ -17,7 +14,8 @@ import Grid from '@material-ui/core/Grid';
 import CardContent from '@material-ui/core/CardContent';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const useStyles = makeStyles({
     container: {
@@ -39,73 +37,9 @@ const useStyles = makeStyles({
     }
 });
 
-function Covid() {
+function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, covidHashtagsData, handleAreaChange, selectedArea }) {
 
     const classes = useStyles();
-
-    const [areasList, setAreasList] = useState([]);
-    const [selectedArea, setSelectedArea] = useState(0);
-    const [covidGraph1Data, setCovidGraph1Data] = useState([]);
-    const [covidGraph2Data, setCovidGraph2Data] = useState([]);
-    const [covidTopicsData, setCovidTopicsData] = useState([]);
-    const [covidHashtagsData, setCovidHashtagsData] = useState([]);
-    const [covidMapData, setCovidMapData] = useState([]);
-
-    useEffect(() => {
-        getCities();
-        getCovidGraph1Data();
-        getCovidTopicsData();
-        getCovidHashtagsData();
-        getCovidMapData();
-    }, [])
-
-    const getCities = async () => {
-        console.log(areasList);
-        if (areasList.length === 0) {
-            let responseJson = await GetCities();
-            setAreasList(responseJson);
-            setSelectedArea(responseJson[0]["value"]);
-            getCovidGraph2Data(responseJson[0]["value"]);
-        }
-    }
-
-    const getCovidGraph1Data = async () => {
-        if (covidGraph1Data.length === 0) {
-            let responseJson = await GetCovidGraph1Data();
-            responseJson = responseJson.map(el => ({
-                ...el,
-                percentage: ((el.metioned_covid / el.total_tweets) * 100).toFixed(2)
-            }))
-            setCovidGraph1Data(responseJson);
-        }
-    }
-
-    const getCovidGraph2Data = async (city, override = false) => {
-        if (covidGraph2Data.length === 0 || override) {
-            const responseJson = await GetCovidGraph2Data(city);
-            setCovidGraph2Data(responseJson);
-        }
-    }
-
-    const getCovidTopicsData = async () => {
-        const responseJson = await GetCovidTopicsData();
-        setCovidTopicsData(responseJson);
-    }
-
-    const getCovidHashtagsData = async () => {
-        const responseJson = await GetCovidHashtagsData();
-        setCovidHashtagsData(responseJson);
-    }
-
-    const getCovidMapData = async () => {
-        const responseJson = await GetCovidMapData();
-        setCovidMapData(responseJson);
-    }
-
-    const handleAreaChange = (event) => {
-        setSelectedArea(event.target.value);
-        getCovidGraph2Data(event.target.value, true);
-    };
 
     return (
         <div className={classes.container}>
@@ -120,6 +54,8 @@ function Covid() {
 
                 {/* Graph 1 */}
                 <Grid item xs={12} >
+                    {covidGraph1Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card>
                         <CardContent>
                             <Grid
@@ -128,10 +64,13 @@ function Covid() {
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
-                                    <CovidGraph1 data={covidGraph1Data} />
+                                <Grid item xs={8}>
+                                    {covidGraph1Data.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <CovidGraph1 data={covidGraph1Data} />
+                                    }
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Proportion of tweets mentioning COVID
                                     </Typography>
@@ -151,6 +90,8 @@ function Covid() {
 
                 {/* Graph 2 */}
                 <Grid item xs={12} >
+                    {covidGraph2Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card >
                         <CardContent>
                             <Grid
@@ -158,7 +99,6 @@ function Covid() {
                                 direction="row"
                                 justify="center"
                                 alignItems="center"
-                            // spacing={2}
                             >
                                 <Grid item xs={12}>
                                     <Typography variant="h6" className={classes.chartHeaderCenter}>
@@ -167,7 +107,11 @@ function Covid() {
                                     <div className={classes.chartHeaderCenter}>
                                         <Filters data={areasList} value={selectedArea} handleChange={handleAreaChange} />
                                     </div>
-                                    <CovidGraph2 data={covidGraph2Data} />
+                                    {covidGraph2Data.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <CovidGraph2 data={covidGraph2Data} />
+                                    }
+
                                 </Grid>
                                 {/* <Grid item xs={5} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
@@ -223,6 +167,8 @@ function Covid() {
 
                 {/* Graph 3 */}
                 <Grid item xs={12} >
+                    {covidTopicsData.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card >
                         <CardContent>
                             <Grid
@@ -231,11 +177,14 @@ function Covid() {
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
-                                    <WordCloudCovid data={covidTopicsData} />
-
+                                <Grid item xs={8}>
+                                    {covidTopicsData.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <WordCloudCovid data={covidTopicsData} />
+                                    }
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                <Grid item xs={4} className={classes.descContainer}>
+
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Main Topics
                                      </Typography>
@@ -243,11 +192,14 @@ function Covid() {
                                         The wordcloud describes the main topics used in COVID related tweets.
                                         <p></p>
                                         <strong>Top 3 topics</strong>
-                                        <ul>
-                                            {covidTopicsData
-                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
-                                                .map(el => <li>{el.text}</li>)}
-                                        </ul>
+                                        {
+                                            covidTopicsData &&
+                                            <ul>
+                                                {covidTopicsData
+                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                    .map(el => <li>{el.text}</li>)}
+                                            </ul>
+                                        }
                                     </p>
                                 </Grid>
                             </Grid>
@@ -257,6 +209,8 @@ function Covid() {
 
                 {/* Graph 4 */}
                 <Grid item xs={12} >
+                    {covidHashtagsData.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card >
                         <CardContent>
                             <Grid
@@ -265,11 +219,13 @@ function Covid() {
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
-
-                                    <WordCloudCovidHashTag data={covidHashtagsData} />
+                                <Grid item xs={8}>
+                                    {covidHashtagsData.length === 0
+                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        : <WordCloudCovidHashTag data={covidHashtagsData} />
+                                    }
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Main Hashtags
                                      </Typography>
@@ -277,11 +233,14 @@ function Covid() {
                                         The wordcloud describes the main topics used in COVID related tweets.
                                         <p></p>
                                         <strong>Top 3 Hashtags</strong>
-                                        <ul>
-                                            {covidHashtagsData
-                                                .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
-                                                .map(el => <li>{el.text}</li>)}
-                                        </ul>
+                                        {
+                                            covidHashtagsData &&
+                                            <ul>
+                                                {covidHashtagsData
+                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 3)
+                                                    .map(el => <li>{el.text}</li>)}
+                                            </ul>
+                                        }
                                     </p>
                                 </Grid>
                             </Grid>
