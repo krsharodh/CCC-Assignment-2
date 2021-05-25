@@ -55,6 +55,7 @@ function App() {
 
   const handleGetStarted = () => {
     setShowGetStarted(false);
+
   }
 
   return (

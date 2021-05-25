@@ -177,7 +177,9 @@ const JobGraph = ({ data, lineDataKey, yAxisLabel }) => {
                     type="category"
                     dataKey="city"
                     stroke="black"
-                    fontSize="12" />
+                    fontSize="12"
+                    interval={0}
+                />
 
                 <YAxis
                     width={80}

@@ -90,10 +90,10 @@ function JobKeeper() {
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
+                                <Grid item xs={8}>
                                     <JobGraph data={jobGraph1Data} lineDataKey={"median_weekly_personal_income"} yAxisLabel={"Median Weekly Personal Income"} />
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Proportion of tweets mentioning Job Keeper and Median Weekly Personal Income
                                     </Typography>
@@ -120,10 +120,10 @@ function JobKeeper() {
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
+                                <Grid item xs={8}>
                                     <JobGraph data={jobGraph2Data} lineDataKey={"jobseeker_payment"} yAxisLabel={"Jobseeker Payment"} />
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Proportion of tweets mentioning Job Keeper and Jobseeker Payment
                                     </Typography>
@@ -150,10 +150,10 @@ function JobKeeper() {
                                 justify="center"
                                 alignItems="center"
                                 spacing={2}>
-                                <Grid item xs={7}>
+                                <Grid item xs={8}>
                                     <JobGraph data={jobGraph3Data} lineDataKey={"Aged_15_64_percentage"} yAxisLabel={"Aged 15 to 64 %"} />
                                 </Grid>
-                                <Grid item xs={5} className={classes.descContainer}>
+                                <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
                                         Proportion of tweets mentioning Vaccine and Aged 15 to 64 %
                                     </Typography>
