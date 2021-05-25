@@ -62,7 +62,7 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                                 spacing={2}>
                                 <Grid item xs={8}>
                                     {vaccineGraph1Data.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <CovidGraph1 data={vaccineGraph1Data} />
                                     }
                                 </Grid>
@@ -134,7 +134,7 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                                 spacing={2}>
                                 <Grid item xs={7}>
                                     {vaccineGraph3Data.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <VaccineBarGraph data={vaccineGraph3Data} lineDataKey={"median_weekly_personal_income"} yAxisLabel={"Median Weekly Personal Income"} />
                                     }
                                 </Grid>
@@ -162,7 +162,7 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                                 spacing={2}>
                                 <Grid item xs={8}>
                                     {vaccineGraph4Data.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <WordCloudVaccine data={vaccineGraph4Data} />
                                     }
                                 </Grid>
@@ -203,7 +203,7 @@ function Vaccine({ vaccineGraph1Data, vaccineGraph2Data, vaccineGraph3Data, vacc
                                 spacing={2}>
                                 <Grid item xs={8}>
                                     {vaccineGraph5Data.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <WordCloudVaccineHashTag data={vaccineGraph5Data} />
                                     }
                                 </Grid>

@@ -66,7 +66,7 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                                 spacing={2}>
                                 <Grid item xs={8}>
                                     {covidGraph1Data.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <CovidGraph1 data={covidGraph1Data} />
                                     }
                                 </Grid>
@@ -108,7 +108,7 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                                         <Filters data={areasList} value={selectedArea} handleChange={handleAreaChange} />
                                     </div>
                                     {covidGraph2Data.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <CovidGraph2 data={covidGraph2Data} />
                                     }
 
@@ -179,7 +179,7 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                                 spacing={2}>
                                 <Grid item xs={8}>
                                     {covidTopicsData.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <WordCloudCovid data={covidTopicsData} />
                                     }
                                 </Grid>
@@ -221,7 +221,7 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                                 spacing={2}>
                                 <Grid item xs={8}>
                                     {covidHashtagsData.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <WordCloudCovidHashTag data={covidHashtagsData} />
                                     }
                                 </Grid>

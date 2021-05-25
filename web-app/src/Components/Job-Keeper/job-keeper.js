@@ -59,7 +59,7 @@ function JobKeeper({ jobGraph1Data, jobGraph2Data, jobGraph3Data }) {
                                 spacing={2}>
                                 <Grid item xs={8}>
                                     {jobGraph1Data.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <JobGraph data={jobGraph1Data} lineDataKey={"median_weekly_personal_income"} yAxisLabel={"Median Weekly Personal Income"} />
                                     }
                                 </Grid>
@@ -94,7 +94,7 @@ function JobKeeper({ jobGraph1Data, jobGraph2Data, jobGraph3Data }) {
                                 spacing={2}>
                                 <Grid item xs={8}>
                                     {jobGraph2Data.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <JobGraph data={jobGraph2Data} lineDataKey={"jobseeker_payment"} yAxisLabel={"Jobseeker Payment"} />
                                     }
                                 </Grid>
@@ -129,7 +129,7 @@ function JobKeeper({ jobGraph1Data, jobGraph2Data, jobGraph3Data }) {
                                 spacing={2}>
                                 <Grid item xs={8}>
                                     {jobGraph3Data.length === 0
-                                        ? <Skeleton animation="rect" height={350} width="100%" />
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
                                         : <JobGraph data={jobGraph3Data} lineDataKey={"Aged_15_64_percentage"} yAxisLabel={"Aged 15 to 64 %"} />
                                     }
                                 </Grid>
