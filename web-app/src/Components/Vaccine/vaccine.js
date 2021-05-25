@@ -1,11 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-import { CovidGraph1, Wordcloud, SentimentAnalysis, VaccineBarGraph } from "../Graphs/graphs";
-
-
-import { GetVaccineGraph1Data, GetVaccineGraph2Data, GetVaccineGraph3Data, GetVaccineGraph4Data, GetVaccineGraph5Data } from "../agent";
-
-import { MapContainer, CircleMarker, TileLayer } from "react-leaflet";
+import { CovidGraph1, SentimentAnalysis, VaccineBarGraph } from "../Graphs/graphs";
 
 // Material UI imports
 import Card from '@material-ui/core/Card';
@@ -27,10 +22,6 @@ const useStyles = makeStyles({
     chartHeader: {
         marginBottom: 10,
         display: "inline-block"
-    },
-    descContainer: {
-        // border: "0.5px solid black",
-        // height: 250
     }
 });
 

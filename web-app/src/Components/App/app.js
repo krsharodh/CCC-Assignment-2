@@ -16,15 +16,11 @@ import Cover from "../Cover/cover"
 import { makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import { GetCities, GetCovidGraph1Data, GetCovidGraph2Data, GetCovidTopicsData, GetCovidHashtagsData, GetCovidMapData } from "../agent";
 import { GetVaccineGraph1Data, GetVaccineGraph2Data, GetVaccineGraph3Data, GetVaccineGraph4Data, GetVaccineGraph5Data } from "../agent";
 import { GetJobGraph1Data, GetJobGraph2Data, GetJobGraph3Data } from "../agent";
-
-
-// Material UI imports
-
 const drawerWidth = 150;
 
 const useStyles = makeStyles((theme) => ({
@@ -38,7 +34,6 @@ const useStyles = makeStyles((theme) => ({
   drawerPaper: {
     width: drawerWidth,
   },
-  // necessary for content to be below app bar
   toolbar: theme.mixins.toolbar,
   content: {
     flexGrow: 1,
@@ -78,6 +73,7 @@ function App() {
   const handleGetStarted = () => {
     setShowGetStarted(false);
 
+    //  Cities List
     getCities()
 
     // Covid
