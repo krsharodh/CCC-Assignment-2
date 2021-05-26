@@ -1,9 +1,12 @@
 import './style.css';
 import Filters from '../Filters/filters';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
 // ReChars
-import { CovidGraph1, CovidGraph2, Wordcloud } from "../Graphs/graphs";
+import { CovidGraph1, CovidGraph2 } from "../Graphs/graphs";
+import WordCloudCovid from "./WordCloudCovid"
+import Map from "./Map"
+import WordCloudCovidHashTag from "./WordCloudCovidHashTag"
 
 // Material UI imports
 import Card from '@material-ui/core/Card';
@@ -11,90 +14,31 @@ import Grid from '@material-ui/core/Grid';
 import CardContent from '@material-ui/core/CardContent';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Skeleton from '@material-ui/lab/Skeleton';
 
 const useStyles = makeStyles({
-    // Styles for component
     container: {
         width: "95%",
         margin: "0 auto",
-        marginTop: 10
+        marginTop: 10,
     },
     chartHeader: {
-        marginBottom: 10
+        marginBottom: 10,
+        display: "inline-block"
+    },
+    chartHeaderCenter: {
+        marginBottom: 10,
+        textAlign: "center"
     }
 });
 
-function Covid() {
+function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, covidHashtagsData, covidMapData, handleAreaChange, selectedArea }) {
 
     const classes = useStyles();
 
-    const [areasList, setAreasList] = useState([]);
-    const [selectedArea, setSelectedArea] = useState(0);
-    const [covidGraph1Data, setCovidGraph1Data] = useState([]);
-    const [covidGraph2Data, setCovidGraph2Data] = useState([]);
-    const [covidWordCloudData, setCovidWordCloudData] = useState([]);
-
-    useEffect(() => {
-        getCities();
-        getCovidGraph1Data();
-        getCovidWordCloudData();
-        // getSample();
-    }, [])
-
-    let baseURL = "http://127.0.0.1:5000"
-    if (process.env.NODE_ENV === 'production') {
-        baseURL = `${process.env.REACT_APP_PROD_URL}:${process.env.REACT_APP_PORT_NUMBER}`
-    };
-
-    const getCities = async () => {
-        const response = await fetch(`${baseURL}/getCities`);
-        const responseJson = await response.json();
-        // const responseJson = [
-        //     { "label": 'Melbourne', "value": 1 },
-        //     { "label": 'Adelaide', "value": 2 },
-        //     { "label": 'Sydney', "value": 3 }
-        // ]
-        setAreasList(responseJson);
-        setSelectedArea(responseJson[0]["value"])
-        getCovidGraph2Data();
-    }
-
-    const getCovidGraph1Data = async () => {
-        const response = await fetch(`${baseURL}/getCovidGraph1Data`);
-        const responseJson = await response.json();
-        setCovidGraph1Data(responseJson);
-    }
-
-    const getCovidGraph2Data = async () => {
-        const url = new URL(`${baseURL}/getCovidGraph2Data`)
-        const params = { city: selectedArea }
-        Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
-        const response = await fetch(url);
-        const responseJson = await response.json();
-        setCovidGraph2Data(responseJson);
-    }
-
-    const getCovidWordCloudData = async () => {
-        const response = await fetch(`${baseURL}/getCovidWordCloudData`);
-        const responseJson = await response.json();
-        setCovidWordCloudData(responseJson);
-    }
-
-    const getSample = async () => {
-        const response = await fetch(baseURL + "getSample");
-        const responseJson = await response.json();
-        console.log(responseJson);
-    }
-
-    const handleAreaChange = (event) => {
-        setSelectedArea(event.target.value);
-    };
-
-
     return (
         <div className={classes.container}>
-
 
             <Grid
                 container
@@ -103,51 +47,194 @@ function Covid() {
                 alignItems="center"
                 spacing={2}
             >
-                <Grid item xs={6} >
+
+                {/* Graph 1 */}
+                <Grid item xs={12} >
+                    {covidGraph1Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card>
                         <CardContent>
-                            <Typography variant="h6" className={classes.chartHeader}>
-                                Proportion/count of tweets mentioning COVID
-                            </Typography>
-                            <CovidGraph1 data={covidGraph1Data} />
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={8}>
+                                    {covidGraph1Data.length === 0
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
+                                        : <CovidGraph1 data={covidGraph1Data} />
+                                    }
+                                </Grid>
+                                <Grid item xs={4} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Proportion of tweets mentioning COVID
+                                    </Typography>
+                                    <p>
+                                        The graph describes the percentage of tweets containing covid keyword in main cities of Australia.
+                                        <p></p>
+                                        <strong>Highest Percentage:</strong>  Canberra<br></br>
+                                        <strong>Lowest Percentage:</strong>  Hobart
+                                    </p>
+                                </Grid>
+                            </Grid>
+
                         </CardContent>
                     </Card>
                 </Grid>
 
-                <Grid item xs={6} >
+
+                {/* Graph 2 */}
+                <Grid item xs={12} >
+                    {covidGraph2Data.length === 0 &&
+                        <LinearProgress color="secondary" />}
                     <Card >
                         <CardContent>
-                            <Typography variant="h6" className={classes.chartHeader}>
-                                <Grid
-                                    container
-                                    direction="row"
-                                    justify="center"
-                                    alignItems="center"
-                                >
-                                    <Grid item xs={7}>
-                                        COVID tweets vs COVID cases -
-                                    </Grid>
-                                    <Grid item xs={5}>
-                                        <Filters autoCompleteList={areasList} label={"Select City"} value={selectedArea} handleChange={handleAreaChange} />
-                                    </Grid>
-                                </Grid>
-                            </Typography>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                            >
+                                <Grid item xs={12}>
+                                    <Typography variant="h6" className={classes.chartHeaderCenter}>
+                                        Counts of tweets mentioning Covid vs Cases
+                                    </Typography>
+                                    <div className={classes.chartHeaderCenter}>
+                                        <Filters data={areasList} value={selectedArea} handleChange={handleAreaChange} />
+                                    </div>
+                                    {covidGraph2Data.length === 0
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
+                                        : <CovidGraph2 data={covidGraph2Data} />
+                                    }
 
-                            <CovidGraph2 data={covidGraph2Data} />
+                                </Grid>
+                                {/* <Grid item xs={5} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Proportion of tweets mentioning COVID
+                                    </Typography>
+                                    <div className={classes.chartHeader}>
+                                        <Filters data={areasList} value={selectedArea} handleChange={handleAreaChange} />
+                                    </div>
+                                    <p>
+                                        The graph describes the correlation betweet COVID keyword in tweets and the actual number of cases in a specific city.
+                                        <p></p>
+                                    </p>
+                                </Grid> */}
+                            </Grid>
+
                         </CardContent>
                     </Card>
                 </Grid>
 
+                {/* Graph 3 */}
                 <Grid item xs={12} >
                     <Card >
                         <CardContent>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={7}>
+                                    <Map data={covidMapData} />
 
-                            <Typography variant="h6" className={classes.chartHeader}>
-                                Main Topics
-                            </Typography>
+                                </Grid>
+                                <Grid item xs={5} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Number of tweets mentioning COVID over time
+                                     </Typography>
+                                    <p>
+                                        The map shows the number of COVID-related tweets in each month from Feb 2020 to now, comparing across the 8 cities of interest, each representing a state in Australia.
+                                        <p>Darker colours represent higher number of tweets.</p>
+                                        <p>Sydney and Melbourne tend to have the most tweets mentioning COVID across all times studied.</p>
+                                    </p>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
 
-                            <Wordcloud data={covidWordCloudData} />
+                {/* Graph 4 */}
+                <Grid item xs={12} >
+                    {covidTopicsData.length === 0 &&
+                        <LinearProgress color="secondary" />}
+                    <Card >
+                        <CardContent>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={8}>
+                                    {covidTopicsData.length === 0
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
+                                        : <WordCloudCovid data={covidTopicsData} />
+                                    }
+                                </Grid>
+                                <Grid item xs={4} className={classes.descContainer}>
 
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Main Topics
+                                     </Typography>
+                                    <p>
+                                        The wordcloud describes the main topics used in COVID related tweets.
+                                        <p></p>
+                                        <strong>Top 5 topics</strong>
+                                        {
+                                            covidTopicsData &&
+                                            <ul>
+                                                {covidTopicsData
+                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 5)
+                                                    .map(el => <li>{el.text}</li>)}
+                                            </ul>
+                                        }
+                                    </p>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
+                </Grid>
+
+                {/* Graph 5 */}
+                <Grid item xs={12} >
+                    {covidHashtagsData.length === 0 &&
+                        <LinearProgress color="secondary" />}
+                    <Card >
+                        <CardContent>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="center"
+                                alignItems="center"
+                                spacing={2}>
+                                <Grid item xs={8}>
+                                    {covidHashtagsData.length === 0
+                                        ? <Skeleton animation="pulse" height={350} width="100%" />
+                                        : <WordCloudCovidHashTag data={covidHashtagsData} />
+                                    }
+                                </Grid>
+                                <Grid item xs={4} className={classes.descContainer}>
+                                    <Typography variant="h6" className={classes.chartHeader}>
+                                        Main Hashtags
+                                     </Typography>
+                                    <p>
+                                        The wordcloud describes the main topics used in COVID related tweets.
+                                        <p></p>
+                                        <strong>Top 5 Hashtags</strong>
+                                        {
+                                            covidHashtagsData &&
+                                            <ul>
+                                                {covidHashtagsData
+                                                    .sort((a, b) => parseFloat(b.value) - parseFloat(a.value)).slice(0, 5)
+                                                    .map(el => <li>{el.text}</li>)}
+                                            </ul>
+                                        }
+                                    </p>
+                                </Grid>
+                            </Grid>
                         </CardContent>
                     </Card>
                 </Grid>
