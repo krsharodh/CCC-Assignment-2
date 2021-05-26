@@ -1,0 +1,9 @@
+- hosts: COMP90024
+
+  roles:
+    - role: harvester
+
+- hosts: MASTER
+
+  roles:
+    - role: launch_harvester

@@ -5,7 +5,6 @@
     user: "{{ couchdbusername }}"
     password: "{{ couchdbpassword }}"
     force_basic_auth: yes
-    status_code: 200, 201
     headers:
       Content-Type: "application/json"
     body_format: json
@@ -18,7 +17,6 @@
     user: "{{ couchdbusername }}"
     password: "{{ couchdbpassword }}"
     force_basic_auth: yes
-    status_code: 200, 201
     headers:
       Content-Type: "application/json"
     body_format: json
@@ -42,7 +40,6 @@
     force_basic_auth: yes
     headers:
       Content-Type: "application/json"
-    status_code: 200, 201
     body_format: json
     body: "{\"action\":\"finish_cluster\"}"
   run_once: true

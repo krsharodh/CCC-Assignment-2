@@ -15,10 +15,27 @@
     - "npm run build"
     - "npm install -g serve"
 
+- name: Create the .env file for react app
+  file:
+    path: /home/ubuntu/COMP90024/web-app/.env
+    state: touch
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: 600
+
+- name: write .env file for react app
+  become: yes
+  lineinfile:
+    dest: /home/ubuntu/COMP90024/web-app/.env
+    line: '{{ item }}'
+  with_items:
+    - 'REACT_APP_PORT_NUMBER=5000'
+    - 'REACT_APP_PROD_URL=http://{{ masternode }}'
+
 - name: Launch React app
   become: yes
   command: serve -l 3000 -s build
-  async: 600
+  async: 7776000
   poll: 0
   args:
     chdir: /home/ubuntu/COMP90024/web-app

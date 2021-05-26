@@ -3,10 +3,16 @@
   pip:
     requirements: /home/ubuntu/COMP90024/Flask-Service/requirements.txt
 
+- name: Install python modules needed for harvester
+  become: yes
+  pip:
+    name: ['pytz', 'textblob', 'couchdb', 'pandas', 'nltk']
+    state: latest
+
 - name: Launch Flask app
   become: yes
-  command: python3 main.py
-  async: 1200
+  command: flask run --host '0.0.0.0'
+  async: 7776000
   poll: 0
   args:
     chdir: /home/ubuntu/COMP90024/Flask-Service

@@ -1,0 +1,4 @@
+- hosts: MASTER
+
+  roles:
+    - role: back-end
