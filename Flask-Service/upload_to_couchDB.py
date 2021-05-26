@@ -23,20 +23,28 @@ aurin_quarterly_payment_db = couchserver["aurin_quarterly_payment"]
 with open('data2357255522807394857.json') as jsonfile:
     rows = json.load(jsonfile)['features']
     for db_entry in rows:
-        aurin_income_db.save(db_entry)
+        tmp = db_entry
+        tmp['_id'] = db_entry["lga_code_2016"]
+        aurin_income_db.save(tmp)
 
 with open('ABS_-_Regional_Population_-_Summary_Statistics__LGA__2018.json') as jsonfile:
     rows = json.load(jsonfile)['features']
     for db_entry in rows:
-        aurin_regional_population_db.save(db_entry)
+        tmp = db_entry
+        tmp['_id'] = db_entry["lga_code18"]
+        aurin_regional_population_db.save(tmp)
 
 with open('DSS_-_Quarterly_Payment_Recipients__LGA__June_2020.json') as jsonfile:
     rows = json.load(jsonfile)['features']
     for db_entry in rows:
-        aurin_quarterly_payment_db.save(db_entry)
+        tmp = db_entry
+        tmp['_id'] = db_entry["lga_code18"]
+        aurin_quarterly_payment_db.save(tmp)
 
 with open('COVID_AU_state_daily_change.json') as jsonfile:
     rows = json.load(jsonfile)
     for db_entry in rows:
-        covid_db.save(db_entry)
+        tmp = db_entry
+        tmp['_id'] = db_entry['date'] + db_entry['state_abbrev']
+        covid_db.save(tmp)
 
