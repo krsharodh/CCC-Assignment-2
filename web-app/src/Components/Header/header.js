@@ -22,7 +22,7 @@ function Header() {
         <AppBar position="fixed" className={classes.appBar}>
             <Toolbar>
                 <Typography variant="h6" noWrap>
-                    Twitter Data Analysis
+                    COVID analysis among major Australian cities
             </Typography>
             </Toolbar>
         </AppBar>

@@ -69,7 +69,7 @@ function Cover({
     return (
         <div>
             <header className={classes.banner}>
-                <h1>Twitter Data Analysis</h1>
+                <h1>COVID Analysis Among Major Australian Cities</h1>
                 <Grid
                     container
                     direction="row"
