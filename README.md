@@ -1,5 +1,6 @@
 # Covid analysis among Australian cities
 ## Group - 70
+### Demo Deployment Video Link: https://youtu.be/rxg-DDCLgEU
 
 ## Folder Structure
 Folder Name | Content
