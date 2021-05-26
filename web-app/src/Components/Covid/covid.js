@@ -71,7 +71,7 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                                         Proportion of tweets mentioning COVID
                                     </Typography>
                                     <p>
-                                        The graph describes the percentage of COVID keyword in tweets across various major in cities in Australia.
+                                        The graph describes the percentage of tweets containing covid keyword in main cities of Australia.
                                         <p></p>
                                         <strong>Highest Percentage:</strong>  Canberra<br></br>
                                         <strong>Lowest Percentage:</strong>  Hobart
@@ -98,7 +98,7 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                             >
                                 <Grid item xs={12}>
                                     <Typography variant="h6" className={classes.chartHeaderCenter}>
-                                        Proportion of tweets mentioning COVID vs Cases
+                                        Counts of tweets mentioning Covid vs Cases
                                     </Typography>
                                     <div className={classes.chartHeaderCenter}>
                                         <Filters data={areasList} value={selectedArea} handleChange={handleAreaChange} />
@@ -138,7 +138,7 @@ function Covid({ areasList, covidGraph1Data, covidGraph2Data, covidTopicsData, c
                                 alignItems="center"
                                 spacing={2}>
                                 <Grid item xs={7}>
-                                    <Map data={covidMapData}/>
+                                    <Map data={covidMapData} />
 
                                 </Grid>
                                 <Grid item xs={5} className={classes.descContainer}>

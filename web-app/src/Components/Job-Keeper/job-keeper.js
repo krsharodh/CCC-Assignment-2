@@ -62,7 +62,7 @@ function JobKeeper({ jobGraph1Data, jobGraph2Data, jobGraph3Data }) {
                                         Proportion of tweets mentioning Job Keeper and Median Weekly Personal Income
                                     </Typography>
                                     <p>
-                                        The graph describes the percentage of Job Keeper keyword in tweets and Median Weekly Personal Income across various major in cities in Australia.
+                                        The graph describes the percentage of tweets containing covid keyword in main cities of Australia.
                                         <p></p>
                                         <strong>Highest Percentage:</strong>  Adelaide<br></br>
                                         <strong>Lowest Percentage:</strong>  Darwin
@@ -94,10 +94,10 @@ function JobKeeper({ jobGraph1Data, jobGraph2Data, jobGraph3Data }) {
                                 </Grid>
                                 <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
-                                        Proportion of tweets mentioning Job Keeper and Jobseeker Payment
+                                        Proportion  of tweets mentioning Jobseeker and counts  of Jobseeker payment in main cities
                                     </Typography>
                                     <p>
-                                        The graph describes the percentage of Job Keeper keyword in tweets and Jobseeker Payment across various major in cities in Australia.
+                                        The graph describes the percentage of Jobseeker/Jobkeeper keyword in tweets and the counts of jobseeker payment recepients across main cities in Australia.
                                         <p></p>
                                         <strong>Highest Percentage:</strong>  Adelaide<br></br>
                                         <strong>Lowest Percentage:</strong>  Hobart
@@ -129,10 +129,10 @@ function JobKeeper({ jobGraph1Data, jobGraph2Data, jobGraph3Data }) {
                                 </Grid>
                                 <Grid item xs={4} className={classes.descContainer}>
                                     <Typography variant="h6" className={classes.chartHeader}>
-                                        Proportion of tweets mentioning Job Keeper and Aged 15 to 64 %
+                                        Proportion of tweets mentioning Jobkeeper and the percentage of population aged between 15 and 64
                                     </Typography>
                                     <p>
-                                        The graph describes the percentage of Job Keeper keyword in tweets and Aged 15 to 64 % across various major in cities in Australia.
+                                        The graph describes the percentage of tweets containing Jobkeeper/Jobseeker keyword and the percentage of population aged between 15 and 64 in the main cities of Australia.
                                         <p></p>
                                         <strong>Highest Percentage:</strong>  Adelaide<br></br>
                                         <strong>Lowest Percentage:</strong>  Hobart
