@@ -445,8 +445,6 @@ class VaccineGraph3(Resource):
 
 class VaccineGraph4(Resource):
     def get(self):
-        vaccine_words = ['covid19', 'covid', 'people', 'pfizer', 'australia', 'rollout', 'astrazeneca', 'us', 'doses', 'government', 'need', 'az', 'health', 'australians', 'first', 'new', 'risk', 'know', 'million', 'time', 'many', 'virus', 'think', 'good', 'cases', 'says', 'world', 'auspol', 'well', 'morrison', 'jab', 'work', 'coronavirus', 'year', 'deaths', 'quarantine', 'want', 'see', 'said', 'care', 'countries', 'news', 'workers', 'immunity', 'effective', 'scottmorrisonmp', '7news',
-                         'mrna', 'flu', 'blood', 'week', 'clots', 'uk', 'enough', 'public', 'data', 'back', 'govt', 'months', 'next', 'last', 'right', 'program', 'everyone', 'safe', 'available', 'use', 'better', 'day', 'really', 'already', 'aged', 'end', 'moderna', 'federal', 'country', 'today', 'medical', 'long', 'population', 'greghuntmp', 'stop', 'states', 'pandemic', 'open', 'never', 'years', 'sure', 'point', 'days', 'minister', 'must', 'weeks', 'keep', 'roll', 'yes', 'wait', 'borders', 'due', 'india']
         couchserver = couchdb.Server(
             "http://%s:%s@172.26.133.161:5984/" % (user, password))
         db = couchserver['raw_tweets_from_timeline']
@@ -485,12 +483,20 @@ class VaccineGraph5(Resource):
         data = []
         wordcloud_vaccine_view_result = db.view(
             'vaccine_related/Wordcloud_hashtag_vaccine', group=True)
-        word_count_vaccine = {}
+        word_count_vaccine_hashtag = {}
+        stop_words = stopwords.words('english')
         for r in wordcloud_vaccine_view_result:
-            word_count_vaccine[r.key] = r.value
-        word_count_vaccine = sorted(word_count_vaccine.items(
+            word = r.key
+            word = '#' + word.lower()
+            if word not in stop_words and word != '' and word not in ['#vaccine','#vaccines','#vaccination']:
+                if word not in word_count_vaccine_hashtag.keys():
+                    word_count_vaccine_hashtag[word] = r.value
+                else:
+                    word_count_vaccine_hashtag[word] += r.value
+
+        word_count_vaccine_hashtag = sorted(word_count_vaccine_hashtag.items(
         ), key=lambda item: item[1], reverse=True)[:50]
-        for item in word_count_vaccine:
+        for item in word_count_vaccine_hashtag:
             data.append({
                 'text': '#' + item[0],
                 'value': item[1]

@@ -65,74 +65,78 @@ var currentValue = 0
 var dates = []
 function drawMap(data) {
     var dom = document.getElementById('echartsmap')
-    var myChart = echarts.init(dom);
-    echarts.registerMap('AU', geoJson);
-    let option = {
-        visualMap: {
-            left: 'left',
-            min: 0,
-            max: max * 1.2,
-            inRange: {
-                color: ['#ffffff', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026', 'black']
-            },
-            text: ['High', 'Low'],
-            calculable: true
-        },
-        tooltip: {},
-        geo: {
-            show: true,
-            map: 'AU',
-            label: {
-                normal: { show: false },
-                emphasis: { show: false }
-            },
-            roam: false,
-            itemStyle: {
-                normal: {
-                    areaColor: '#47D1FF',
-                    borderColor: '#3B5077'
+    console.log(dom)
+    if (dom !== null && dom !== undefined) {
+        var myChart = echarts.init(dom);
+        echarts.registerMap('AU', geoJson);
+        let option = {
+            visualMap: {
+                left: 'left',
+                min: 0,
+                max: max * 1.2,
+                inRange: {
+                    color: ['#ffffff', '#ffffbf', '#fee090', '#fdae61', '#f46d43', '#d73027', '#a50026', 'black']
                 },
-                emphasis: { areaColor: '#040404' }
+                text: ['High', 'Low'],
+                calculable: true
             },
-            zoom: 1
-        },
-        series: [
-            {
-                type: 'scatter',
-                coordinateSystem: 'geo',
-                data: cities,
-                symbolSize: 8,
-                showEffectOn: 'emphasis',
-                rippleEffect: { brushType: 'stroke' },
-                hoverAnimation: true,
+            tooltip: {},
+            geo: {
+                show: true,
+                map: 'AU',
                 label: {
+                    normal: { show: false },
+                    emphasis: { show: false }
+                },
+                roam: false,
+                itemStyle: {
                     normal: {
-                        formatter: '{b}',
-                        position: 'right',
+                        areaColor: '#47D1FF',
+                        borderColor: '#3B5077'
+                    },
+                    emphasis: { areaColor: '#040404' }
+                },
+                zoom: 1
+            },
+            series: [
+                {
+                    type: 'scatter',
+                    coordinateSystem: 'geo',
+                    data: cities,
+                    symbolSize: 8,
+                    showEffectOn: 'emphasis',
+                    rippleEffect: { brushType: 'stroke' },
+                    hoverAnimation: true,
+                    label: {
+                        normal: {
+                            formatter: '{b}',
+                            position: 'right',
+                            show: true
+                        },
+                        emphasis: { show: true }
+                    },
+                    itemStyle: {
+                        normal: { color: 'black' }
+                    },
+                    tooltip: {
+                        show: false,
+                    }
+                },
+                {
+                    name: '# tweets',
+                    type: 'map',
+                    mapType: 'AU',
+                    label: {
                         show: true
                     },
-                    emphasis: { show: true }
+                    data: data,
                 },
-                itemStyle: {
-                    normal: { color: 'black' }
-                },
-                tooltip: {
-                    show: false,
-                }
-            },
-            {
-                name: '# tweets',
-                type: 'map',
-                mapType: 'AU',
-                label: {
-                    show: true
-                },
-                data: data,
-            },
-        ]
-    };
-    myChart.setOption(option);
-    myChart.hideLoading();
+            ]
+        };
+        myChart.setOption(option);
+        myChart.hideLoading();
+    }
+    
 };
 
 function ValueLabelComponent(props) {
