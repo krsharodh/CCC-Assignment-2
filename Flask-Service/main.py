@@ -498,7 +498,7 @@ class VaccineGraph5(Resource):
         ), key=lambda item: item[1], reverse=True)[:50]
         for item in word_count_vaccine_hashtag:
             data.append({
-                'text': '#' + item[0],
+                'text':  item[0],
                 'value': item[1]
             })
         return data
